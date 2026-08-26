@@ -51,12 +51,10 @@ class ProfileSellerModel {
       propertyAddress: map['propertyAddress'],
       numberOfProperties: map['numberOfProperties'] ?? 0,
       whyChooseUs: map['whychooseus'],
-      createdAt: map['createdAt'] != null
-          ? DateTime.tryParse(map['createdAt'])
-          : null,
-      updatedAt: map['updatedAt'] != null
-          ? DateTime.tryParse(map['updatedAt'])
-          : null,
+      createdAt:
+          map['createdAt'] != null ? DateTime.tryParse(map['createdAt']) : null,
+      updatedAt:
+          map['updatedAt'] != null ? DateTime.tryParse(map['updatedAt']) : null,
     );
   }
 
@@ -86,7 +84,7 @@ class UserUpdateProfile {
   final String firstName;
   final String lastName;
   final String phone;
-   String? image;
+  String? image;
   final String address;
   final String email;
   final String city;
@@ -100,7 +98,7 @@ class UserUpdateProfile {
     required this.lastName,
     required this.phone,
     required this.address,
-     this.image,
+    this.image,
     required this.email,
     required this.city,
     required this.state,
@@ -116,8 +114,9 @@ class UserUpdateProfile {
       email: map['email'] ?? '',
       city: map['city'] ?? '',
       state: map['state'] ?? '',
-      address: map['address']??'',
-      profileData: SellerProfileData.fromMap(map['profiledata'] ?? {}), image: map['profilePic']??'',
+      address: map['address'] ?? '',
+      profileData: SellerProfileData.fromMap(map['profiledata'] ?? {}),
+      image: map['profilePic'] ?? '',
     );
   }
 
@@ -130,8 +129,8 @@ class UserUpdateProfile {
       'city': city,
       'totalExperience': totalExperience,
       'state': state,
-      'address':address,
-      'profilePic':image??"",
+      'address': address,
+      'profilePic': image ?? "",
       'profiledata': profileData.toMap(),
     };
   }
@@ -172,4 +171,3 @@ class SellerProfileData {
     };
   }
 }
-

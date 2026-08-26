@@ -138,7 +138,6 @@ class _ChatMessageInputFieldState extends State<ChatMessageInputField> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Obx(
       () => Column(
         mainAxisSize: MainAxisSize.min,

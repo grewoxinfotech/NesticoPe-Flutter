@@ -52,7 +52,6 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
   void initState() {
     super.initState();
     _tag = 'top_dev_profile_${widget.userId}';
-    print('tag: ${widget.userId}======== ${widget.createdBy}');
 
     profileController =
         Get.isRegistered<TopBuilderController>(tag: _tag)
@@ -79,9 +78,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
             selectedCity.value = city;
           }
         })
-        .catchError((e) {
-          log('Error reading selected city: $e');
-        });
+        .catchError((e) {});
 
     ever<List<ProjectItem>>(projectController.items, (list) async {
       if (allItemsCache.isEmpty && list.isNotEmpty) {
@@ -126,7 +123,6 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
           child: Obx(() {
             final isLoadingProfile = profileController.isLoading.value;
             final items = projectController.items;
-            log('items: sdfdsfsdfsdf${items.length}');
 
             if (selectedStatus.value.isEmpty &&
                 allItemsCache.isEmpty &&
@@ -492,9 +488,7 @@ class _TopDeveloperProfileScreenState extends State<TopDeveloperProfileScreen> {
                         completed: completedCount,
                         onSelect: (status) async {
                           selectedStatus.value = status;
-                          log(
-                            'status: $status   selectedStatus.value: ${selectedStatus.value}',
-                          );
+
                           if (status.isEmpty) {
                             projectController.builderStatus.value = '';
                             projectController.clearFilter('status');

@@ -25,12 +25,14 @@ class CustomSwitch extends StatelessWidget {
         height: 28,
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          border: Border.all(color:value
-              ? activeColor.withOpacity(0.5)
-              : inactiveColor.withOpacity(0.5),width: 1 ),
-          color: value
-              ? activeColor.withOpacity(0.4)
-              : inactiveColor,
+          border: Border.all(
+            color:
+                value
+                    ? activeColor.withOpacity(0.5)
+                    : inactiveColor.withOpacity(0.5),
+            width: 1,
+          ),
+          color: value ? activeColor.withOpacity(0.4) : inactiveColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: AnimatedAlign(

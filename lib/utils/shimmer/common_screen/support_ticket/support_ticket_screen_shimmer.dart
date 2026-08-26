@@ -18,7 +18,8 @@ class SupportTicketScreenShimmer extends StatelessWidget {
 
   Widget _shimmerCard() {
     return Container(
-      clipBehavior: Clip.antiAlias, // Ensures the side bar respects border radius
+      clipBehavior:
+          Clip.antiAlias, // Ensures the side bar respects border radius
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -39,7 +40,9 @@ class SupportTicketScreenShimmer extends StatelessWidget {
             bottom: 0,
             child: Container(
               width: 5,
-              color: Colors.blue.shade600.withOpacity(0.3), // Faded version for shimmer
+              color: Colors.blue.shade600.withOpacity(
+                0.3,
+              ), // Faded version for shimmer
             ),
           ),
 

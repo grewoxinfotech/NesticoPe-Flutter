@@ -228,9 +228,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                 items: controllerForFilter.statusOfApplicant,
                 controllerForFilter: controllerForFilter,
                 selectedItems: controllerForFilter.statusApplicateIndex,
-                onSelectionChanged: (index) {
-                  debugPrint('Status Type property Type $index');
-                },
+                onSelectionChanged: (index) {},
               ),
               const SizedBox(height: 16),
             ],
@@ -240,9 +238,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               items: controllerForFilter.verificationStatus,
               controllerForFilter: controllerForFilter,
               selectedItems: controllerForFilter.verifiedStatusIndex,
-              onSelectionChanged: (index) {
-                debugPrint('Verified Status $index');
-              },
+              onSelectionChanged: (index) {},
             ),
             const SizedBox(height: 16),
             Container(
@@ -280,8 +276,6 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
               filterControllerForFilter: controllerForFilter,
               selectedItem: controllerForFilter.selectedPurchaseType,
               onSelected: (type) {
-                debugPrint('Purchase Type Commercial $type');
-
                 setState(() {
                   saleType = type;
                 });
@@ -341,9 +335,6 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                                     onTap: () {
                                       controllerForFilter.addBuilderAmenities(
                                         amenity.title,
-                                      );
-                                      debugPrint(
-                                        "Selected Amenities: ${controllerForFilter.amenities}",
                                       );
                                     },
                                     child: Container(
@@ -481,9 +472,11 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                     controllerForFilter.propertyType.length,
                     (index) {
                       final isSelected =
-                          controllerForFilter.hasUserSelectedPropertyType.value &&
+                          controllerForFilter
+                              .hasUserSelectedPropertyType
+                              .value &&
                           controllerForFilter.selectedPropertyTypeIndex.value ==
-                          index;
+                              index;
                       return Padding(
                         padding: EdgeInsets.only(
                           right:
@@ -561,9 +554,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
             ListedBy(
               listedByList: controllerForFilter.constructionStatus,
               selectedString: controllerForFilter.constructionStatusInBuy,
-              onTap: (index) {
-                debugPrint('Construction Status $index');
-              },
+              onTap: (index) {},
               controllerForFilter: controllerForFilter,
             ),
             const SizedBox(height: 100),
@@ -638,7 +629,7 @@ class _RealEstateFilterScreenState extends State<RealEstateFilterScreen> {
                       await Future.delayed(Duration.zero);
                       final filters = controllerForFilter.getAllFilters();
                       final stringFilters = convertFiltersToString(filters);
-                      log("Change the filter ${stringFilters}");
+
                       Get.back(result: stringFilters);
                       // debugPrint(
                       //   '================= Current Filters =================',

@@ -70,7 +70,6 @@ class FilterController extends GetxController {
   // --- DATA LOADING ---
   void loadInitial() {
     // Call your API/service here with current filters
-    print("Loading data with filters: $filters");
   }
 
   void loadMore() {

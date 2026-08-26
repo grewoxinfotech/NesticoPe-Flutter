@@ -62,11 +62,10 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
     final controller = Get.find<PropertyController>();
     final PropertyFavoriteController favoriteController =
         Get.find<PropertyFavoriteController>();
-        final images = widget.property.propertyMedia?.images ?? [];
+    final images = widget.property.propertyMedia?.images ?? [];
     // print('Building PropertyCardWidget for ${widget.role}');
     return GestureDetector(
       onTap: () {
-        log('[PropertyCardWidget] onTap called ${widget.property}');
         Get.to(
           () => PropertyDetailScreen(propertyId: widget.property.id ?? ''),
         );
@@ -96,13 +95,12 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                       horizontal: AppPadding.small,
                       vertical: AppPadding.small,
                     ),
-                    itemCount:
-                        images.isEmpty ? 1 : images.length,
+                    itemCount: images.isEmpty ? 1 : images.length,
                     separatorBuilder:
                         (context, index) =>
                             const SizedBox(width: 6), // gap between images
                     itemBuilder: (context, index) {
-                       final property = images.isEmpty ? null : images[index];
+                      final property = images.isEmpty ? null : images[index];
                       return Container(
                         width:
                             MediaQuery.of(context).size.width / 2 -
@@ -164,8 +162,7 @@ class _PropertyCardWidgetState extends State<PropertyCardWidget> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: ClipRRect(
-                                  
-                                  borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12),
                                     child: CustomImage(
                                       type: CustomImageType.asset,
                                       src: imageOfNotAvailable,

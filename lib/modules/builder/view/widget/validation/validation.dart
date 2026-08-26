@@ -36,7 +36,11 @@ class ProjectValidators {
     return null;
   }
 
-  static String? inEnum(String? v, List<String> allowed, {String field = 'Field'}) {
+  static String? inEnum(
+    String? v,
+    List<String> allowed, {
+    String field = 'Field',
+  }) {
     if (v == null || v.isEmpty) return null;
     if (!allowed.contains(v)) return '$field is not valid';
     return null;

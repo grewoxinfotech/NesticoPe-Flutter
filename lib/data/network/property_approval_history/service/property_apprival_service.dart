@@ -27,10 +27,8 @@ class ApprovalHistoryService {
           isProject
               ? Uri.parse("$baseUrlProject/$propertyId/$approval")
               : Uri.parse("$baseUrlProperty/$propertyId/$approval");
-      debugPrint("Fetching Approval History: $uri");
 
       final response = await http.get(uri, headers: await headers());
-      debugPrint("Approval History Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
@@ -39,12 +37,9 @@ class ApprovalHistoryService {
 
         return parsed.data;
       } else {
-        debugPrint("Failed to fetch approval history: ${response.statusCode}");
         throw Exception("Failed to load approval history");
       }
     } catch (e) {
-      debugPrint("Exception in fetchApprovalHistory: $e");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Unable to fetch approval history",

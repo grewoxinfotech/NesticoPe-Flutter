@@ -31,9 +31,7 @@ class HireContractorNewController
   Future<PaginationResponse<OverAllContractorItem>> fetchItems(int page) async {
     final response = await HireContractorService.contractorMyService
         .fetchAllContractorByCategory(page: page, limit: 24);
-    print(
-      "Fetched items for all contractor: ${response.items.map((e) => e.toMap())}",
-    );
+
     return response;
   }
 

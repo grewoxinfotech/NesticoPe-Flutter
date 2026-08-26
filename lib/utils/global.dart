@@ -1,8 +1,6 @@
 import '../data/network/property/models/property_model.dart';
 import '../modules/reseller/model/reseller_lead_model/reseller_lead_overview.dart';
 
-
-
 import 'package:flutter/material.dart';
 
 final List<Map<String, dynamic>> contractorServiceCategories = [
@@ -57,11 +55,6 @@ final List<Map<String, dynamic>> contractorServiceCategories = [
     "color": Colors.deepOrangeAccent,
   },
 ];
-
-
-
-
-
 
 List<Map<String, dynamic>> propertyList = [
   {
@@ -860,4 +853,4 @@ final List<String> months = [
   'Dec',
 ];
 
-String imageOfNotAvailable="assets/images/not_available_image.png";
+String imageOfNotAvailable = "assets/images/not_available_image.png";

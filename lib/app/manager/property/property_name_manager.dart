@@ -13,13 +13,11 @@ class PropertyNameManager {
     final type = property.type?.toLowerCase() ?? '';
     final propertyType = property.propertyType?.capitalize ?? '';
 
-    print("Property Type: $propertyType, Property BHK: ${property.title}");
-
     if (type == "residential") {
       final bhk = property.propertyDetails?.bhk ?? 0;
 
-      if(property.listingType?.toLowerCase() == "pg") {
-        return property.propertyDetails?.pgInfo?.pgName??'PG';
+      if (property.listingType?.toLowerCase() == "pg") {
+        return property.propertyDetails?.pgInfo?.pgName ?? 'PG';
       }
       // If bhk = 0, show only property type
       return bhk > 0

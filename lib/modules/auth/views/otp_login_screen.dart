@@ -461,8 +461,6 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
       await SecureStorage.saveLoggedIn(true);
       //  final user = await authService.login(email, password);
 
-      print('Login With Otp ${user.user?.toJson()}');
-
       // 2️⃣ Save auth data
       await SecureStorage.saveToken(user.token!);
       await SecureStorage.saveUserData(user);
@@ -481,8 +479,6 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
 
       // 4️⃣ 🔔 NOTIFICATION SYNC
       final userId = user.user?.id?.toString();
-      print('userId: $userId');
-      print('role: ${UserHelper.userType?.name}');
 
       final role = UserHelper.userType?.name ?? 'buyer';
 
@@ -614,7 +610,6 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // House image
-                
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   // mainAxisAlignment: MainAxisAlignment.center,
@@ -636,7 +631,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
                     const SizedBox(height: 20),
 
                     // Welcome heading
-                    const Text( 
+                    const Text(
                       'Welcome Back.',
                       style: TextStyle(
                         fontSize: 24,
@@ -1355,8 +1350,6 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
       await SecureStorage.saveLoggedIn(true);
       //  final user = await authService.login(email, password);
 
-      print('Login With Otp ${user.user?.toJson()}');
-
       // 2️⃣ Save auth data
       await SecureStorage.saveToken(user.token!);
       await SecureStorage.saveUserData(user);
@@ -1375,8 +1368,6 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
 
       // 4️⃣ 🔔 NOTIFICATION SYNC
       final userId = user.user?.id?.toString();
-      print('userId: $userId');
-      print('role: ${UserHelper.userType?.name}');
 
       final role = UserHelper.userType?.name ?? 'buyer';
 

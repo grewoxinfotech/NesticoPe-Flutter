@@ -51,13 +51,8 @@ class ContractorDashboardController extends GetxController {
       try {
         final parsedDate = DateTime.parse(createdDate);
         createdUserYear.value = parsedDate.year;
-        log('Created year of user: ${createdUserYear.value}');
-      } catch (e) {
-        log('Error parsing createdAt date: $e');
-      }
-    } else {
-      log('User createdAt date is empty or null');
-    }
+      } catch (e) {}
+    } else {}
   }
 
   Future<Rxn<ContractorInsightsModel>> getContractorDashboard({
@@ -72,7 +67,6 @@ class ContractorDashboardController extends GetxController {
       final userId = user?.user?.id;
 
       if (userId == null || userId.isEmpty) {
-        log("Contractor dashboard skipped: user id missing in secure storage");
         contractorInsights.value = null;
         return contractorInsights;
       }
@@ -89,10 +83,7 @@ class ContractorDashboardController extends GetxController {
       showRedDot.value = await SecureStorage.hasNewContractorLead(
         currentLeadCount,
       );
-
-      log("Contractor dashboard fetched successfully ${showRedDot.value}");
     } catch (e, s) {
-      log("Failed to fetch contractor dashboard: $e", stackTrace: s);
       contractorInsights.value = null;
     } finally {
       if (!silent) {

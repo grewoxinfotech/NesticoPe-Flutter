@@ -19,12 +19,10 @@ class ContractorReferralService {
   Future<ReferralResponseModel> fetchReferralInfo() async {
     final uri = Uri.parse('$_baseUrl/user/$userId/info/buyer');
 
-    print("URL of Referral Info: $uri");
-
     try {
       final response = await http.get(uri, headers: await headers());
       final data = jsonDecode(response.body);
-      print("Response of Referral Info: $data");
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
 

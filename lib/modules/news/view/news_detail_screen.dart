@@ -77,7 +77,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-
               SliverAppBar(
                 expandedHeight: isTablet ? 400 : 250,
                 floating: false,
@@ -94,7 +93,7 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
-         /*       actions: [
+                /*       actions: [
                   // Container(
                   //   margin: const EdgeInsets.all(8),
                   //   decoration: BoxDecoration(
@@ -198,11 +197,11 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                               "_",
                               " ",
                             ),
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: ColorRes.white,
                               fontSize: AppFontSizes.extraSmall,
                               fontWeight: AppFontWeights.semiBold,
-                              letterSpacing: 0.5
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ),
@@ -212,7 +211,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       Text(
                         newsItem.title ?? 'Untitled',
                         style: TextStyle(
-                          fontSize: isTablet ? AppFontSizes.subtitle : AppFontSizes.large,
+                          fontSize:
+                              isTablet
+                                  ? AppFontSizes.subtitle
+                                  : AppFontSizes.large,
                           fontWeight: AppFontWeights.semiBold,
                           color: ColorRes.textPrimary,
                           height: 1.3,
@@ -226,7 +228,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         Text(
                           newsItem.summary!,
                           style: TextStyle(
-                            fontSize: isTablet ? AppFontSizes.bodyMedium : AppFontSizes.small,
+                            fontSize:
+                                isTablet
+                                    ? AppFontSizes.bodyMedium
+                                    : AppFontSizes.small,
                             color: ColorRes.leadGreyColor[600],
                             fontWeight: AppFontWeights.regular,
                             height: 1.6,
@@ -265,10 +270,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                 children: [
                                   Text(
                                     newsItem.author ?? 'Unknown Author',
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontWeight: AppFontWeights.semiBold,
                                       fontSize: AppFontSizes.bodyMedium,
-                                      color: ColorRes.textPrimary
+                                      color: ColorRes.textPrimary,
                                     ),
                                   ),
                                   if (newsItem.authorDesignation != null)
@@ -280,7 +285,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                         fontWeight: AppFontWeights.regular,
                                       ),
                                     ),
-
                                 ],
                               ),
                             ),
@@ -306,7 +310,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                             Icons.visibility,
                             '${newsItem.viewCount ?? 0} views',
                           ),
-
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -368,7 +371,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                         size: AppFontSizes.small,
                         trimLines: 18,
                         colorClickableText: ColorRes.primary,
-
                       ),
                       const SizedBox(height: 24),
                       if (newsItem.tags != null && newsItem.tags!.isNotEmpty)
@@ -376,16 +378,16 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           spacing: 8,
                           runSpacing: 8,
                           children:
-                          newsItem.tags!.map((tag) {
-                            return Text(
-                              '#$tag',
-                              style: TextStyle(
-                                fontSize: AppFontSizes.bodySmall,
-                                color: ColorRes.primary,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            );
-                          }).toList(),
+                              newsItem.tags!.map((tag) {
+                                return Text(
+                                  '#$tag',
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.bodySmall,
+                                    color: ColorRes.primary,
+                                    fontWeight: AppFontWeights.medium,
+                                  ),
+                                );
+                              }).toList(),
                         ),
 
                       const SizedBox(height: 20),
@@ -436,15 +438,19 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                       //     ],
                       //   ),
                       // ),
-
-
                       Container(
                         margin: const EdgeInsets.only(top: 20),
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: ColorRes.white,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: ColorRes.leadGreyColor[300]!,width: 1),
+                          border: Border.all(
+                            color: ColorRes.leadGreyColor[300]!,
+                            width: 1,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -488,7 +494,9 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                                     );
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Link copied to clipboard'),
+                                        content: Text(
+                                          'Link copied to clipboard',
+                                        ),
                                       ),
                                     );
                                   },
@@ -498,9 +506,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                           ],
                         ),
                       ),
-
-
-
 
                       const SizedBox(height: 40),
                     ],
@@ -526,7 +531,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       ),
     );
   }
-
 
   Widget _buildShareButton({
     required IconData icon,
@@ -566,7 +570,14 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
       children: [
         Icon(icon, size: 14, color: ColorRes.primary),
         const SizedBox(width: 4),
-        Text(text, style: TextStyle(color: ColorRes.leadGreyColor[600], fontSize: AppFontSizes.small,fontWeight: AppFontWeights.medium)),
+        Text(
+          text,
+          style: TextStyle(
+            color: ColorRes.leadGreyColor[600],
+            fontSize: AppFontSizes.small,
+            fontWeight: AppFontWeights.medium,
+          ),
+        ),
       ],
     );
   }

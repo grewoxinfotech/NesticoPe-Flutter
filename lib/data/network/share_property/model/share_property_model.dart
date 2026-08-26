@@ -18,11 +18,7 @@ class SharePropertyResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
@@ -46,10 +42,6 @@ class ShareData {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'shareId': shareId,
-      'shareUrl': shareUrl,
-      'propertyId': propertyId,
-    };
+    return {'shareId': shareId, 'shareUrl': shareUrl, 'propertyId': propertyId};
   }
 }

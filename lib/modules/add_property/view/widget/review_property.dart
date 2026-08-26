@@ -33,11 +33,8 @@ class ListingReviewCard extends StatelessWidget {
         final review = controller.review.value!;
 
         // DEBUG: Print image paths
-        debugPrint("=== PG/CO-LIVING REVIEW IMAGES ===");
-        for (var img in review.images) {
-          debugPrint("Image path: ${img.path}");
-        }
-        debugPrint("==================================");
+
+        for (var img in review.images) {}
 
         return SingleChildScrollView(
           child: Column(
@@ -108,11 +105,8 @@ class ListingReviewCard extends StatelessWidget {
             );
 
         // DEBUG: Print image paths
-        debugPrint("=== COMMERCIAL REVIEW IMAGES ===");
-        for (var img in review.photos) {
-          debugPrint("Image path: ${img.path}");
-        }
-        debugPrint("=================================");
+
+        for (var img in review.photos) {}
 
         return SingleChildScrollView(
           child: Column(
@@ -238,8 +232,6 @@ class _ReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildImageWidget(String? imagePath) {
-    debugPrint("PG Image path: $imagePath");
-
     if (imagePath == null || imagePath.isEmpty) {
       return _buildPlaceholderImage();
     }
@@ -268,7 +260,6 @@ class _ReviewCardItem extends StatelessWidget {
           );
         },
         errorBuilder: (context, error, stackTrace) {
-          debugPrint("Error loading network image: $error");
           return _buildPlaceholderImage();
         },
       );
@@ -277,7 +268,6 @@ class _ReviewCardItem extends StatelessWidget {
     // Otherwise, try local file
     final file = File(imagePath);
     if (!file.existsSync()) {
-      debugPrint("Local file does not exist: $imagePath");
       return _buildPlaceholderImage();
     }
 
@@ -287,7 +277,6 @@ class _ReviewCardItem extends StatelessWidget {
       cacheWidth: 200,
       cacheHeight: 240,
       errorBuilder: (context, error, stackTrace) {
-        debugPrint("Error loading file image: $error");
         return _buildPlaceholderImage();
       },
     );
@@ -346,9 +335,10 @@ class _ReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildInfoText(String text) {
-    final sanitized = text.toLowerCase().contains('null')
-        ? text.replaceAll(RegExp('null', caseSensitive: false), '').trim()
-        : text;
+    final sanitized =
+        text.toLowerCase().contains('null')
+            ? text.replaceAll(RegExp('null', caseSensitive: false), '').trim()
+            : text;
     if (sanitized.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -482,8 +472,6 @@ class _CommercialReviewCardItem extends StatelessWidget {
   }
 
   Widget _buildImageWidget(String? imagePath) {
-    debugPrint("Commercial Image path: $imagePath");
-
     if (imagePath == null || imagePath.isEmpty) {
       return _buildPlaceholderImage();
     }
@@ -512,7 +500,6 @@ class _CommercialReviewCardItem extends StatelessWidget {
           );
         },
         errorBuilder: (context, error, stackTrace) {
-          debugPrint("Error loading network image: $error");
           return _buildPlaceholderImage();
         },
       );
@@ -521,7 +508,6 @@ class _CommercialReviewCardItem extends StatelessWidget {
     // Otherwise, try local file
     final file = File(imagePath);
     if (!file.existsSync()) {
-      debugPrint("Local file does not exist: $imagePath");
       return _buildPlaceholderImage();
     }
 
@@ -531,7 +517,6 @@ class _CommercialReviewCardItem extends StatelessWidget {
       cacheWidth: 200,
       cacheHeight: 240,
       errorBuilder: (context, error, stackTrace) {
-        debugPrint("Error loading file image: $error");
         return _buildPlaceholderImage();
       },
     );

@@ -79,7 +79,6 @@ class FeedbackController extends GetxController {
         inquiryType.value = '';
       }
     } catch (e) {
-      debugPrint("Exception in submitFeedback: $e");
     } finally {
       isLoading.value = false;
     }

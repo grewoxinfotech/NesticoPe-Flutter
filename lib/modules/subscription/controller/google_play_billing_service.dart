@@ -202,7 +202,6 @@ Future<void> purchaseSubscription({required String planId}) async {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      print(data);
       final result = jsonDecode(response.body);
 
       // Success
@@ -211,7 +210,6 @@ Future<void> purchaseSubscription({required String planId}) async {
       // onPurchaseFailed(data["message"] ?? "Purchase failed");
     }
   } catch (e) {
-    print('Backend verification error: $e');
     // onPurchaseFailed(e.toString());
   }
 }

@@ -60,7 +60,10 @@ class NesticoPeButton extends StatelessWidget {
           heroTag != null
               ? Hero(
                 tag: heroTag!,
-                child: Material(color: ColorRes.transparentColor, child: button),
+                child: Material(
+                  color: ColorRes.transparentColor,
+                  child: button,
+                ),
               )
               : Material(color: ColorRes.transparentColor, child: button),
     );

@@ -29,7 +29,16 @@ class ResellerMeetingController extends PaginatedController<MeetingItem> {
   @override
   Future<PaginationResponse<MeetingItem>> fetchItems(int page) async {
     if (resellerId.isEmpty) {
-      return PaginationResponse(items: [], meta: PaginationMeta(total: 0, currentPage: 1, totalPages: 1, hasMore: false, fetchedAll: true));
+      return PaginationResponse(
+        items: [],
+        meta: PaginationMeta(
+          total: 0,
+          currentPage: 1,
+          totalPages: 1,
+          hasMore: false,
+          fetchedAll: true,
+        ),
+      );
     }
     return _service.fetchMeetings(
       page: page,
@@ -39,7 +48,6 @@ class ResellerMeetingController extends PaginatedController<MeetingItem> {
   }
 
   Future<void> refreshMeetings() async {
-
     try {
       await refreshList();
     } catch (e) {
@@ -50,6 +58,7 @@ class ResellerMeetingController extends PaginatedController<MeetingItem> {
       );
     }
   }
+
   Future<void> createMeeting({
     required String title,
     required String date, // yyyy-MM-dd

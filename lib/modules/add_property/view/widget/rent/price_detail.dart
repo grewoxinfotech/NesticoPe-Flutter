@@ -53,8 +53,6 @@ class RentPriceDetail extends StatelessWidget {
                   if (rent > 0) {
                     // Calculate 5% of rent as Platform Fees
 
-                    print("Check anud swdsjdns ${rent}");
-
                     final feePercentage = getPlatformFeePercentage(
                       platformFeeController,
                     );
@@ -62,8 +60,6 @@ class RentPriceDetail extends StatelessWidget {
                     controller.platformFees.text = platformFee.toStringAsFixed(
                       1,
                     );
-
-                    print("Check anud swdsjdnscfsscs ${platformFee}");
 
                     // C0alculate  of platform fees as Broker Commission
 
@@ -397,11 +393,7 @@ class RentPriceDetail extends StatelessWidget {
                         child: buildTextField(
                           "$year",
                           Icons.currency_rupee_outlined,
-                          onChanged: (value) {
-                            log(
-                              "Past year 5 ${controller.pastPrices.map((e) => e)}",
-                            );
-                          },
+                          onChanged: (value) {},
                           controller.pastPrices[index],
                           isPhoneKey: true,
                           validator: (value) {
@@ -598,9 +590,6 @@ class RentPriceDetail extends StatelessWidget {
                                   controller.setValue(
                                     controller.sell_constructionStatus,
                                     type,
-                                  );
-                                  log(
-                                    'Tapped on ${controller.sell_constructionStatus.value}',
                                   );
                                 },
                               ),
@@ -1292,11 +1281,7 @@ class RentPriceDetail extends StatelessWidget {
                           child: buildTextField(
                             "$year",
                             Icons.currency_rupee_outlined,
-                            onChanged: (value) {
-                              log(
-                                "Past year 5 ${controller.pastPrices.map((e) => e)}",
-                              );
-                            },
+                            onChanged: (value) {},
                             controller.pastPrices[index],
                             isPhoneKey: true,
                             validator: (value) {
@@ -1535,11 +1520,7 @@ class RentPriceDetail extends StatelessWidget {
                           child: buildTextField(
                             "$year",
                             Icons.currency_rupee_outlined,
-                            onChanged: (value) {
-                              log(
-                                "Past year 5 ${controller.pastPrices.map((e) => e)}",
-                              );
-                            },
+                            onChanged: (value) {},
                             controller.pastPrices[index],
                             isPhoneKey: true,
                             validator: (value) {
@@ -1734,10 +1715,6 @@ double getPlatformFeePercentage(PlatformFeeController platformFeeController) {
   try {
     final fee = platformFeeController.items.firstWhere(
       (e) => e.category == 'client_property' && e.isActive == true,
-    );
-
-    print(
-      "Check ksdjfcsaidc dsvcsd${platformFeeController.items.firstWhere((e) => e.category == 'client_property' && e.isActive == true)} ",
     );
 
     return double.tryParse(fee.percentage ?? '0') ?? 0;

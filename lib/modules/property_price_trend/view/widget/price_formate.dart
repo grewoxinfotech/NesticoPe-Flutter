@@ -1,4 +1,3 @@
-
 String formatNumber(dynamic value) {
   if (value >= 10000000) {
     return "${(value / 10000000).toStringAsFixed(1)} Cr"; // Crores

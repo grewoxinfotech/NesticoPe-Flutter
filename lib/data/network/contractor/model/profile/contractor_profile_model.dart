@@ -20,11 +20,7 @@ class ContractorProfileModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data.toJson()};
   }
 }
 
@@ -60,8 +56,8 @@ class ContractorProfileData {
     this.blockReason,
     this.blockedAt,
     required this.activeServices,
-     this.createdAt,
-     this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.projectData,
   });
 
@@ -80,12 +76,14 @@ class ContractorProfileData {
       blockedAt: json['blockedAt'],
       activeServices: json['activeServices'],
       contractorType: json['contractorType'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'])
-          : null,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.tryParse(json['createdAt'])
+              : null,
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.tryParse(json['updatedAt'])
+              : null,
       projectData: ContractorProjectData.fromJson(json['projectData']),
     );
   }
@@ -102,7 +100,7 @@ class ContractorProfileData {
       'totalServices': totalServices,
       'isBlocked': isBlocked,
       'blockReason': blockReason,
-      'contractorType':contractorType,
+      'contractorType': contractorType,
       'blockedAt': blockedAt,
       'activeServices': activeServices,
       'createdAt': createdAt?.toIso8601String(),
@@ -148,8 +146,6 @@ class ContractorProjectData {
   }
 }
 
-
-
 class ContractorUserUpdateProfile {
   final String firstName;
   final String lastName;
@@ -161,7 +157,6 @@ class ContractorUserUpdateProfile {
   final int experinec;
   final String state;
 
-
   ContractorUserUpdateProfile({
     required this.firstName,
     required this.lastName,
@@ -172,7 +167,6 @@ class ContractorUserUpdateProfile {
     required this.email,
     required this.city,
     required this.state,
-
   });
 
   factory ContractorUserUpdateProfile.fromMap(Map<String, dynamic> map) {
@@ -180,12 +174,10 @@ class ContractorUserUpdateProfile {
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
       phone: map['phone'] ?? '',
-      experinec: map['totalExperience']??0,
+      experinec: map['totalExperience'] ?? 0,
       email: map['email'] ?? '',
       city: map['city'] ?? '',
       state: map['state'] ?? '',
-
-
     );
   }
 
@@ -196,11 +188,10 @@ class ContractorUserUpdateProfile {
       'phone': phone,
       'email': email,
       'city': city,
-      'totalExperience':experinec,
+      'totalExperience': experinec,
       'state': state,
 
-      'profilePic':image??"",
-
+      'profilePic': image ?? "",
     };
   }
 }

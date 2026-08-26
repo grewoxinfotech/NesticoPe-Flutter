@@ -2922,7 +2922,6 @@ class _ContractorInquiryQuotationScreenState
 
   /// Initialize form data
   void _initializeFormData() {
-    AppLogger.structured("Edit quotation and data", widget.quotation?.toMap());
     _quotationNoteController.text =
         'Generated from inquiry for: ${widget.inquiry?.services.map((e) => e.serviceName).join(', ') ?? ''}';
 
@@ -3566,7 +3565,9 @@ class _ContractorInquiryQuotationScreenState
                         elevation: 0,
                       ),
                       child: Text(
-                        widget.isEditMode ? 'Update Quotation' : 'Save Quotation',
+                        widget.isEditMode
+                            ? 'Update Quotation'
+                            : 'Save Quotation',
                         style: const TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,
@@ -3792,17 +3793,16 @@ class _ContractorInquiryQuotationScreenState
 
   void _submitQuotation() {
     if (_formKey.currentState!.validate()) {
-      final dashboardController =
-          Get.find<ContractorDashboardController>();
+      final dashboardController = Get.find<ContractorDashboardController>();
       final limitReached =
           dashboardController.activeSubscription.value?.isServiceLimitReached ??
-              true;
+          true;
 
       if (limitReached) {
         dashboardController.showUpgradePlanDialog(
           title: 'Limit Reached',
           message: 'Limit Reached, please upgrade your plan.',
-          buttonText: 'Upgrade Plan'
+          buttonText: 'Upgrade Plan',
         );
         return;
       }

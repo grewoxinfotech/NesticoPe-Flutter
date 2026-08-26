@@ -84,7 +84,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   late ContractorLeadItem currentLead;
 
   void populateLeadData(ContractorLeadItem lead) {
-    print("Josn lead Data ${lead.toMap()}");
     currentLead = lead;
     txtName.text = lead.name ?? '';
     txtPhone.text = lead.phone ?? '';
@@ -93,7 +92,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
     selectedContractor.value = lead.customFields?.contractorId ?? '';
     selectedContractorName.value = lead.customFields?.contractorUsername ?? '';
-    print("sdsadgsa Previous ${selectedContractorName.value}");
+
     selectedServiceId.value = lead.customFields?.serviceId?.trim() ?? '';
 
     selectedServiceName.value = lead.customFields?.serviceName ?? '';
@@ -103,21 +102,15 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     quotationPrice.value = lead.customFields?.quotationPrice.toString() ?? '';
     isConvertedToProject.value =
         lead.customFields?.isConvertedToProject ?? false;
-    print(
-      "Edit of lead in contractor ${selectedServiceName.value} = == = = === = == = =  =${selectedServiceId.value}",
-    );
+
     selectedSource.value = capitalizeEachWord(lead.source) ?? '';
     selectedStatus.value = capitalizeEachWord(lead.status);
 
     selectedStage.value = capitalizeEachWord(lead.stage);
-
-    print("✅ Lead data populated for edit: ${lead.id}");
   }
 
   void populateProjectForm(ContractorProjectItem item) {
     try {
-      debugPrint("🟢 Populating project form from project: ${item.id}");
-
       // ---------------- Basic Text Fields ----------------
       txtTitle.text = item.title ?? '';
       txtClientName.text = item.client.name ?? '';
@@ -163,22 +156,9 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
                   .toList();
 
           selectedEmployees.assignAll(matchedEmployees);
-          debugPrint(
-            "✅ Populated ${selectedEmployees.length} employees from project meta",
-          );
-        } else {
-          debugPrint(
-            "⚠️ Employee controller list is empty — cannot match IDs yet",
-          );
-        }
-      } else {
-        debugPrint("⚠️ No employees found in project meta");
-      }
-
-      debugPrint("✅ Project form populated successfully for edit.");
-    } catch (e, s) {
-      debugPrint("🚨 Error populating project form: $e\n$s");
-    }
+        } else {}
+      } else {}
+    } catch (e, s) {}
   }
 
   Future<void> refreshLead() async {
@@ -234,8 +214,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
     /// 🟢 Reset current lead
     currentLead = ContractorLeadItem();
-
-    print("✅ Form reset successfully");
   }
 
   void resetFilters() {
@@ -264,13 +242,12 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
-    print("Apply Filter in Inquiry Contractor Section ${filters} ");
+
     // await loadInitial();
     refreshList();
   }
 
   Future<void> convertIntoProject(String id) async {
-    debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
@@ -281,7 +258,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     }
 
     final payload = getProjectPayload(id);
-    debugPrint("📦 Project Payload => $payload");
+
     final response = await ContractorLeadService.contractorLeadService
         .convertIntoProject(payload);
     if (response) {
@@ -295,17 +272,13 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
         final projectController = Get.find<ContractorProjectController>();
         await projectController.fetchContractorProjects();
         items.removeWhere((element) => element.id == id);
-        print("✅ Contractor projects refreshed after conversion");
-      } catch (e) {
-        print("⚠️ Could not refresh projects: $e");
-      }
+      } catch (e) {}
       resetForm();
       Get.back();
     }
   }
 
   Future<void> updateProject(String id) async {
-    debugPrint("📦 Project Payload => $id");
     if (deadline.value == null || startDate.value == null) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
@@ -316,7 +289,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     }
 
     final payload = updateProjectPayload();
-    debugPrint("📦 Project Payload => $payload");
+
     final response = await ContractorProjectService.contractorProjectService
         .updateProject(payload, id);
     if (response) {
@@ -325,10 +298,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       try {
         final projectController = Get.find<ContractorProjectController>();
         await projectController.fetchContractorProjects();
-        print("✅ Contractor projects refreshed after conversion");
-      } catch (e) {
-        print("⚠️ Could not refresh projects: $e");
-      }
+      } catch (e) {}
       resetForm();
       Get.back();
     }
@@ -343,8 +313,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
     txtProjectPrice.text = item.customFields?.quotationPrice.toString() ?? '';
 
     selectedService.value = item.customFields?.serviceName ?? '';
-
-    debugPrint("✅ Form populated from item: $item");
   }
 
   Map<String, dynamic> getProjectPayload(String leadId) {
@@ -370,9 +338,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   }
 
   Map<String, dynamic> updateProjectPayload() {
-    debugPrint("🟢 Updating project payload");
-    debugPrint("🟢 Updating $startDate    ------ $deadline");
-
     return {
       "title": txtTitle.text.trim(),
       "startDate":
@@ -407,7 +372,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
   void toggleCard(String id) {
     expandedCards[id] = !(expandedCards[id] ?? false);
-    print("toggle Card $id");
+
     expandedCards.refresh();
   }
 
@@ -433,7 +398,7 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
           filter: filters.value,
           isConverted: false,
         );
-    print("Contractor Lead items: ${response.items.length}");
+
     getAllSourceData();
     return response;
   }
@@ -558,7 +523,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
   Future<void> updateLeadDetails(String leadId) async {
     try {
       final payload = getUpdateLeadPayload(leadId);
-      AppLogger.structured("🟩 Lead Update Payload =>", payload);
 
       final response = await ContractorLeadService.contractorLeadService
           .updateContractorLead(leadId, payload);
@@ -580,8 +544,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
         );
       }
     } catch (e, s) {
-      debugPrint("🚨 Error in updateLeadDetails: $e\n$s");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Something went wrong while updating.",
@@ -607,8 +569,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
       }
 
       if (payload.isEmpty) {
-        print("⚠️ No valid status or stage provided to update.");
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Warning",
           message: "Please select at least one value to update.",
@@ -617,15 +577,11 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
         return;
       }
 
-      print("🟩 Payload ready for update: $payload");
-
       // 🔥 Call the service
       final success = await ContractorLeadService.contractorLeadService
           .updateTheLeadStatusAndStage(payload, leadId);
 
       if (success) {
-        print("✅ Lead updated successfully with $payload");
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Updated",
           message: "Lead status/stage updated successfully.",
@@ -634,8 +590,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
 
         refreshList(); // reloads data from API
       } else {
-        print("🔴 Failed to update lead with $payload");
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
           message: "Failed to update lead.",
@@ -643,9 +597,6 @@ class ContractorLeadController extends PaginatedController<ContractorLeadItem> {
         );
       }
     } catch (e, stack) {
-      print("🚨 Exception in updateTheStatusAndStage: $e");
-      print("🧠 Stack trace: $stack");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Something went wrong while updating.",

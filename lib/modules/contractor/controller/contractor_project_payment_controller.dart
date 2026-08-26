@@ -76,7 +76,6 @@ class ContractorProjectMilestonePaymentController
         projectId: projectId,
       );
     } catch (e) {
-      log("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -126,7 +125,6 @@ class ContractorProjectMilestonePaymentController
 
       milestones.assignAll(response.items);
     } catch (e) {
-      log("Failed to load milestones: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Failed to load milestones",
@@ -164,7 +162,7 @@ class ContractorProjectMilestonePaymentController
         isLoading.value = false;
         return;
       }
-      log("Creating payment for milestone ID: ${selectedPaymentMode.value}");
+
       final payload = {
         "projectId": projectId,
         "milestoneId": selectedMilestoneId.value,
@@ -177,8 +175,6 @@ class ContractorProjectMilestonePaymentController
         "paidOn": paidOn.value!.toIso8601String(),
         "referenceNote": referenceNoteController.text.trim(),
       };
-
-      log("Create Payment Payload => $payload");
 
       final success = await service.createMilestonePayment(payload);
 
@@ -200,8 +196,6 @@ class ContractorProjectMilestonePaymentController
         );
       }
     } catch (e) {
-      log("Submit Payment Error: $e");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong: $e",
@@ -283,8 +277,6 @@ class ContractorProjectMilestonePaymentController
         ),
       );
 
-      log("Update Payment Payload => ${payload.toJson()}");
-
       final success = await service.updateMilestonePayment(
         paymentId: editingPaymentId.value,
         payload: payload,
@@ -308,8 +300,6 @@ class ContractorProjectMilestonePaymentController
         );
       }
     } catch (e) {
-      log("Update Payment Error: $e");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong: $e",
@@ -364,8 +354,6 @@ class ContractorProjectMilestonePaymentController
         );
       }
     } catch (e) {
-      log("Delete Payment Error: $e");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong: $e",

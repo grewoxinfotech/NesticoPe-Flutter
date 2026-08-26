@@ -61,18 +61,12 @@ class ContactHelper {
       }
 
       if (!launched) {
-        debugPrint("⚠️ Email app not available, opening Gmail web");
         await launchUrl(
           Uri.parse('https://mail.google.com/'),
           mode: LaunchMode.platformDefault,
         );
       }
-
-      debugPrint("📧 Email composer opened");
-    } catch (e, st) {
-      debugPrint("❌ Failed to open email composer: $e");
-      debugPrint("Stack: $st");
-    }
+    } catch (e, st) {}
   }
 
   /// Open WhatsApp chat
@@ -94,7 +88,6 @@ class ContactHelper {
   }
 
   static Future<void> openPublicWhatsApp({
-    
     String? phoneNumber,
     String message = "",
     bool shareToStatus = false,
@@ -122,9 +115,7 @@ class ContactHelper {
 
         await launchUrl(uri, mode: LaunchMode.platformDefault);
       }
-    } catch (e) {
-      debugPrint("WhatsApp share failed: $e");
-    }
+    } catch (e) {}
   }
 
   // static Future<void> openInstagram({
@@ -182,11 +173,7 @@ class ContactHelper {
           mode: LaunchMode.platformDefault,
         );
       }
-
-      debugPrint("📸 Opened Instagram success composer");
-    } catch (e) {
-      debugPrint("❌ Failed to open Instagram success: $e");
-    }
+    } catch (e) {}
   }
 
   /// Share image or content to Instagram feed (system share)
@@ -196,7 +183,6 @@ class ContactHelper {
         await SharePlus.instance.share(
           ShareParams(files: [XFile(storyImagePath)], text: 'Check this out!'),
         );
-        debugPrint("✅ Shared image to Instagram (system share sheet)");
       } else {
         // Just open Instagram app
         final Uri appUri = Uri.parse('instagram://app');
@@ -213,9 +199,7 @@ class ContactHelper {
           await launchUrl(webUri, mode: LaunchMode.platformDefault);
         }
       }
-    } catch (e) {
-      debugPrint("❌ Failed to share to Instagram feed: $e");
-    }
+    } catch (e) {}
   }
 
   static Future<void> shareToFacebookStory(String? link) async {
@@ -239,11 +223,7 @@ class ContactHelper {
           mode: LaunchMode.externalApplication,
         );
       }
-
-      debugPrint("📘 Opened Facebook Story composer");
-    } catch (e) {
-      debugPrint("❌ Failed to open Facebook success: $e");
-    }
+    } catch (e) {}
   }
 
   /// 🔹 Share image or text to Facebook Feed
@@ -259,7 +239,6 @@ class ContactHelper {
             text: caption ?? 'Check this out!',
           ),
         );
-        debugPrint("✅ Shared image via system share sheet (Facebook feed)");
       } else {
         // just open Facebook app
         final Uri appUri = Uri.parse('fb://feed');
@@ -279,9 +258,7 @@ class ContactHelper {
           await launchUrl(webUri, mode: LaunchMode.externalApplication);
         }
       }
-    } catch (e) {
-      debugPrint("❌ Failed to share to Facebook feed: $e");
-    }
+    } catch (e) {}
   }
 
   static Future<void> shareContent({
@@ -290,7 +267,6 @@ class ContactHelper {
     String? imagePath, // Optional image path
   }) async {
     try {
-      log("link $link");
       // Combine text and link
       final shareText = [
         if (text != null) text,
@@ -306,12 +282,7 @@ class ContactHelper {
         // 📄 Share text only
         await SharePlus.instance.share(ShareParams(text: shareText));
       }
-
-      debugPrint("✅ Shared content successfully");
     } catch (e, st) {
-      debugPrint("❌ Failed to share content: $e");
-      debugPrint("Stack: $st");
-
       // Fallback — open link directly if share fails
       if (link != null) {
         await launchUrl(Uri.parse(link), mode: LaunchMode.platformDefault);
@@ -342,8 +313,11 @@ class ContactHelper {
     await launchUrl(googleMapsUri, mode: LaunchMode.platformDefault);
   }
 
-  static void showContactOptions(BuildContext context, String phoneNumber,
-      {String message = ""}) {
+  static void showContactOptions(
+    BuildContext context,
+    String phoneNumber, {
+    String message = "",
+  }) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -351,7 +325,7 @@ class ContactHelper {
       ),
       builder: (ctx) {
         return SafeArea(
-          child: Column( 
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(

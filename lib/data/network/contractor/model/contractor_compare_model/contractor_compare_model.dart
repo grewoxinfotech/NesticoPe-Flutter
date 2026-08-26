@@ -21,11 +21,7 @@ class ContractorDataResponse {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data.toMap()};
   }
 }
 
@@ -51,9 +47,10 @@ class ContractorData {
     return ContractorData(
       contractor: ContractorItem.fromJson(json['contractor'] ?? {}),
       profile: Profile.fromJson(json['profile'] ?? {}),
-      servicesByCategory: (json['servicesByCategory'] as List<dynamic>?)
-          ?.map((e) => ServiceCategory.fromJson(e))
-          .toList() ??
+      servicesByCategory:
+          (json['servicesByCategory'] as List<dynamic>?)
+              ?.map((e) => ServiceCategory.fromJson(e))
+              .toList() ??
           [],
       totalCategories: json['totalCategories'] ?? 0,
       totalServices: json['totalServices'] ?? 0,
@@ -105,19 +102,23 @@ class ContractorItem {
     return ContractorItem(
       id: json['id'] ?? '',
       username: json['username'] ?? '',
-      firstName: (json['firstName'] is String) ? (json['firstName'] as String) : null,
-      lastName: (json['lastName'] is String) ? (json['lastName'] as String) : null,
+      firstName:
+          (json['firstName'] is String) ? (json['firstName'] as String) : null,
+      lastName:
+          (json['lastName'] is String) ? (json['lastName'] as String) : null,
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      profilePic: (json['profilePic'] is String)
-          ? (json['profilePic'] as String).trim().replaceAll('`', '')
-          : null,
+      profilePic:
+          (json['profilePic'] is String)
+              ? (json['profilePic'] as String).trim().replaceAll('`', '')
+              : null,
       city: json['city'],
       state: json['state'],
       userType: json['userType'] ?? 'contractor',
-      memberSince: json['memberSince'] != null
-          ? DateTime.parse(json['memberSince'])
-          : DateTime.now(),
+      memberSince:
+          json['memberSince'] != null
+              ? DateTime.parse(json['memberSince'])
+              : DateTime.now(),
     );
   }
 
@@ -148,7 +149,7 @@ class Profile {
   final int warningCount;
   final String contractorType;
 
-  Profile( {
+  Profile({
     required this.contractorType,
     required this.totalServices,
     required this.activeServices,
@@ -160,7 +161,10 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(
-      contractorType:( json['contractorType']==null)? 'Not Provided': json['contractorType'],
+      contractorType:
+          (json['contractorType'] == null)
+              ? 'Not Provided'
+              : json['contractorType'],
       totalServices: json['totalServices'] ?? 0,
       activeServices: json['activeServices'] ?? 0,
       overallRating: (json['overallRating'] ?? 0).toDouble(),
@@ -209,13 +213,15 @@ class ServiceCategory {
     return ServiceCategory(
       categoryId: json['categoryId'] ?? '',
       categoryName: json['categoryName'] ?? '',
-      categoryDescription: (json['categoryDescription'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList() ??
+      categoryDescription:
+          (json['categoryDescription'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
           [],
-      services: (json['services'] as List<dynamic>?)
-          ?.map((e) => Service.fromJson(e))
-          .toList() ??
+      services:
+          (json['services'] as List<dynamic>?)
+              ?.map((e) => Service.fromJson(e))
+              .toList() ??
           [],
       totalServices: json['totalServices'] ?? 0,
       activeServices: json['activeServices'] ?? 0,
@@ -272,12 +278,14 @@ class Service {
       totalReviews: json['totalReviews'] ?? 0,
       isActive: json['isActive'] ?? true,
       meta: ServiceMeta.fromJson(json['meta'] ?? {}),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : DateTime.now(),
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.parse(json['updatedAt'])
+              : DateTime.now(),
     );
   }
 
@@ -576,9 +584,10 @@ class ServiceMeta {
       brandsUsed: json['brandsUsed'],
       equipmentProvided: json['equipmentProvided'] ?? false,
       insuranceAvailable: json['insuranceAvailable'] ?? false,
-      acceptedPaymentModes: (json['acceptedPaymentModes'] as List?)
-          ?.map((e) => e.toString())
-          .toList(),
+      acceptedPaymentModes:
+          (json['acceptedPaymentModes'] as List?)
+              ?.map((e) => e.toString())
+              .toList(),
       advanceRequiredPercentage:
           (json['advanceRequiredPercentage'] as num?)?.toInt() ?? 0,
       billingType: json['billingType'] ?? 'non_gst',
@@ -588,20 +597,16 @@ class ServiceMeta {
       brickType: (json['brickType'] as List?)?.cast<String>(),
       sandSource: (json['sandSource'] as List?)?.cast<String>(),
       electricalWiresBrand:
-      (json['electricalWiresBrand'] as List?)?.cast<String>(),
+          (json['electricalWiresBrand'] as List?)?.cast<String>(),
       electricalSwitchesBrand:
-      (json['electricalSwitchesBrand'] as List?)?.cast<String>(),
-      plumbingPipesBrand:
-      (json['plumbingPipesBrand'] as List?)?.cast<String>(),
+          (json['electricalSwitchesBrand'] as List?)?.cast<String>(),
+      plumbingPipesBrand: (json['plumbingPipesBrand'] as List?)?.cast<String>(),
       sanitaryFittingsBrand:
-      (json['sanitaryFittingsBrand'] as List?)?.cast<String>(),
+          (json['sanitaryFittingsBrand'] as List?)?.cast<String>(),
       waterTankBrand: (json['waterTankBrand'] as List?)?.cast<String>(),
-      flooringTilesBrand:
-      (json['flooringTilesBrand'] as List?)?.cast<String>(),
-      interiorPaintBrand:
-      (json['interiorPaintBrand'] as List?)?.cast<String>(),
-      exteriorPaintBrand:
-      (json['exteriorPaintBrand'] as List?)?.cast<String>(),
+      flooringTilesBrand: (json['flooringTilesBrand'] as List?)?.cast<String>(),
+      interiorPaintBrand: (json['interiorPaintBrand'] as List?)?.cast<String>(),
+      exteriorPaintBrand: (json['exteriorPaintBrand'] as List?)?.cast<String>(),
       doorsType: (json['doorsType'] as List?)?.cast<String>(),
       windowsType: (json['windowsType'] as List?)?.cast<String>(),
       structure: (json['structure'] as List?)?.cast<String>(),
@@ -678,4 +683,3 @@ class ServiceMeta {
     }
   }
 }
-

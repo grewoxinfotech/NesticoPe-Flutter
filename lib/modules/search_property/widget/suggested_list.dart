@@ -63,9 +63,6 @@
 //   }
 // }
 
-
-
-
 import 'package:flutter/material.dart';
 
 import '../../../app/constants/app_font_sizes.dart';
@@ -90,20 +87,17 @@ Widget buildFilterPropertyTypes({
       vertical: paddingVertical + 2,
     ),
     decoration: BoxDecoration(
-
       color: isSelected ? ColorRes.primary.withOpacity(0.1) : ColorRes.white,
       border: Border.all(
         color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
-        width: isSelected?1.8:1.5,
+        width: isSelected ? 1.8 : 1.5,
       ),
       borderRadius: BorderRadius.circular(10),
-
     ),
     child: Row(
       mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-
         buildCommonText(
           title,
           AppFontSizes.small,
@@ -115,4 +109,3 @@ Widget buildFilterPropertyTypes({
     ),
   );
 }
-

@@ -35,22 +35,16 @@ class ContractorMyService {
     try {
       final uri = Uri.parse('$_baseCategory/$fields');
 
-      print("Category API URI: $uri");
-
       final response = await http.get(uri, headers: await headers());
-      print("Contractor Service Response Status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Category data fetched successfully: $data");
+
         return ContractorServiceCategory.fromMap(data['data']);
       } else {
-        print("Failed to load Categories: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Categories");
       }
     } catch (e) {
-      print("Exception in getContractorCategory: $e");
       return ContractorServiceCategory.fromMap({});
     }
   }
@@ -68,7 +62,6 @@ class ContractorMyService {
       };
 
       final uri = Uri.parse("$_baseUrl").replace(queryParameters: queryParams);
-      print("Contractor Service URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
@@ -77,21 +70,15 @@ class ContractorMyService {
         final items = (data['data']?['items'] as List?)?.length ?? 0;
         final currentPage = data['data']?['currentPage'];
         final totalPages = data['data']?['totalPages'];
-        print(
-          "Contractor Service success: items=$items, page=$currentPage/$totalPages",
-        );
 
         return PaginationResponse<ContractorServiceItem>.fromJson(
           data,
           (json) => ContractorServiceItem.fromJson(json),
         );
       } else {
-        print("Failed to load Review: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Review");
       }
     } catch (e) {
-      print("Exception in Review: $e");
       rethrow;
     }
   }
@@ -113,9 +100,7 @@ class ContractorMyService {
         // print("Response body: ${response.body}");
         throw Exception("Failed to load Active");
       }
-    } catch (e) {
-      print("Response body: ${e}");
-    }
+    } catch (e) {}
   }
 
   Future<bool> deletedService(String id) async {
@@ -125,7 +110,7 @@ class ContractorMyService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Service deleted Successfully: $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -142,8 +127,7 @@ class ContractorMyService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-          print("Failed to load deleted: ${response.statusCode}");
-          print("Response body: ${response.body}");
+
         throw Exception("Failed to deleted");
       }
     } catch (e) {
@@ -152,7 +136,7 @@ class ContractorMyService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Response body: ${e}");
+
       return false;
     }
   }
@@ -166,22 +150,15 @@ class ContractorMyService {
         final data = jsonDecode(response.body);
         return data;
       } else {
-        print("Failed to load Active: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Active");
       }
     } catch (e) {
-      print("Response body: ${e}");
       return {};
     }
   }
 
   Future<PaginationResponse<ContractorServiceCategory>>
-  getContractorCategoryService(
-    {int page = 1,
-    String? limit = '10',}
-
-  ) async {
+  getContractorCategoryService({int page = 1, String? limit = '10'}) async {
     final uri = Uri.parse('$_baseCategory').replace(
       queryParameters: {
         'page': page.toString(),
@@ -198,12 +175,9 @@ class ContractorMyService {
           (json) => ContractorServiceCategory.fromMap(json),
         );
       } else {
-        print("Failed to load Active: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Active");
       }
     } catch (e) {
-      print("Response body: ${e}");
       rethrow;
     }
   }
@@ -272,16 +246,15 @@ class ContractorMyService {
           message: resData['message'],
           contentType: ContentType.success,
         );
-        print("Service created successfully: $resData");
+
         return resData['success'];
-      }
-       else {
-        final handled =
-            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+      } else {
+        final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
+          response,
+        );
         if (handled) return false;
         final resData = jsonDecode(response.body);
-        print("Failed to create service: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         throw Exception(resData['message'] ?? "Failed to create service");
       }
     } catch (e) {
@@ -296,7 +269,6 @@ class ContractorMyService {
         contentType: ContentType.failure,
       );
 
-      print("Error creating service: $e");
       return false;
     }
   }
@@ -361,15 +333,15 @@ class ContractorMyService {
           message: resData['message'],
           contentType: ContentType.success,
         );
-        AppLogger.structured("Service Updated Successfully: ", resData);
+
         return resData['success'];
       } else {
-        final handled =
-            await SubscriptionLimitGuard.handlePlanLimitResponse(response);
+        final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
+          response,
+        );
         if (handled) return false;
         final resData = jsonDecode(response.body);
-        print("Failed to update service: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         throw Exception(resData['message'] ?? "Failed to update service");
       }
     } catch (e) {
@@ -383,7 +355,7 @@ class ContractorMyService {
         message: errorMessage,
         contentType: ContentType.failure,
       );
-      print("Error updating service: $e");
+
       return false;
     }
   }
@@ -399,7 +371,7 @@ class ContractorMyService {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        print("Inquiry Created Successfully: $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -416,25 +388,24 @@ class ContractorMyService {
                 .trim();
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
-          message: errorMessage.isEmpty
-              ? 'Failed to create inquiry'
-              : errorMessage,
+          message:
+              errorMessage.isEmpty ? 'Failed to create inquiry' : errorMessage,
           contentType: ContentType.failure,
         );
-        print("Failed to create Inquiry: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         return false;
       }
     } catch (e) {
       final fallbackMessage = e.toString().trim();
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: fallbackMessage.isEmpty
-            ? 'Something went wrong while creating inquiry'
-            : fallbackMessage,
+        message:
+            fallbackMessage.isEmpty
+                ? 'Something went wrong while creating inquiry'
+                : fallbackMessage,
         contentType: ContentType.failure,
       );
-      print("Response body for create Inquiry: ${e}");
+
       return false;
     }
   }

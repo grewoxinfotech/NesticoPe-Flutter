@@ -213,14 +213,15 @@ class RoomDetail extends StatelessWidget {
                                 16.0; // Parent horizontal padding
                             const spacing = 10.0;
 
-                            
-
                             return Wrap(
                               spacing: spacing,
                               runSpacing: spacing,
                               children: [
                                 buildRoomChoice(
-                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
+                                  width:
+                                      (MediaQuery.of(Get.context!).size.width -
+                                          40) /
+                                      2.5,
                                   title: 'Private Room',
                                   selected:
                                       controller.tempRoomType.value ==
@@ -231,8 +232,10 @@ class RoomDetail extends StatelessWidget {
                                               'private',
                                 ),
                                 buildRoomChoice(
-
-                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
+                                  width:
+                                      (MediaQuery.of(Get.context!).size.width -
+                                          40) /
+                                      2.5,
                                   title: 'Double Sharing',
                                   selected:
                                       controller.tempRoomType.value == 'double',
@@ -242,7 +245,10 @@ class RoomDetail extends StatelessWidget {
                                               'double',
                                 ),
                                 buildRoomChoice(
-                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
+                                  width:
+                                      (MediaQuery.of(Get.context!).size.width -
+                                          40) /
+                                      2.5,
                                   title: 'Triple Sharing',
                                   selected:
                                       controller.tempRoomType.value == 'triple',
@@ -252,7 +258,10 @@ class RoomDetail extends StatelessWidget {
                                               'triple',
                                 ),
                                 buildRoomChoice(
-                                  width: (MediaQuery.of(Get.context!).size.width - 40) / 2.5,
+                                  width:
+                                      (MediaQuery.of(Get.context!).size.width -
+                                          40) /
+                                      2.5,
                                   title: '3 + Sharing',
                                   selected:
                                       controller.tempRoomType.value == 'multi',

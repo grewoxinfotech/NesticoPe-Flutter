@@ -3,28 +3,19 @@ class PlatformFeeResponse {
   final String? message;
   final PlatformFeeData? data;
 
-  PlatformFeeResponse({
-    this.success,
-    this.message,
-    this.data,
-  });
+  PlatformFeeResponse({this.success, this.message, this.data});
 
   factory PlatformFeeResponse.fromJson(Map<String, dynamic> json) {
     return PlatformFeeResponse(
       success: json['success'],
       message: json['message'],
-      data: json['data'] != null
-          ? PlatformFeeData.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null ? PlatformFeeData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
@@ -47,9 +38,10 @@ class PlatformFeeData {
 
   factory PlatformFeeData.fromJson(Map<String, dynamic> json) {
     return PlatformFeeData(
-      items: (json['items'] as List?)
-          ?.map((e) => PlatformFeeItem.fromJson(e))
-          .toList(),
+      items:
+          (json['items'] as List?)
+              ?.map((e) => PlatformFeeItem.fromJson(e))
+              .toList(),
       total: json['total'],
       currentPage: json['currentPage'],
       totalPages: json['totalPages'],
@@ -105,12 +97,10 @@ class PlatformFeeItem {
       calculationType: json['calculationType'],
       amount: json['amount'],
       isActive: json['isActive'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 

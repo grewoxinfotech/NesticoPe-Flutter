@@ -21,7 +21,7 @@ class NesticoPeNavigationBar extends StatelessWidget {
     double iconSize = 18;
 
     return Obx(
-          () => Card(
+      () => Card(
         elevation: 5,
         shadowColor: Get.theme.colorScheme.surface,
         color: Get.theme.colorScheme.surface,
@@ -53,7 +53,7 @@ class NesticoPeNavigationBar extends StatelessWidget {
               ),
 
               SalomonBottomBarItem(
-                icon: FaIcon(FontAwesomeIcons.whatsapp, size: iconSize),  
+                icon: FaIcon(FontAwesomeIcons.whatsapp, size: iconSize),
                 title: Text("whatsapp", style: style),
               ),
 

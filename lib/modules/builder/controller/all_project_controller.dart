@@ -29,7 +29,6 @@ class AllProjectController extends PaginatedController<ProjectItem> {
 
       return response; // must return PaginationResponse<ProjectItem>
     } catch (e) {
-      print("Error Could not load projects: ${e.toString()}");
       rethrow;
     }
   }

@@ -19,18 +19,14 @@ class FeedbackService {
   }) async {
     try {
       final uri = Uri.parse("$baseUrl/$propertyId/feedback");
-      debugPrint("Creating Feedback at: $uri");
 
       final body = jsonEncode({'inquiryType': inquiryType});
-      debugPrint("Feedback Body: $body");
 
       final response = await http.put(
         uri,
         headers: await headers(),
         body: body,
       );
-
-      debugPrint("Feedback Response: ${response.body}");
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -40,7 +36,6 @@ class FeedbackService {
         );
         return true;
       } else {
-        debugPrint("Failed to create feedback: ${response.statusCode}");
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Error",
           message: "Failed to submit feedback",
@@ -49,7 +44,6 @@ class FeedbackService {
         return false;
       }
     } catch (e) {
-      debugPrint("Exception in createFeedback: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Something went wrong while submitting feedback",

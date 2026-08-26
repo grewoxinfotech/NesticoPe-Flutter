@@ -21,7 +21,7 @@ class TopSellerProfileController extends GetxController {
   Future<ProfileSellerModel> getSellerProfileById(String sellerId) async {
     try {
       final response = await _service.fetchSellerProfileById(sellerId);
-      print("SELLER PROFILE RESPONSE: ${response.toJson()}");
+
       sellerProfile.value = response;
       return response;
     } catch (e) {

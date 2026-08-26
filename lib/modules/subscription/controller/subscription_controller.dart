@@ -174,8 +174,6 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
   /// --- Constructor ---
   SubscriptionPlanController({required this.userRole}) {
-    log("Subscription Plan for role: $userRole");
-
     /// Apply default required filter
     filters["plansFor"] = _resolvePlansFor(userRole);
 
@@ -218,10 +216,8 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
     try {
       final response = await _service.fetchPlans(page: page, filters: filters);
 
-      debugPrint("Fetched plans for $userRole: ${response.items.length}");
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -277,9 +273,7 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
         items.refresh();
         return plan;
       }
-    } catch (e) {
-      debugPrint("Get plan by ID error: $e");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -320,7 +314,6 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
 
       // _razorpay.open(options);
     } catch (e) {
-      debugPrint("Exception in openRazorpayCheckout: $e");
       isProcessingPayment.value = false;
     }
   }
@@ -470,7 +463,6 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
     try {
       return await _service.buySubscriptionPlan(planId);
     } catch (e) {
-      debugPrint("Exception in BuyPlan: $e");
       return false;
     }
   }
@@ -483,7 +475,6 @@ class SubscriptionPlanController extends PaginatedController<SubscriptionPlan> {
       }
       return ok;
     } catch (e) {
-      debugPrint("Exception in InquiryPlan: $e");
       return false;
     }
   }

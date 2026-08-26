@@ -16,21 +16,25 @@ class ContactItem {
   factory ContactItem.fromJson(Map<String, dynamic> json) {
     return ContactItem(
       id: json['id']?.toString(),
-      phones: (json['phones'] as List<dynamic>?)
+      phones:
+          (json['phones'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],
-      emails: (json['emails'] as List<dynamic>?)
+      emails:
+          (json['emails'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],
-      locations: (json['locations'] as List<dynamic>?)
+      locations:
+          (json['locations'] as List<dynamic>?)
               ?.map((e) => ContactLocation.fromJson(e))
               .toList() ??
           const [],
-      socialMedia: json['socialMedia'] != null
-          ? SocialMedia.fromJson(json['socialMedia'])
-          : null,
+      socialMedia:
+          json['socialMedia'] != null
+              ? SocialMedia.fromJson(json['socialMedia'])
+              : null,
     );
   }
 }

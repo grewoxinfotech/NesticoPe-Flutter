@@ -5,11 +5,7 @@ class LeadPriceNegotiable {
   final String? message;
   final NegotiableData? data;
 
-  LeadPriceNegotiable({
-    this.success,
-    this.message,
-    this.data,
-  });
+  LeadPriceNegotiable({this.success, this.message, this.data});
 
   factory LeadPriceNegotiable.fromMap(Map<String, dynamic> map) {
     return LeadPriceNegotiable(
@@ -20,11 +16,7 @@ class LeadPriceNegotiable {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 
   factory LeadPriceNegotiable.fromJson(String source) =>
@@ -52,10 +44,12 @@ class NegotiableData {
 
   factory NegotiableData.fromMap(Map<String, dynamic> map) {
     return NegotiableData(
-      items: map['items'] != null
-          ? List<NegotiableItem>.from(
-          map['items'].map((x) => NegotiableItem.fromMap(x)))
-          : [],
+      items:
+          map['items'] != null
+              ? List<NegotiableItem>.from(
+                map['items'].map((x) => NegotiableItem.fromMap(x)),
+              )
+              : [],
       total: map['total'] as int?,
       currentPage: map['currentPage'] as int?,
       totalPages: map['totalPages'] as int?,

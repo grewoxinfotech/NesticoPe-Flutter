@@ -1738,7 +1738,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                         .trim()
                         .replaceAll(RegExp(r'\s+'), '_'), // pass ID directly
                   );
-                  log("option ${options}");
+
                   return NesticoPeDropdownField<String>(
                     isRequired: true,
                     value:
@@ -1764,9 +1764,6 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                             .toList(),
                     onChanged: (val) {
                       if (val == null) return;
-                      log(
-                        "Checkfehfhuewh ${val}   ${controller.selectedServiceNameDropdown.value}",
-                      );
 
                       if (val == controller.selectedServiceNameDropdown.value)
                         return;
@@ -1945,7 +1942,10 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
                                 controller.showAllMaterials.value
                                     ? "Show less ▲"
                                     : "Show more ▼",
-                                    style: TextStyle(color: ColorRes.primary,fontWeight: FontWeight.w500),
+                                style: TextStyle(
+                                  color: ColorRes.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -2207,7 +2207,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildSectionTitle(title),
-        SizedBox(height: 4,),
+        SizedBox(height: 4),
         Obx(() {
           return NesticoPeDropdownField<String>(
             isRequired: true,
@@ -2235,7 +2235,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      
+
       children: [
         buildSectionTitle(title),
         Obx(
@@ -2285,7 +2285,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
               //       selectedValues.add(customValue);
               //   }
               // } else {
-                if (!selectedValues.contains(val)) selectedValues.add(val);
+              if (!selectedValues.contains(val)) selectedValues.add(val);
               // }
             },
           );
@@ -2714,10 +2714,10 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
               ),
             ),
           ],
-          if(!controller.isService('structure_planning_and_design'))...[
-              SizedBox(width: 8),
+          if (!controller.isService('structure_planning_and_design')) ...[
+            SizedBox(width: 8),
           ],
-        
+
           if (controller.isService('structure_planning_and_design') ||
               controller.isService('turnkey_construction') ||
               controller.isService('commercial_construction_contractors')) ...[

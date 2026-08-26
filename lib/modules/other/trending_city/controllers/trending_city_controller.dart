@@ -35,7 +35,6 @@ class TrendingCityController extends GetxController {
       _generatePropertyRangeData();
       _getTopViewedCities();
     } catch (e) {
-      print("Error fetching trending cities: $e");
     } finally {
       isLoading.value = false;
     }

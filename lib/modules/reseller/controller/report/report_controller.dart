@@ -51,7 +51,6 @@ class ReportPropertyController extends PaginatedController<PropertyReportItem> {
 
   Future<void> submitReport(String propertyId) async {
     if (selectedReason.value.isEmpty) {
-      print('Not sfijwdjish');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'Please select a reason for reporting',
@@ -78,7 +77,6 @@ class ReportPropertyController extends PaginatedController<PropertyReportItem> {
       );
       getPropertyReportsById(propertyId);
     } catch (e) {
-      print('Error submitting report: $e');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'Failed to submit report. Please try again later.',
@@ -113,10 +111,8 @@ class ReportPropertyController extends PaginatedController<PropertyReportItem> {
         filters: filters,
       );
 
-      print("Fetched items: ${response.items.length}");
       return response; // ✅ full response with items + meta
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }

@@ -54,16 +54,10 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOutSine,
-      ),
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutSine),
     );
 
     if (widget.enabled) {
@@ -101,9 +95,8 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
           height: widget.height,
           decoration: BoxDecoration(
             shape: widget.shape,
-            borderRadius: widget.shape == BoxShape.rectangle
-                ? widget.borderRadius
-                : null,
+            borderRadius:
+                widget.shape == BoxShape.rectangle ? widget.borderRadius : null,
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
@@ -112,11 +105,7 @@ class _ShimmerWidgetState extends State<ShimmerWidget>
                 widget.highlightColor,
                 widget.baseColor,
               ],
-              stops: [
-                0.0,
-                _animation.value.clamp(0.0, 1.0),
-                1.0,
-              ],
+              stops: [0.0, _animation.value.clamp(0.0, 1.0), 1.0],
               transform: _SlidingGradientTransform(
                 slidePercent: _animation.value,
               ),
@@ -272,9 +261,7 @@ class ShimmerLayouts {
   }
 
   /// Profile shimmer (for user profile sections)
-  static Widget profile({
-    EdgeInsets padding = const EdgeInsets.all(16),
-  }) {
+  static Widget profile({EdgeInsets padding = const EdgeInsets.all(16)}) {
     return Padding(
       padding: padding,
       child: Column(

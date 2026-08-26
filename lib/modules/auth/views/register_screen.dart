@@ -422,8 +422,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
-      } finally {
-      }
+      } finally {}
     }
   }
 
@@ -470,8 +469,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // }
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
-      } finally {
-      }
+      } finally {}
     }
   }
 
@@ -514,8 +512,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // }
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
-      } finally {
-      }
+      } finally {}
     }
   }
 
@@ -555,8 +552,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       } catch (e) {
         _showErrorDialog('Registration failed: ${e.toString()}');
-      } finally {
-      }
+      } finally {}
     }
   }
 
@@ -701,12 +697,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   CommonRadioGroup<String>(
                     title: "Contractor Type",
                     options: const ["Company", "Worker"],
-                    groupValue: _contractorType == "Labour" ? "Worker" : _contractorType,
+                    groupValue:
+                        _contractorType == "Labour"
+                            ? "Worker"
+                            : _contractorType,
                     labelBuilder: (v) => v,
                     onChanged: (value) {
                       setState(() {
                         _contractorType = value == "Worker" ? "Labour" : value;
-                        print("Contractor choice ${_contractorType}");
                       });
                     },
                   ),
@@ -856,7 +854,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 //   const SizedBox(height: 10),
                 // ],
 
-
                 // const SizedBox(height: 10),
                 if (_selectedRole == UserRole.contractor) ...[
                   CitySelectionWidget(
@@ -867,9 +864,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     color: ColorRes.primary,
                     fillColor: ColorRes.white,
                     onCitySelected: (selectedCity) {
-                      debugPrint(
-                        "✅ Selected city: ${selectedCity.description}",
-                      );
                       _cityController.text = selectedCity.description ?? '';
                     },
                   ),
@@ -897,7 +891,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onSelected: (city, zipcode) {
                       _cityController.text = city;
                       _zipCodeController.text = zipcode;
-                      print('City: $city, Zipcode: $zipcode');
                     },
                   ),
                   SizedBox(height: 10),
@@ -970,7 +963,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 10),
                 ],
-                
+
                 Row(
                   children: [
                     Checkbox(
@@ -1183,7 +1176,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return _contractorRegister;
     }
   }
-
 }
 
 class CommonRadioGroup<T> extends StatelessWidget {

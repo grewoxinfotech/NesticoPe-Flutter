@@ -1592,16 +1592,12 @@ class HorizontalPropertyCard extends StatelessWidget {
     } else {
       final Items? prop = await propertyService.getPropertyById(propertyId);
       final fetchedListingType = prop?.listingType ?? listingType ?? '';
-      log(
-        "Property Details  for inquiry deatial ${fetchedListingType.toLowerCase() == 'pg'} and",
-      );
+
       // final fetchedListingType = prop?.listingType ?? listingType ?? '';
       if (fetchedListingType.toLowerCase() == 'pg') {
         final fetchedListingType = prop?.listingType ?? listingType ?? '';
         pgRoomOptions = prop?.propertyDetails?.pgInfo?.pgRoomInfo ?? [];
-        log(
-          "Property Details  for inquiry deatial ${pgRoomOptions.length} and",
-        );
+
         // final priceManager = PropertyPriceManager(
         //   listingType: fetchedListingType,
         //   financialInfo:

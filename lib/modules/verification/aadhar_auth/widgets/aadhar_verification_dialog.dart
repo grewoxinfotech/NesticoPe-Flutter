@@ -13,11 +13,7 @@ class AadharVerificationDialog extends StatefulWidget {
   final VoidCallback? onSuccess;
   final VoidCallback? onCancel;
 
-  const AadharVerificationDialog({
-    super.key,
-    this.onSuccess,
-    this.onCancel,
-  });
+  const AadharVerificationDialog({super.key, this.onSuccess, this.onCancel});
 
   static Future<bool?> show(
     BuildContext context, {
@@ -27,15 +23,17 @@ class AadharVerificationDialog extends StatefulWidget {
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AadharVerificationDialog(
-        onSuccess: onSuccess,
-        onCancel: onCancel,
-      ),
+      builder:
+          (context) => AadharVerificationDialog(
+            onSuccess: onSuccess,
+            onCancel: onCancel,
+          ),
     );
   }
 
   @override
-  State<AadharVerificationDialog> createState() => _AadharVerificationDialogState();
+  State<AadharVerificationDialog> createState() =>
+      _AadharVerificationDialogState();
 }
 
 class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
@@ -87,11 +85,13 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
     });
 
     try {
-      final response = await _aadharAuthService.initiateAadharVerification(aadharNum);
+      final response = await _aadharAuthService.initiateAadharVerification(
+        aadharNum,
+      );
 
       if (response['success'] == true) {
         final innerData = response['data'];
-        
+
         // Handle service dynamically skipped
         if (innerData != null && innerData['skipped'] == true) {
           await UserHelper.setAadharVerified(true);
@@ -111,11 +111,23 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
             if (level3 is Map) {
               refId = (level3['reference_id'] ?? level3['ref_id'])?.toString();
             }
-            refId ??= (level2['reference_id'] ?? level2['ref_id'] ?? level2['request_id'])?.toString();
+            refId ??=
+                (level2['reference_id'] ??
+                        level2['ref_id'] ??
+                        level2['request_id'])
+                    ?.toString();
           }
-          refId ??= (level1['reference_id'] ?? level1['ref_id'] ?? level1['request_id'])?.toString();
+          refId ??=
+              (level1['reference_id'] ??
+                      level1['ref_id'] ??
+                      level1['request_id'])
+                  ?.toString();
         }
-        refId ??= (response['reference_id'] ?? response['ref_id'] ?? response['request_id'])?.toString();
+        refId ??=
+            (response['reference_id'] ??
+                    response['ref_id'] ??
+                    response['request_id'])
+                ?.toString();
         if (refId != null) {
           setState(() {
             _refId = refId.toString();
@@ -139,7 +151,10 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
           }
           specificError ??= response['message']?.toString();
 
-          _showError(specificError ?? 'Failed to get verification reference ID. Please try again.');
+          _showError(
+            specificError ??
+                'Failed to get verification reference ID. Please try again.',
+          );
         }
       } else {
         _showError(response['message'] ?? 'Failed to send Aadhaar OTP');
@@ -167,10 +182,11 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
     try {
       final response = await _aadharAuthService.verifyAadharOtp(_refId, otp);
 
-      if (response['success'] == true && response['data']?['verified'] == true) {
+      if (response['success'] == true &&
+          response['data']?['verified'] == true) {
         await UserHelper.setAadharVerified(true);
         _showSuccess('Aadhaar verified successfully!');
-        
+
         widget.onSuccess?.call();
         Navigator.of(context).pop(true);
       } else {
@@ -205,9 +221,7 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -233,11 +247,7 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                     widget.onCancel?.call();
                     Navigator.of(context).pop(false);
                   },
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
                 ),
               ],
             ),
@@ -300,13 +310,14 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: (_isLoading || _resendCountdown > 0)
-                            ? null
-                            : () {
-                                if (_formKey.currentState!.validate()) {
-                                  _sendOtp();
-                                }
-                              },
+                        onPressed:
+                            (_isLoading || _resendCountdown > 0)
+                                ? null
+                                : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _sendOtp();
+                                  }
+                                },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
                           shape: RoundedRectangleBorder(
@@ -314,25 +325,26 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                           ),
                           elevation: 0,
                         ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
+                        child:
+                            _isLoading
+                                ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : Text(
+                                  _resendCountdown > 0
+                                      ? 'Resend OTP in ${_resendCountdown}s'
+                                      : 'Send OTP',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              )
-                            : Text(
-                                _resendCountdown > 0
-                                    ? 'Resend OTP in ${_resendCountdown}s'
-                                    : 'Send OTP',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
                       ),
                     ),
                   ] else ...[
@@ -401,13 +413,14 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                if (_formKey.currentState!.validate()) {
-                                  _verifyOtp();
-                                }
-                              },
+                        onPressed:
+                            _isLoading
+                                ? null
+                                : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _verifyOtp();
+                                  }
+                                },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorRes.primary,
                           shape: RoundedRectangleBorder(
@@ -415,23 +428,24 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                           ),
                           elevation: 0,
                         ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
+                        child:
+                            _isLoading
+                                ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : const Text(
+                                  'Verify Aadhaar',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
-                              )
-                            : const Text(
-                                'Verify Aadhaar',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -440,15 +454,16 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
                       width: double.infinity,
                       height: 44,
                       child: OutlinedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () {
-                                setState(() {
-                                  _currentStep = 1;
-                                  _otpController.clear();
-                                });
-                                _startResendTimer();
-                              },
+                        onPressed:
+                            _isLoading
+                                ? null
+                                : () {
+                                  setState(() {
+                                    _currentStep = 1;
+                                    _otpController.clear();
+                                  });
+                                  _startResendTimer();
+                                },
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey.shade300),
                           shape: RoundedRectangleBorder(
@@ -485,24 +500,24 @@ class _AadharVerificationDialogState extends State<AadharVerificationDialog> {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: step2Active ? ColorRes.primary.withOpacity(0.2) : ColorRes.primary,
+            color:
+                step2Active
+                    ? ColorRes.primary.withOpacity(0.2)
+                    : ColorRes.primary,
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: step2Active
-              ? const Icon(
-                  Icons.check,
-                  color: ColorRes.primary,
-                  size: 14,
-                )
-              : const Text(
-                  '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+          child:
+              step2Active
+                  ? const Icon(Icons.check, color: ColorRes.primary, size: 14)
+                  : const Text(
+                    '1',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
         ),
         const SizedBox(width: 8),
         Text(

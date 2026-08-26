@@ -183,6 +183,7 @@ class LeadItem {
   final String? city;
   final String? propertyType;
   final String? projectStatus;
+
   /// Sale/listing state from API key `property_status` (e.g. unsold).
   final String? propertyListingStatus;
   final String? listingType;
@@ -222,7 +223,8 @@ class LeadItem {
     this.bhk,
     this.carpetArea,
     this.priceRange,
-    this.price, this.leadResellerData,
+    this.price,
+    this.leadResellerData,
   });
 
   factory LeadItem.fromJson(Map<String, dynamic> json) => LeadItem(
@@ -236,11 +238,12 @@ class LeadItem {
     resellerId: json["reseller_id"],
     source: json["source"],
     status: json["status"],
-    leadResellerData: json['reseller'] != null
-        ? LeadResellerData.fromMap(
-      Map<String, dynamic>.from(json['reseller']),
-    )
-        : null,
+    leadResellerData:
+        json['reseller'] != null
+            ? LeadResellerData.fromMap(
+              Map<String, dynamic>.from(json['reseller']),
+            )
+            : null,
 
     stage: json["stage"],
     notes: json["notes"],
@@ -249,6 +252,7 @@ class LeadItem {
     fakeReason: json["fakeReason"],
     markedFakeBy: json["markedFakeBy"],
     markedFakeAt: json["markedFakeAt"],
+
     // customFields:
     //     (() {
     //       final data = json["customFields"];
@@ -286,7 +290,6 @@ class LeadItem {
     //       // }
     //       return null;
     //     })(),
-
     customFields: CustomOldLeadFields.fromJson(json["customFields"]),
 
     createdAt:
@@ -337,14 +340,13 @@ class LeadItem {
     if (city != null) "city": city,
     if (propertyType != null) "propertyType": propertyType,
     if (projectStatus != null) "projectStatus": projectStatus,
-    if (propertyListingStatus != null)
-      "property_status": propertyListingStatus,
+    if (propertyListingStatus != null) "property_status": propertyListingStatus,
     if (listingType != null) "listingType": listingType,
     if (bhk != null) "bhk": bhk,
     if (carpetArea != null) "carpetarea": carpetArea,
     if (priceRange != null) "priceRange": priceRange,
     if (price != null) "price": price,
-    if(leadResellerData!=null)"reseller":leadResellerData?.toMap()
+    if (leadResellerData != null) "reseller": leadResellerData?.toMap(),
   };
 }
 
@@ -418,8 +420,6 @@ extension LeadItemCopy on LeadItem {
     );
   }
 }
-
-
 
 class LeadResellerData {
   final String id;
@@ -545,7 +545,6 @@ class CustomOldLeadFields {
   };
 }
 
-
 // import 'dart:developer';
 
 // import 'dart:developer';
@@ -627,7 +626,6 @@ class NewUpdatedLeadModel {
             try {
               return CustomFields.fromJson(data);
             } catch (e) {
-              log("Error parsing customFields as Map: $e");
               return null;
             }
           }

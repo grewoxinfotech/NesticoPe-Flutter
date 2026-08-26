@@ -12,14 +12,15 @@ import '../../../data/network/subscription/model/subscription_model.dart';
 import '../../../data/network/subscription/model/user_subscription_model.dart';
 import '../../../data/network/subscription/services/subscription_services.dart';
 
-class CurrentUserPlanController extends PaginatedController<CurrentUserSubscriptionItem> {
+class CurrentUserPlanController
+    extends PaginatedController<CurrentUserSubscriptionItem> {
   final SubscriptionPlanService _service = SubscriptionPlanService();
-  final ContractorDashboardController dashboardController = Get.isRegistered<ContractorDashboardController>()
-            ? Get.find<ContractorDashboardController>()
-            : Get.put(ContractorDashboardController());
+  final ContractorDashboardController dashboardController =
+      Get.isRegistered<ContractorDashboardController>()
+          ? Get.find<ContractorDashboardController>()
+          : Get.put(ContractorDashboardController());
 
   /// User role comes from constructor (ex: "reseller" / "builder")
-
 
   /// Filters
   Map<String, String>? filters = {};
@@ -32,16 +33,20 @@ class CurrentUserPlanController extends PaginatedController<CurrentUserSubscript
 
   ///==================== Fetch (Pagination) ====================
   @override
-  Future<PaginationResponse<CurrentUserSubscriptionItem>> fetchItems(int page) async {
+  Future<PaginationResponse<CurrentUserSubscriptionItem>> fetchItems(
+    int page,
+  ) async {
     try {
-      final user =await SecureStorage.getUserData();
-      final userId=user?.user?.id??'';
-      final response = await _service.fetchUserSubscriptionData(page: page, filters: filters,userId: userId);
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+      final response = await _service.fetchUserSubscriptionData(
+        page: page,
+        filters: filters,
+        userId: userId,
+      );
 
-      debugPrint("Fetched plans: ${response.items.length}");
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -49,9 +54,7 @@ class CurrentUserPlanController extends PaginatedController<CurrentUserSubscript
   ///==================== Apply Single Filter ====================
   /// Example: applyFilter("isPremium", "true")
 
-
   ///==================== Apply Multiple Filters ====================
-
 
   ///==================== Get Plan by ID ====================
 
@@ -59,9 +62,10 @@ class CurrentUserPlanController extends PaginatedController<CurrentUserSubscript
     final ok = await _service.activateSubscription(subscriptionId);
     if (ok) {
       await loadInitial();
-      await dashboardController.fetchActiveSubscription(showDialogWhenMissing: false);
+      await dashboardController.fetchActiveSubscription(
+        showDialogWhenMissing: false,
+      );
     }
     return ok;
   }
 }
-

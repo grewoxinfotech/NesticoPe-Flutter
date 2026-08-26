@@ -330,7 +330,6 @@ class WebSocketService {
     try {
       final url = ApiConstants.ticketChat;
 
-      
       final token = await SecureStorage.getToken();
 
       /// IMPORTANT FIX — Always create new socket only ONCE
@@ -342,11 +341,9 @@ class WebSocketService {
           .setTimeout(20000);
       // Attach token only when available
       if (token != null && token.isNotEmpty) {
-        print("🔐 Socket auth: token attached");
         _safeAdd(SocketEvent('auth_mode', {}));
         builder.setAuth({'token': token});
       } else {
-        print("👤 Socket guest mode: no token, connecting without auth");
         _safeAdd(SocketEvent('guest_mode', {}));
       }
       _socket = IO.io(url, builder.build());
@@ -354,7 +351,6 @@ class WebSocketService {
       // ========== CONNECT ==========
       _socket!.onConnect((_) {
         _isConnected = true;
-        print("✅ Socket connected: ${_socket!.id}");
 
         // FIX: Notify controller
         _safeAdd(SocketEvent('connect', {}));
@@ -362,32 +358,27 @@ class WebSocketService {
 
       // ========== CONNECT ERROR ==========
       _socket!.onConnectError((err) {
-        print("❌ Connect Error: $err");
         _safeAdd(SocketEvent('connect_error', err));
       });
 
       _socket!.onError((err) {
-        print("❌ Socket Error: $err");
         _safeAdd(SocketEvent('error', err));
       });
 
       // ========== DISCONNECT ==========
       _socket!.onDisconnect((_) {
-        print("❌ Socket disconnected");
         _isConnected = false;
         _safeAdd(SocketEvent('disconnect', {}));
       });
 
       // ========== ANY EVENT ==========
       _socket!.onAny((event, data) {
-        print("📡 $event = ${jsonEncode(data)}");
         _safeAdd(SocketEvent(event.toString(), data));
       });
 
       // Finally connect
       _socket!.connect();
     } catch (e) {
-      print("❌ Initialization Error: $e");
       _safeAdd(SocketEvent('error', e.toString()));
     }
   }
@@ -397,19 +388,10 @@ class WebSocketService {
   // ============================
   void send(Map<String, dynamic> data) {
     if (!_isConnected || _socket == null) {
-      print("⚠️ Cannot send — Socket not connected");
       return;
     }
 
-    print("📤 Sending message: $data");
-
-    _socket!.emitWithAck(
-      'ticket_send_message',
-      data,
-      ack: (response) {
-        print("🎉 Message Sent ACK: $response");
-      },
-    );
+    _socket!.emitWithAck('ticket_send_message', data, ack: (response) {});
   }
 
   // ============================
@@ -417,11 +399,8 @@ class WebSocketService {
   // ============================
   void joinTicket(String ticketId) {
     if (!_isConnected) {
-      print("⚠️ joinTicket blocked — socket not connected yet");
       return;
     }
-
-    print("📡 Joining ticket => $ticketId");
 
     _socket!.emit('join_ticket', {'ticketId': ticketId});
     _socket!.emit('get_ticket_messages', {'ticketId': ticketId});
@@ -433,8 +412,6 @@ class WebSocketService {
   void leaveTicket(String ticketId) {
     if (!_isConnected) return;
 
-    print("📡 Leaving ticket => $ticketId");
-
     _socket!.emit('leave_ticket', {'ticketId': ticketId});
   }
 
@@ -443,8 +420,6 @@ class WebSocketService {
   // ============================
   void disconnect() {
     if (_socket == null) return;
-
-    print("🔌 Disconnecting socket...");
 
     try {
       _socket!.dispose(); // FIX: dispose cleans listeners safely
@@ -469,15 +444,16 @@ class WebSocketService {
     void onOk(_) {
       if (!completer.isCompleted) completer.complete(true);
     }
+
     void onErr(dynamic _) {
       if (!completer.isCompleted) completer.complete(false);
     }
+
     _socket?.once('connect', onOk);
     _socket?.once('connect_error', onErr);
     _socket?.once('error', onErr);
     try {
-      return await completer.future
-          .timeout(timeout, onTimeout: () => false);
+      return await completer.future.timeout(timeout, onTimeout: () => false);
     } finally {
       // no cleanup necessary for once listeners
     }

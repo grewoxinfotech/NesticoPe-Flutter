@@ -21,7 +21,6 @@ class SearchHistoryService {
   }
 
   Future<bool> addSearchHistory(Map<String, dynamic> data) async {
-    log("Adding search history with data: $data");
     try {
       final response = await http.post(
         Uri.parse(baseUrl),
@@ -29,27 +28,16 @@ class SearchHistoryService {
         body: jsonEncode(data),
       );
       try {
-        log("Response status: ${Uri.parse(baseUrl)}");
-        log("Response body: ${response.body}");
-
         if (response.statusCode == 200 || response.statusCode == 201) {
-          AppLogger.structured(
-            "Search history added successfully :",
-            response.body,
-          );
-
           final data = jsonDecode(response.body);
           return data['success'];
         } else {
-          print("Failed to add search history: ${response.statusCode}");
           return false;
         }
       } catch (e) {
-        print("Error parsing response: $e");
         return false;
       }
     } catch (e) {
-      print("Error adding search history: $e");
       rethrow;
     }
   }
@@ -61,27 +49,16 @@ class SearchHistoryService {
         headers: await headers(),
       );
       try {
-        log("Response History Data Url: ${Uri.parse("$baseUrl/user/history")}");
-        log("Response body: ${response.body}");
-
         if (response.statusCode == 200 || response.statusCode == 201) {
-          AppLogger.structured(
-            "Search history fetch successfully :",
-            response.body,
-          );
-
           final data = jsonDecode(response.body);
           return data;
         } else {
-          print("Failed to fetch search history: ${response.statusCode}");
           return {};
         }
       } catch (e) {
-        print("Error parsing response: $e");
         return {};
       }
     } catch (e) {
-      print("Error adding search history: $e");
       rethrow;
     }
   }
@@ -93,29 +70,16 @@ class SearchHistoryService {
         headers: await headers(),
       );
       try {
-        log(
-          "Response History Data Url: ${Uri.parse("$baseUrl/clear/history")}",
-        );
-        log("Response body: ${response.body}");
-
         if (response.statusCode == 200 || response.statusCode == 201) {
-          AppLogger.structured(
-            "Search history deleted successfully :",
-            response.body,
-          );
-
           final data = jsonDecode(response.body);
           return data['success'];
         } else {
-          print("Failed to delete search history: ${response.statusCode}");
           return false;
         }
       } catch (e) {
-        print("Error parsing response: $e");
         return true;
       }
     } catch (e) {
-      print("Error deleting search history: $e");
       rethrow;
     }
   }

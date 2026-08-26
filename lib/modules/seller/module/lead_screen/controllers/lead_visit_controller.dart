@@ -101,7 +101,6 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       txtDate.text = '';
     }
     txtTime.text = _formatTimeForDisplay(payload.timeSlot);
-    log("Populated payload data: ${payload.toMap()}");
   }
 
   void clearPayloadData() {
@@ -113,8 +112,6 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
     txtReason.clear();
     txtDate.clear();
     txtTime.clear();
-
-    log("Cleared all payload data");
   }
 
   final LeadService _leadService = LeadService();
@@ -127,41 +124,28 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
 
   @override
   Future<PaginationResponse<LeadVisitItem>> fetchItems(int page) async {
-    log("Fetching Visit for Lead ID: ${buyer_Id.value}");
-    log("Fetching Visit for Lead ID: ${property_Id.value}");
-    log("Filters applied: ${filters.toString()}");
-    log("Page number: $page");
-
     final response = await _leadService.fetchLeadVisitData(
       page: page,
       filters: filters,
       buyerId: buyer_Id.value,
       propertyId: property_Id.value,
     );
-    log("Response received Visit: ${response.items.map((e) => e.toMap(),)}");
+
     return response;
   }
 
   /// Set the currently active inquiry ID, then refresh the list.
   void setLeadVisitId(String? buyerId, String? propertyId) {
-    log("Setting Lead Visit Buyer ID to: $buyerId");
-    log("Setting Lead Visit Property ID to: $propertyId");
-
     buyer_Id.value = buyerId ?? '';
     property_Id.value = propertyId ?? '';
-    log("Loading initial data for Lead Visit");
-    log("Buyer ID: ${buyer_Id.value}, Property ID: ${property_Id.value}");
+
     // leadInquiryId.value = id;
     loadInitial();
     refreshLead();
   }
 
   void getLeadId(String? leadId) {
-    log("Setting Lead Visit leadId ID to: $leadId");
-
     leadIdFollowUp.value = leadId ?? '';
-
-    log("Loading initial data for Lead Visit  ${leadIdFollowUp.value}");
 
     // leadInquiryId.value = id;
     leadIdFollowUp.refresh();
@@ -173,10 +157,7 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
   RxMap<String, User> userProfiles = <String, User>{}.obs;
 
   Future<void> getTheVisitersProfile(String visiterId) async {
-    log("Fetching visiter profile for ID: $visiterId");
-
     if (userProfiles.containsKey(visiterId)) {
-      log("User already cached: $visiterId");
       return; // Avoid duplicate API calls
     }
 
@@ -184,13 +165,10 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
       final user = await userService.getUserById(visiterId);
       if (user != null) {
         userProfiles[visiterId] = user;
-        log("KDisadji ${userProfiles}");
+
         userProfiles.refresh();
-        log('Profile stored for user $visiterId');
       }
-    } catch (e) {
-      log("Error fetching visiter profile: $e");
-    }
+    } catch (e) {}
   }
 
   void deleteLead() {
@@ -386,15 +364,9 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log(
-                                    "Form is invalid. Please correct the errors.",
-                                  );
                                 } else {
                                   updateRejectVisit(leadVisitId.value);
                                   Get.back();
-                                  log(
-                                    "Form is valid. Proceeding with submission.",
-                                  );
                                 }
                               },
                               child: Text('Submit'),
@@ -439,50 +411,38 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
   }
 
   void updateRejectVisit(String visitId) async {
-    log("Reject visit with ID: $visitId");
     Map<String, String> payload = buildRejectPayload();
-    log("Payload for Reject: $payload");
 
     try {
       await _leadService.updateTheVisitedData(payload, visitId);
-      log("Visit Reject successfully for ID: $visitId");
+
       refreshList();
       clearPayloadData();
-    } catch (e) {
-      log("Error Reject visit for ID $visitId: $e");
-    }
+    } catch (e) {}
   }
 
   void updateVisit(String visitId) async {
-    log("Updating visit with ID: $visitId");
     Map<String, String> payload = buildPayload();
-    log("Payload for update: $payload");
 
     try {
       await _leadService.updateTheVisitedData(payload, visitId);
-      log("Visit updated successfully for ID: $visitId");
+
       // Optionally, refresh the list or perform other actions after update
       refreshList();
       clearPayloadData();
-    } catch (e) {
-      log("Error updating visit for ID $visitId: $e");
-    }
+    } catch (e) {}
   }
 
   void approvedVisite(String visitId) async {
-    log("Updating visit with ID: $visitId");
     Map<String, String> payload = {'status': "confirmed"};
-    log("Payload for update: $payload");
 
     try {
       await _leadService.updateTheVisitedData(payload, visitId);
-      log("Visit updated successfully for ID: $visitId");
+
       // Optionally, refresh the list or perform other actions after update
       refreshList();
       clearPayloadData();
-    } catch (e) {
-      log("Error updating visit for ID $visitId: $e");
-    }
+    } catch (e) {}
   }
 
   void openAddFollowUpDialog() {
@@ -638,10 +598,11 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                   );
                                   if (picked != null) {
                                     final localContext = Get.context!;
-                                    final formattedTime = picked.format(localContext);
+                                    final formattedTime = picked.format(
+                                      localContext,
+                                    );
 
                                     txtTime.text = formattedTime;
-                                    log("Picked time: $formattedTime");
                                   }
                                 },
                               ),
@@ -673,15 +634,9 @@ class LeadVisitController extends PaginatedController<LeadVisitItem> {
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log(
-                                    "Form is invalid. Please correct the errors.",
-                                  );
                                 } else {
                                   updateVisit(leadVisitId.value);
                                   Get.back();
-                                  log(
-                                    "Form is valid. Proceeding with submission.",
-                                  );
                                 }
                               },
                               child: Text('Submit'),

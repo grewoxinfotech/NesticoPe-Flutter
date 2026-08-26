@@ -44,8 +44,6 @@ class LeadPropertyNegotiablePriceController
   }
 
   void populatedContainData(NegotiableItem data) {
-    log("Data of Negotiable Item: ${data.toMap()}");
-
     propertyId.value = data.propertyId ?? '';
     buyerId.value = data.buyerId ?? '';
     leadId.value = data.id ?? '';
@@ -79,8 +77,6 @@ class LeadPropertyNegotiablePriceController
         }
       }
     }
-
-    log("Parsed negotiable price: $negotiablePrice from text: '$priceText'");
 
     return {
       "propertyId": propertyId.value,
@@ -228,15 +224,9 @@ class LeadPropertyNegotiablePriceController
                                     !(formKey.value?.currentState as FormState)
                                         .validate()) {
                                   Get.back();
-                                  log(
-                                    "Form is invalid. Please correct the errors.",
-                                  );
                                 } else {
                                   rejectUpdateData(leadId.value ?? '');
                                   Get.back();
-                                  log(
-                                    "Form is valid. Proceeding with submission.",
-                                  );
                                 }
                               },
                               child: Text('Submit'),
@@ -257,19 +247,15 @@ class LeadPropertyNegotiablePriceController
   }
 
   Future<void> rejectUpdateData(String id) async {
-    log("Updating visit with ID: $id");
     Map<String, dynamic> payload = getPayload();
-    log("Payload for update: $payload");
 
     try {
       await _leadService.updateRejectOfNegotiable(payload, id);
-      log("Visit updated successfully for ID: $id");
+
       // Optionally, refresh the list or perform other actions after update
       refreshList();
       clearValues();
-    } catch (e) {
-      log("Error updating visit for ID $id: $e");
-    }
+    } catch (e) {}
   }
 
   void clearValues() {
@@ -290,13 +276,6 @@ class LeadPropertyNegotiablePriceController
 
   @override
   Future<PaginationResponse<NegotiableItem>> fetchItems(int page) async {
-    log(
-      "Fetching Negotiable Price for Lead ID: ${leadInquiryId.value}======= and Buyer ID: ${leadBuyerId.value}",
-    );
-
-    log("Filters applied: ${filters.toString()}");
-    log("Page number: $page");
-
     final response = await _leadService.fetchLeadPrice(
       page: page,
       filters: filters,
@@ -304,22 +283,18 @@ class LeadPropertyNegotiablePriceController
       buyerId: leadBuyerId.value,
     );
 
-    log("Response received: ${response.toString()}");
     return response;
   }
 
   Future<void> getTheVisitersProfile(String visiterId) async {
-    log("Fetching visiter profile for ID: $visiterId");
     final user = await userService.getUserById(visiterId);
     buyerProfiles[visiterId] = user ?? User.fromJson({});
     // Store by ID
     buyerProfiles.refresh(); // Trigger UI update
-    log('✅ Loaded profile for ${user?.firstName}');
   }
 
   /// Set the currently active inquiry ID, then refresh the list.
   void setLeadNegotiablePriceId(String id, {String? buyerID}) {
-    log("Setting Lead Negotiable Price ID to: $id");
     leadInquiryId.value = id;
     leadBuyerId.value = buyerID ?? '';
 
@@ -328,7 +303,7 @@ class LeadPropertyNegotiablePriceController
 
   Future<void> updateTheDataApproved(String id) async {
     var data = {"newStatus": "approved"};
-    log("Approved payload : $data");
+
     final response = await _leadService.updateStatusOfNegotiable(data, id);
     if (response) {
       refreshList();

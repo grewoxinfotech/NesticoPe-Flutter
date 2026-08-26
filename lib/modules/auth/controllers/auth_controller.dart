@@ -37,7 +37,6 @@ class AuthController extends GetxController {
 
   void setContractorType(String type) {
     contractorType.value = type;
-    log("Contractor type set to: $type");
   }
 
   final authState = AuthState.initial.obs;
@@ -197,8 +196,6 @@ class AuthController extends GetxController {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-
-      debugPrint("[Login Error] $e");
     } finally {
       isLoading.value = false;
     }
@@ -239,8 +236,6 @@ class AuthController extends GetxController {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 
-        print("API called successfully with phone: $phone, token: $token");
-
         Get.to(
           () => OtpVerificationScreen(
             phone: phone,
@@ -258,7 +253,7 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = e.toString();
-      print("[Debug]-> Error: ${e.toString()}");
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Registration Failed",
         message: e.toString(),
@@ -473,7 +468,7 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = e.toString();
-      print("[Debug]-> Error: ${e.toString()}");
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Registration Failed",
         message: e.toString(),
@@ -487,7 +482,7 @@ class AuthController extends GetxController {
   Future<bool> completeSellerRegistration(Map<String, dynamic> data) async {
     try {
       isLoading.value = true;
-      print("Received data: $data");
+
       final user = await authService.sellerRegistrationComplete(data);
       if (user != null) {
         final fallbackSellerType = data['sellerType']?.toString();
@@ -531,11 +526,9 @@ class AuthController extends GetxController {
 
         return true;
       } else {
-        print("Registration failed or token not received");
         return false;
       }
     } catch (e) {
-      print("Error in completeSellerRegistration: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -564,9 +557,6 @@ class AuthController extends GetxController {
       await SecureStorage.saveLoggedIn(true);
 
       currentUser.value = user;
-      debugPrint(
-        "User: ${user.user?.toJson()} =================================================",
-      );
 
       // 2️⃣ Save auth dat
       await SecureStorage.saveTermAndConditionValue(false.toString());
@@ -641,7 +631,7 @@ class AuthController extends GetxController {
         user.user!.userType = "seller";
         await SecureStorage.saveUserData(user);
       }
-      print("Token data: $data");
+
       await SecureStorage.saveToken(data);
       // await SecureStorage.saveLoggedIn(true);
 
@@ -658,7 +648,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       final token = await authService.forgotPassword(id);
-      print('ferefydgetydgwewgdhgtgywvdwyg   hdgetyd hudb      $token');
+
       isLoading.value = false;
 
       Get.to(
@@ -733,7 +723,6 @@ class AuthController extends GetxController {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("[Debug]-> Error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -765,7 +754,6 @@ class AuthController extends GetxController {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("[Debug]-> Error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -791,7 +779,6 @@ class AuthController extends GetxController {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("[Debug]-> Error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -839,8 +826,6 @@ class AuthController extends GetxController {
       }
       return false;
     } catch (e) {
-      print("[Debug]-> Error: $e");
-
       return false;
     } finally {
       isLoading.value = false;
@@ -882,25 +867,14 @@ class AuthController extends GetxController {
         unawaited(
           NotificationSyncService.instance
               .removeNotificationToken(deviceToken)
-              .timeout(
-                const Duration(seconds: 2),
-                onTimeout: () {
-                  debugPrint(
-                    '⏱️ removeNotificationToken() timed out (continuing)',
-                  );
-                },
-              )
-              .catchError((e) {
-                debugPrint('❌ removeNotificationToken() failed: $e');
-              }),
+              .timeout(const Duration(seconds: 2), onTimeout: () {})
+              .catchError((e) {}),
         );
       }
 
       await SecureStorage.clearAll().timeout(
         const Duration(seconds: 2),
-        onTimeout: () {
-          debugPrint('⏱️ SecureStorage.clearAll() timed out (continuing)');
-        },
+        onTimeout: () {},
       );
 
       if (Get.isRegistered<PropertyFavoriteController>()) {
@@ -921,8 +895,6 @@ class AuthController extends GetxController {
 
       unawaited(NotificationService.instance.resetToGuest());
     } catch (e, st) {
-      debugPrint('❌ Logout failed: $e');
-      debugPrint('Stack: $st');
     } finally {
       isLoading.value = false;
     }

@@ -35,11 +35,7 @@ class CalenderService {
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      print("uri: $uri");
-
       final response = await http.get(uri, headers: await headers());
-
-      print("response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -55,7 +51,6 @@ class CalenderService {
 
       throw Exception("Failed to load events");
     } catch (e) {
-      print("Exception in load Events: $e");
       rethrow;
     }
   }
@@ -69,8 +64,6 @@ class CalenderService {
         body: jsonEncode(event.toJson()),
       );
 
-      print("ADD RESPONSE: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -83,11 +76,10 @@ class CalenderService {
       final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']??"Failed to add event",
+        message: jsonData['message'] ?? "Failed to add event",
         contentType: ContentType.failure,
       );
     } catch (e) {
-      print("Exception in add Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
@@ -110,8 +102,6 @@ class CalenderService {
         body: jsonEncode(event.toJson()),
       );
 
-      print("UPDATE RESPONSE: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
@@ -126,11 +116,10 @@ class CalenderService {
       // final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']??'Failed to update event',
+        message: jsonData['message'] ?? 'Failed to update event',
         contentType: ContentType.failure,
       );
     } catch (e) {
-      print("Exception in update Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
@@ -149,16 +138,15 @@ class CalenderService {
         headers: await headers(),
       );
 
-      print("DELETE RESPONSE: ${response.body}");
-NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: json.decode(response.body)['message']??"Event deleted successfully",
-          contentType: ContentType.success,
-        );
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Success',
+        message:
+            json.decode(response.body)['message'] ??
+            "Event deleted successfully",
+        contentType: ContentType.success,
+      );
       return response.statusCode == 200 || response.statusCode == 201;
-
     } catch (e) {
-      print("Exception in delete Event: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",

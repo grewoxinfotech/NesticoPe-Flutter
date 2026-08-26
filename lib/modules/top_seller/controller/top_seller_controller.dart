@@ -28,10 +28,9 @@ class TopSellerController extends PaginatedController<TopSeller> {
   Future<PaginationResponse<TopSeller>> fetchItems(int page) async {
     try {
       final response = await _service.fetchTopSellers(page: page);
-      AppLogger.structured("Top Seller Response :" ,response.items.map((e) => e.toJson()));
+
       return response;
     } catch (e) {
-      print("🔥 [TopSellerController] Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -70,9 +69,7 @@ class TopSellerController extends PaginatedController<TopSeller> {
       //   items.refresh();
       //   return seller;
       // }
-    } catch (e) {
-      print("Get seller by ID error: $e");
-    }
+    } catch (e) {}
     return null;
   }
 }

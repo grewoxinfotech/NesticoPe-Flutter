@@ -19,11 +19,7 @@ class ContractorLeadFollowupModel {
 
   /// Convert model to Map
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data.toMap()};
   }
 }
 
@@ -46,9 +42,10 @@ class ContractorLeadFollowUpData {
 
   factory ContractorLeadFollowUpData.fromJson(Map<String, dynamic> json) {
     return ContractorLeadFollowUpData(
-      items: (json['items'] as List)
-          .map((item) => ContractorLeadFollowUpItem.fromJson(item))
-          .toList(),
+      items:
+          (json['items'] as List)
+              .map((item) => ContractorLeadFollowUpItem.fromJson(item))
+              .toList(),
       total: json['total'],
       currentPage: json['currentPage'],
       totalPages: json['totalPages'],

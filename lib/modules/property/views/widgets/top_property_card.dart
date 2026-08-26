@@ -57,16 +57,16 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
         // You might need to convert AreaTopProperty to Items or create a dedicated detail screen
       },
       child: Container(
-      width: MediaQuery.of(context).size.width * 0.85,
+        width: MediaQuery.of(context).size.width * 0.85,
         decoration: BoxDecoration(
           color: ColorRes.white,
           borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-         // border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
+          // border: Border.all(color: ColorRes.grey.withOpacity(0.3), width: 0.8),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
               blurRadius: 2,
-             
+
               offset: const Offset(0, 3),
             ),
           ],
@@ -129,7 +129,6 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                         GestureDetector(
                           onTap: () {
                             compare.toggle(widget.property, max: 5);
-                            log("gnjignjrkjn");
                           },
                           child: Obx(() {
                             final selected = compare.isSelected(
@@ -165,8 +164,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                             child: Obx(() {
                               final inFavorites = favoriteController.favorites
                                   .contains(widget.property.id);
-                              isFavorite =
-                                  !UserHelper.isGuest && inFavorites;
+                              isFavorite = !UserHelper.isGuest && inFavorites;
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite
@@ -234,7 +232,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                   //     maxLines: 1,
                   //     overflow: TextOverflow.ellipsis,
                   //   ),
-                   Text(
+                  Text(
                     PropertyNameManager(widget.property).displayName,
                     style: TextStyle(
                       fontWeight: AppFontWeights.semiBold,
@@ -251,7 +249,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                   // Location
                   Row(
                     children: [
-                       const Icon(
+                      const Icon(
                         Icons.location_on_outlined,
                         size: 14,
                         color: ColorRes.grey,
@@ -318,11 +316,10 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                       //     ),
                       //   );
                       // }),
-
                       Expanded(
                         child: Container(
                           height: 40,
-                          
+
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 8,
@@ -332,7 +329,7 @@ class _TopPropertyCardState extends State<TopPropertyCard> {
                             color: ColorRes.primary,
                           ),
                           alignment: Alignment.center,
-                          child:  Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(

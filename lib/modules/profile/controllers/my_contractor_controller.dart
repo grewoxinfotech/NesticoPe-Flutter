@@ -174,7 +174,8 @@ class MyContractorController
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                contractor.capitalize?.replaceAll("_", " ") ?? 'Unknown Client',
+                                contractor.capitalize?.replaceAll("_", " ") ??
+                                    'Unknown Client',
                                 maxLines: 1,
                                 style: TextStyle(
                                   fontSize: AppFontSizes.bodySmall,
@@ -303,18 +304,10 @@ class MyContractorController
                                               !(formKey.value?.currentState
                                                       as FormState)
                                                   .validate()) {
-                                            log(
-                                              "Form is invalid. Please correct the errors.",
-                                            );
                                             return;
                                           }
 
-                                          log(
-                                            "Form is valid. Submitting review...",
-                                          );
-
-                                          final ok =
-                                              await addReviewForContractorHandler(
+                                          final ok = await addReviewForContractorHandler(
                                             serviceId:
                                                 serviceId, // Pass contractor ID
                                             reviewerId:
@@ -362,8 +355,6 @@ class MyContractorController
         "cons": {},
       };
 
-      log("📝 Review Payload: $reviewPayload");
-
       // 2️⃣ Send the review using the ReviewUserService
       final bool success = await _reviewService.addReviewForContractor(
         reviewPayload,
@@ -389,8 +380,6 @@ class MyContractorController
         return false;
       }
     } catch (e, st) {
-      log("❌ Error in addReviewForContractorHandler: $e\n$st");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong while adding review.",
@@ -404,7 +393,7 @@ class MyContractorController
   Future<PaginationResponse<ContractorProjectItem>> fetchItems(int page) async {
     final user = await SecureStorage.getUserData();
     final email = user?.user?.email;
-    print('Email $email');
+
     final response = await _service.fetchContractorProjects(
       page: page,
       filters: filters,
@@ -414,7 +403,5 @@ class MyContractorController
     return response;
   }
 
-  void loadData() {
-    log("My Contractor Data ${items.map((element) => element.toJson())}");
-  }
+  void loadData() {}
 }

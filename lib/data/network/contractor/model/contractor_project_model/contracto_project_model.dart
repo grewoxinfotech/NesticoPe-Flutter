@@ -598,8 +598,6 @@ class ContractorProjectMeta {
   final List<ContractorProjectPhoto> beforePhoto;
   final List<ContractorProjectPhoto> afterPhoto;
 
-
-
   ContractorProjectMeta({
     required this.serviceId,
     required this.serviceName,
@@ -610,19 +608,22 @@ class ContractorProjectMeta {
   });
 
   factory ContractorProjectMeta.fromJson(Map<String, dynamic> json) {
-    final empList = (json['employees'] as List?)
-        ?.map((e) => ContractorEmployee.fromJson(e))
-        .toList() ??
+    final empList =
+        (json['employees'] as List?)
+            ?.map((e) => ContractorEmployee.fromJson(e))
+            .toList() ??
         [];
 
-    final beforePhotos = (json['beforePhotos'] as List?)
-        ?.map((e) => ContractorProjectPhoto.fromJson(e))
-        .toList() ??
+    final beforePhotos =
+        (json['beforePhotos'] as List?)
+            ?.map((e) => ContractorProjectPhoto.fromJson(e))
+            .toList() ??
         [];
 
-    final afterPhotos = (json['afterPhotos'] as List?)
-        ?.map((e) => ContractorProjectPhoto.fromJson(e))
-        .toList() ??
+    final afterPhotos =
+        (json['afterPhotos'] as List?)
+            ?.map((e) => ContractorProjectPhoto.fromJson(e))
+            .toList() ??
         [];
 
     return ContractorProjectMeta(
@@ -634,7 +635,6 @@ class ContractorProjectMeta {
       afterPhoto: afterPhotos,
     );
   }
-
 
   Map<String, dynamic> toJson() => {
     'serviceId': serviceId,

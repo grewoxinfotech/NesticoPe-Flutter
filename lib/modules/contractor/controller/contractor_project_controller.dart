@@ -38,7 +38,7 @@ class ContractorProjectController
 
   void toggleCard(String id) {
     expandedCards[id] = !(expandedCards[id] ?? false);
-    print("toggle Card $id");
+
     expandedCards.refresh();
   }
 
@@ -54,12 +54,10 @@ class ContractorProjectController
       if (response.items.isNotEmpty) {
         items.assignAll(response.items); // ✅ reactive update
         items.refresh(); // ensure UI rebuild
-        log("✅ Projects list updated: ${items.length} projects loaded");
       } else {
         items.clear();
       }
     } catch (e, s) {
-      log("❌ Error fetching projects: $e\n$s");
     } finally {
       isLoading.value = false;
     }
@@ -366,7 +364,6 @@ class ContractorProjectController
         return file; // fallback to original if compression fails
       }
     } catch (e) {
-      print("Image compression failed: $e");
       return file; // fallback to original in case of error
     }
   }
@@ -406,7 +403,7 @@ class ContractorProjectController
       }
     } catch (e, stack) {
       Get.back(); // Close loader if error occurs
-      log("🚨 Error deleting photo: $e\n$stack");
+
       ScaffoldMessenger.of(
         Get.context!,
       ).showSnackBar(SnackBar(content: Text("❌ Error: $e")));
@@ -415,7 +412,7 @@ class ContractorProjectController
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
-    log("Apply Filter in Inquiry Contractor Section ${filters} ");
+
     // await loadInitial();
     refreshList();
   }
@@ -442,9 +439,6 @@ class ContractorProjectController
   void populatedProjectData(ContractorProjectItem project) {
     if (project.deadline != null && project.deadline!.isNotEmpty) {
       selectedDate = DateTime.tryParse(project.deadline!);
-      log(
-        "String Date Timer Convert $selectedDate  ============ ${project.deadline}",
-      );
 
       if (selectedDate != null) {
         // 👇 Update the text controller so the UI shows it
@@ -537,8 +531,6 @@ class ContractorProjectController
     String status,
     String dateUpdate,
   ) async {
-    log("Updating project: $dateUpdate");
-
     final Map<String, dynamic> payload = {};
 
     if (status.trim().isNotEmpty) {
@@ -591,11 +583,6 @@ class ContractorProjectController
     final userId = user.user?.id;
     final response = await ContractorProjectService.contractorProjectService
         .getContractorProjectData(contractorId: userId ?? '', filter: filters);
-
-    AppLogger.structured(
-      "App Logger for Contractor Project",
-      response.items.map((e) => e.toJson()),
-    );
 
     return response;
   }

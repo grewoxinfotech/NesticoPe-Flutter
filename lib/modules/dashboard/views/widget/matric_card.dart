@@ -9,7 +9,13 @@ class MetricCard extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const MetricCard({super.key, required this.title, required this.value, required this.icon, required this.color});
+  const MetricCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +28,17 @@ class MetricCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Icon(icon, color: color),
-          ),
+          Align(alignment: Alignment.topRight, child: Icon(icon, color: color)),
           const Spacer(),
-          Text(title,
-              style: TextStyle(color: ColorRes.textSecondary)),
+          Text(title, style: TextStyle(color: ColorRes.textSecondary)),
           const SizedBox(height: 6),
-          Text(value,
-              style: TextStyle(
-                fontSize: AppFontSizes.medium,
-                fontWeight: AppFontWeights.bold,
-              )),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: AppFontSizes.medium,
+              fontWeight: AppFontWeights.bold,
+            ),
+          ),
         ],
       ),
     );

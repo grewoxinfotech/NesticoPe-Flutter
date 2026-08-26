@@ -572,7 +572,8 @@ class _LeadSourceDistributionPieGraphState
     // Safely extract all possible sources
     final sources = {
       "App": (widget.breakdown["app"] as num?)?.toDouble() ?? 0.0,
-      "NesticoPe Site": (widget.breakdown["website"] as num?)?.toDouble() ?? 0.0,
+      "NesticoPe Site":
+          (widget.breakdown["website"] as num?)?.toDouble() ?? 0.0,
       "Referral": (widget.breakdown["referral"] as num?)?.toDouble() ?? 0.0,
       "Social Media":
           (widget.breakdown["social_media"] as num?)?.toDouble() ?? 0.0,
@@ -736,11 +737,6 @@ class _LeadSourceDistributionPieGraphState
     );
   }
 }
-
-
-
-
-
 
 class LeadStatusDistributionPieGraph extends StatefulWidget {
   final Map<String, dynamic> breakdown;

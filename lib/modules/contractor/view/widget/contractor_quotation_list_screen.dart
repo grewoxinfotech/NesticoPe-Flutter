@@ -68,10 +68,7 @@ class ContractorQuotationListScreen extends StatelessWidget {
             itemCount: controller.items.length,
             itemBuilder: (context, index) {
               final quotation = controller.items[index];
-              AppLogger.structured(
-                "Quotation of Contractor ",
-                quotation.toMap(),
-              );
+
               return _QuotationListItem(quotation: quotation);
             },
           ),
@@ -105,10 +102,6 @@ class _QuotationListItem extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            AppLogger.structured(
-              "Check Contractor Inquiry ",
-              quotation.toMap(),
-            );
             Get.to(() => ContractorQuotationScreen(quotation: quotation));
           },
           borderRadius: BorderRadius.circular(12),
@@ -162,7 +155,8 @@ class _QuotationListItem extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        quotation.user.name.capitalize?.replaceAll("_", " ")??'',
+                        quotation.user.name.capitalize?.replaceAll("_", " ") ??
+                            '',
                         style: const TextStyle(
                           fontSize: AppFontSizes.small,
                           color: ColorRes.textPrimary,

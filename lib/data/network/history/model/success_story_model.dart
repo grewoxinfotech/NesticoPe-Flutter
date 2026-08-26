@@ -9,22 +9,21 @@ class BuyerSideResellerSuccessStoryResponse {
     this.data,
   });
 
-  factory BuyerSideResellerSuccessStoryResponse.fromJson(Map<String, dynamic> json) {
+  factory BuyerSideResellerSuccessStoryResponse.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return BuyerSideResellerSuccessStoryResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? BuyerSideResellerSuccessStoryData.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null
+              ? BuyerSideResellerSuccessStoryData.fromJson(json['data'])
+              : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 }
 
@@ -45,11 +44,14 @@ class BuyerSideResellerSuccessStoryData {
     required this.fetchedAll,
   });
 
-  factory BuyerSideResellerSuccessStoryData.fromJson(Map<String, dynamic> json) {
+  factory BuyerSideResellerSuccessStoryData.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return BuyerSideResellerSuccessStoryData(
-      items: (json['items'] as List?)
-          ?.map((e) => BuyerSideResellerSuccessStoryItem.fromJson(e))
-          .toList() ??
+      items:
+          (json['items'] as List?)
+              ?.map((e) => BuyerSideResellerSuccessStoryItem.fromJson(e))
+              .toList() ??
           [],
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 1,
@@ -108,7 +110,9 @@ class BuyerSideResellerSuccessStoryItem {
     this.reseller,
   });
 
-  factory BuyerSideResellerSuccessStoryItem.fromJson(Map<String, dynamic> json) {
+  factory BuyerSideResellerSuccessStoryItem.fromJson(
+    Map<String, dynamic> json,
+  ) {
     DateTime? parseDate(String? date) {
       if (date == null || date.isEmpty) return null;
       try {
@@ -117,6 +121,7 @@ class BuyerSideResellerSuccessStoryItem {
         return null;
       }
     }
+
     String? sanitizeUrl(String? url) {
       if (url == null) return null;
       return url.replaceAll('`', '').trim();
@@ -138,9 +143,10 @@ class BuyerSideResellerSuccessStoryItem {
       status: json['status'],
       createdAt: parseDate(json['createdAt']),
       updatedAt: parseDate(json['updatedAt']),
-      reseller: json['reseller'] != null
-          ? BuyerSideResellerInfo.fromJson(json['reseller'])
-          : null,
+      reseller:
+          json['reseller'] != null
+              ? BuyerSideResellerInfo.fromJson(json['reseller'])
+              : null,
     );
   }
 
@@ -183,10 +189,6 @@ class BuyerSideResellerInfo {
     );
   }
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'username': username,
-      'userType': userType,
-    };
+    return {'id': id, 'username': username, 'userType': userType};
   }
 }

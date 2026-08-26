@@ -32,11 +32,8 @@ class PlatformServicesService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      debugPrint("Fetching Platform Services from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("Platform Services API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -46,9 +43,6 @@ class PlatformServicesService {
           (json) => PlatformServiceItem.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch services: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
         CustomSnackBar.show(
           Get.overlayContext!,
           message: "Failed to load platform services",
@@ -58,7 +52,6 @@ class PlatformServicesService {
         throw Exception("Failed to load platform services");
       }
     } catch (e) {
-      debugPrint("Exception in fetchServices: $e");
       rethrow;
     }
   }
@@ -71,17 +64,11 @@ class PlatformServicesService {
         headers: await headers(),
       );
 
-      debugPrint("Get service by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         return PlatformServicesModel.fromJson(jsonData).data?.items?.first;
-      } else {
-        debugPrint("Failed to get service by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get service by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
     return null;
   }
 }

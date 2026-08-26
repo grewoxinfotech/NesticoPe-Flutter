@@ -334,13 +334,14 @@ Future<bool?> showResellerCommissionModal(
   return showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => PopScope(
-      canPop: false, // Prevents back navigation
-      child: ResellerCommissionModal(
-        clientCommission: client,
-        builderCommission: builder,
-      ),
-    ),
+    builder:
+        (_) => PopScope(
+          canPop: false, // Prevents back navigation
+          child: ResellerCommissionModal(
+            clientCommission: client,
+            builderCommission: builder,
+          ),
+        ),
   );
 }
 
@@ -351,7 +352,7 @@ double getPlatformFeeForPropertyCommissionPercentage(
     final fee = platformFeeController.items.firstWhere(
       (e) => e.category == 'partner_property' && e.isActive == true,
     );
-    print("Platform fees ${platformFeeController.items} ");
+
     return double.tryParse(fee.percentage ?? '0') ?? 0;
   } catch (_) {
     return 0;

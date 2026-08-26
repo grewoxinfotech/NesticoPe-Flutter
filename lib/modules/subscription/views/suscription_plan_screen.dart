@@ -228,10 +228,6 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                                   ? item.usedProperties
                                   : item.usedServices;
 
-                          log(
-                            "Check which plan was selected ${item.toMap()}   ${widget.role}",
-                          );
-
                           final dynamic rawMax =
                               item.metadata?['maxProperties'] ??
                               item.metadata?['maxServices'];
@@ -252,10 +248,6 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen> {
                               isUnlimited || max <= 0
                                   ? 0.0
                                   : (used / max).clamp(0.0, 1.0);
-
-                          log(
-                            "Plan Usage $percent | Unlimited: $isUnlimited  ${plan?.toMap()}",
-                          );
 
                           return _buildCurrentPlanCard(
                             item: item,

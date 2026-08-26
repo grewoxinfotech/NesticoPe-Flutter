@@ -449,7 +449,7 @@ class _CategoryCardState extends State<_CategoryCard>
     final isPopular = key == 'home_construction';
 
     /// 🎨 Gradient map
-   final gradientMap = {
+    final gradientMap = {
       'home_construction': [
         Color(0xFF00F5A0), // neon green
         Color.fromARGB(255, 0, 147, 245), // aqua blue
@@ -485,7 +485,6 @@ class _CategoryCardState extends State<_CategoryCard>
         Color.fromARGB(255, 69, 56, 249), // mint cyan
       ],
     };
-
 
     final colors =
         gradientMap[key] ??
@@ -641,8 +640,6 @@ class _CategoryCardState extends State<_CategoryCard>
     // );
     return GestureDetector(
       onTap: () {
-
-        print("Contractor data ${widget.item.id}");
         Get.to(
           () => CategoryServiceExplorer(
             categoryId: widget.item.id,
@@ -676,44 +673,43 @@ class _CategoryCardState extends State<_CategoryCard>
             //                   ),
 
             /// 🎯 ICON
-        // final screenWidth = MediaQuery.of(context).size.width;
+            // final screenWidth = MediaQuery.of(context).size.width;
+            Positioned(
+              right: -screenWidth * 0.02,
+              bottom: -screenWidth * 0.02,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[0],
+                width: screenWidth * 0.18,
+                height: screenWidth * 0.18,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.22),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
 
-Positioned(
-  right: -screenWidth * 0.02,
-  bottom: -screenWidth * 0.02,
-  child: SvgPicture.asset(
-    (svgMap[key] ??
-        [
-          'assets/svg/service/build-svgrepo-com.svg',
-          'assets/svg/service/bricks-svgrepo-com.svg',
-        ])[0],
-    width: screenWidth * 0.18,
-    height: screenWidth * 0.18,
-    colorFilter: ColorFilter.mode(
-      Colors.white.withOpacity(0.22),
-      BlendMode.srcIn,
-    ),
-  ),
-),
-
-/// 🖼️ SVG IMAGE 2
-Positioned(
-  left: screenWidth * 0.025,
-  top: screenWidth * 0.075,
-  child: SvgPicture.asset(
-    (svgMap[key] ??
-        [
-          'assets/svg/service/build-svgrepo-com.svg',
-          'assets/svg/service/bricks-svgrepo-com.svg',
-        ])[1],
-    width: screenWidth * 0.12,
-    height: screenWidth * 0.12,
-    colorFilter: ColorFilter.mode(
-      Colors.white.withOpacity(0.45),
-      BlendMode.srcIn,
-    ),
-  ),
-),
+            /// 🖼️ SVG IMAGE 2
+            Positioned(
+              left: screenWidth * 0.025,
+              top: screenWidth * 0.075,
+              child: SvgPicture.asset(
+                (svgMap[key] ??
+                    [
+                      'assets/svg/service/build-svgrepo-com.svg',
+                      'assets/svg/service/bricks-svgrepo-com.svg',
+                    ])[1],
+                width: screenWidth * 0.12,
+                height: screenWidth * 0.12,
+                colorFilter: ColorFilter.mode(
+                  Colors.white.withOpacity(0.45),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
 
             /// ⭐ BADGE (FIXED POSITION)
             if (isPopular)

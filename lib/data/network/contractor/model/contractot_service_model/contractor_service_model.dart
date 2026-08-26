@@ -397,7 +397,8 @@ class ContractorMetaData {
       boreAndPump: json['boreAndPump'],
       securitySystems: json['securitySystems'],
       solarPanelBrands: (json['solarPanelBrands'] as List?)?.cast<String>(),
-      solarInverterBrands: (json['solarInverterBrands'] as List?)?.cast<String>(),
+      solarInverterBrands:
+          (json['solarInverterBrands'] as List?)?.cast<String>(),
       securityBrands: (json['securityBrands'] as List?)?.cast<String>(),
       smartHomeBrands: (json['smartHomeBrands'] as List?)?.cast<String>(),
       machineBrands: (json['machineBrands'] as List?)?.cast<String>(),

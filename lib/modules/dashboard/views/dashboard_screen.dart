@@ -154,7 +154,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String city = '';
   int _lastNavIndex = 0;
 
-  
   @override
   void initState() {
     super.initState();
@@ -169,7 +168,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             HomeScreen(),
             PropertyDetail(
               isFromSeeAll: true,
-            
+
               // filters: [
               //   if (city.isNotEmpty) {'city': city},
               // ],

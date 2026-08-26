@@ -22,13 +22,12 @@ class MarketInsightService {
     final uri = Uri.parse(
       '$_marketInsightEndpoint',
     ).replace(queryParameters: {if (filters != null) ...filters});
-    print("Matrix URI: $uri");
 
     final response = await http.get(uri, headers: await headers());
-    print("[DEBUG]=>Response ${response.body}");
+
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
-      print("Decoded data: $decoded");
+
       return MarketInsightResponse.fromJson(decoded);
     } else {
       throw Exception(

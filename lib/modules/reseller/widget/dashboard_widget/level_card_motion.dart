@@ -8,11 +8,7 @@ class LevelCard extends StatefulWidget {
   final String levelName;
   final List<String> benefits;
 
-  const LevelCard({
-    super.key,
-    required this.levelName,
-    required this.benefits,
-  });
+  const LevelCard({super.key, required this.levelName, required this.benefits});
 
   @override
   State<LevelCard> createState() => _LevelCardState();
@@ -27,7 +23,7 @@ class _LevelCardState extends State<LevelCard>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds:3),
+      duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
   }
 
@@ -61,11 +57,7 @@ class _LevelCardState extends State<LevelCard>
                 color: Colors.green,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 12,
-              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 12),
             ),
             const SizedBox(width: 10),
             Text(
@@ -82,7 +74,6 @@ class _LevelCardState extends State<LevelCard>
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -93,10 +84,10 @@ class _LevelCardState extends State<LevelCard>
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-           color: Color(0xffFAF5F0),
+            color: Color(0xffFAF5F0),
             borderRadius: BorderRadius.circular(20),
 
-           border: Border.all(color: ColorRes.homeYellow,width: 1)
+            border: Border.all(color: ColorRes.homeYellow, width: 1),
           ),
           child: Column(
             children: [
@@ -104,8 +95,11 @@ class _LevelCardState extends State<LevelCard>
                 animation: _controller,
                 builder: (_, __) {
                   // Smooth up-down + subtle left-right motion
-                  final double dy = sin(_controller.value * 2 * pi) * 4;  // vertical
-                  final double dx = cos(_controller.value * 1 * pi) * 1;  // horizontal (slightly increased)
+                  final double dy =
+                      sin(_controller.value * 2 * pi) * 4; // vertical
+                  final double dx =
+                      cos(_controller.value * 1 * pi) *
+                      1; // horizontal (slightly increased)
 
                   return Transform.translate(
                     offset: Offset(dx, dy),
@@ -126,7 +120,7 @@ class _LevelCardState extends State<LevelCard>
               ),
 
               const SizedBox(height: 12),
-             /* Container(
+              /* Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 decoration: BoxDecoration(
                   color: Color(0xff725AB7),
@@ -147,7 +141,7 @@ class _LevelCardState extends State<LevelCard>
               const SizedBox(height: 12),
               Text(
                 "${widget.levelName} Level",
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Color(0xff725AB7),
@@ -160,14 +154,16 @@ class _LevelCardState extends State<LevelCard>
           ),
         ),
 
-        SizedBox(height: 20,),
+        SizedBox(height: 20),
 
         // ✨ Floating star animation
         AnimatedBuilder(
           animation: _controller,
           builder: (_, __) {
             // Move only vertically (up & down)
-            final double dy = sin(_controller.value * 2 * pi) * 8; // adjust amplitude (8 = smooth)
+            final double dy =
+                sin(_controller.value * 2 * pi) *
+                8; // adjust amplitude (8 = smooth)
             return Positioned(
               right: 20,
               top: 10 + dy, // only Y position changes
@@ -183,7 +179,9 @@ class _LevelCardState extends State<LevelCard>
           animation: _controller,
           builder: (_, __) {
             // Move only vertically (up & down)
-            final double dy = sin(_controller.value * 2 * pi) * 8; // adjust amplitude (8 = smooth)
+            final double dy =
+                sin(_controller.value * 2 * pi) *
+                8; // adjust amplitude (8 = smooth)
             return Positioned(
               bottom: 20,
               left: 20,
@@ -196,15 +194,10 @@ class _LevelCardState extends State<LevelCard>
             );
           },
         ),
-
       ],
     );
   }
 }
-
-
-
-
 
 Widget buildLevelBadge(String text) {
   return IntrinsicWidth(
@@ -229,22 +222,22 @@ Widget buildLevelBadge(String text) {
         //     ),
         //   ),
         // ),
-                Container(
-                  height: 30,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff725AB7),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: const Color(0xff725AB7).withOpacity(0.4),
-                      width: 1,
-                    ),
-                  ),
-                ),
+        Container(
+          height: 30,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xff725AB7),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: const Color(0xff725AB7).withOpacity(0.4),
+              width: 1,
+            ),
+          ),
+        ),
 
         // Visible text on top
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text(
             text.toUpperCase(),
             style: const TextStyle(
@@ -259,7 +252,3 @@ Widget buildLevelBadge(String text) {
     ),
   );
 }
-
-
-
-

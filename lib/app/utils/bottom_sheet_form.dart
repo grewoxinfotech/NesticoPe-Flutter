@@ -159,7 +159,6 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             _negotiablePriceController.text = widget.forSellPrice.toString();
             miniPrice = widget.forSellPrice * 0.98;
             currentPrice = widget.forSellPrice;
-            log("Current price ${currentPrice} ${miniPrice}");
           } else if (widget.listingType == "rent") {
             _negotiablePriceController.text = widget.forRentPrice.toString();
             miniPrice = widget.forRentPrice * 0.98;
@@ -301,7 +300,7 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
 
             // Title
             Text(
-              "${(UserHelper.isBuyer||UserHelper.isGuest)?'Enquiry Already Submitted!':'Inquiry Already Submitted!'}",
+              "${(UserHelper.isBuyer || UserHelper.isGuest) ? 'Enquiry Already Submitted!' : 'Inquiry Already Submitted!'}",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppFontSizes.large,
@@ -309,7 +308,6 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
                 color: ColorRes.blueGrey,
               ),
             ),
-
 
             const SizedBox(height: 12),
 
@@ -898,186 +896,180 @@ class _ContactOwnerBottomState extends State<ContactOwnerBottom> {
             //   ],
             // ),
             // if (_negotiable) ...[
-              const SizedBox(height: 16),
-              Text(
-                "When are you planning to buy",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.textSecondary,
-                ),
+            const SizedBox(height: 16),
+            Text(
+              "When are you planning to buy",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textSecondary,
               ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    [
-                      'less than 1 month',
-                      'less than 3 month',
-                      'less than 6 month',
-                      'less than 12 month',
-                    ].map((option) {
-                      return buildChoice(
-                        title: option,
-                        selected: dropdownValue == option,
-                        onTap: () {
-                          setState(() {
-                            dropdownValue = option;
-                          });
-                        },
-                      );
-                    }).toList(),
-              ),
-              const SizedBox(height: 16),
-              buildSectionTitle("Negotiable Price"),
-              const SizedBox(height: 12),
-              // TextFormField(
-              //   controller: _negotiablePriceController,
-              //   style: TextStyle(fontSize: AppFontSizes.bodySmall),
-              //   decoration: InputDecoration(
-              //     hintText: 'Enter your negotiable price',
-              //     hintStyle: TextStyle(fontSize: AppFontSizes.small),
-              //     labelStyle: TextStyle(
-              //       fontSize: AppFontSizes.small,
-              //       fontWeight: AppFontWeights.medium,
-              //     ),
-              //     prefixIcon: const Icon(Icons.currency_rupee_outlined, size: 18),
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //       borderSide: const BorderSide(color: ColorRes.overlay),
-              //     ),
-              //     enabledBorder: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //       borderSide: const BorderSide(color: ColorRes.overlay),
-              //     ),
-              //   ),
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //
-              //     if (value == null || value.trim().isEmpty) {
-              //       return "Required";
-              //     }
-              //
-              //     final enteredPrice = double.tryParse(value);
-              //     if (enteredPrice == null) {
-              //       return "Enter a valid amount";
-              //     }
-              //
-              //     final originalPrice = int.tryParse(_negotiablePriceController.text)??0;
-              //     final minAllowedPrice = originalPrice * 0.98;
-              //     print("Price $originalPrice  $minAllowedPrice");
-              //
-              //     if (enteredPrice < minAllowedPrice || enteredPrice >= originalPrice) {
-              //       return "Price must be between "
-              //           "${Formatter.formatPrice(minAllowedPrice)} "
-              //           "and ${Formatter.formatPrice(originalPrice)}";
-              //     }
-              //
-              //     return null;
-              //   },
-              // ),
-              // const SizedBox(height: 12),
-              StatefulBuilder(
-                builder: (context, setState) {
-                  log("Lst Current price ${currentPrice} ${miniPrice}");
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: _negotiablePriceController,
-                        style: TextStyle(fontSize: AppFontSizes.bodySmall),
-                        decoration: InputDecoration(
-                          hintText: 'Enter your negotiable price',
-                          hintStyle: TextStyle(fontSize: AppFontSizes.small),
-                          labelStyle: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.medium,
-                          ),
-                          prefixIcon: const Icon(
-                            Icons.currency_rupee_outlined,
-                            size: 18,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: ColorRes.overlay,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: ColorRes.overlay,
-                            ),
-                          ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children:
+                  [
+                    'less than 1 month',
+                    'less than 3 month',
+                    'less than 6 month',
+                    'less than 12 month',
+                  ].map((option) {
+                    return buildChoice(
+                      title: option,
+                      selected: dropdownValue == option,
+                      onTap: () {
+                        setState(() {
+                          dropdownValue = option;
+                        });
+                      },
+                    );
+                  }).toList(),
+            ),
+            const SizedBox(height: 16),
+            buildSectionTitle("Negotiable Price"),
+            const SizedBox(height: 12),
+            // TextFormField(
+            //   controller: _negotiablePriceController,
+            //   style: TextStyle(fontSize: AppFontSizes.bodySmall),
+            //   decoration: InputDecoration(
+            //     hintText: 'Enter your negotiable price',
+            //     hintStyle: TextStyle(fontSize: AppFontSizes.small),
+            //     labelStyle: TextStyle(
+            //       fontSize: AppFontSizes.small,
+            //       fontWeight: AppFontWeights.medium,
+            //     ),
+            //     prefixIcon: const Icon(Icons.currency_rupee_outlined, size: 18),
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(12),
+            //       borderSide: const BorderSide(color: ColorRes.overlay),
+            //     ),
+            //     enabledBorder: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(12),
+            //       borderSide: const BorderSide(color: ColorRes.overlay),
+            //     ),
+            //   ),
+            //   keyboardType: TextInputType.number,
+            //   validator: (value) {
+            //
+            //     if (value == null || value.trim().isEmpty) {
+            //       return "Required";
+            //     }
+            //
+            //     final enteredPrice = double.tryParse(value);
+            //     if (enteredPrice == null) {
+            //       return "Enter a valid amount";
+            //     }
+            //
+            //     final originalPrice = int.tryParse(_negotiablePriceController.text)??0;
+            //     final minAllowedPrice = originalPrice * 0.98;
+            //     print("Price $originalPrice  $minAllowedPrice");
+            //
+            //     if (enteredPrice < minAllowedPrice || enteredPrice >= originalPrice) {
+            //       return "Price must be between "
+            //           "${Formatter.formatPrice(minAllowedPrice)} "
+            //           "and ${Formatter.formatPrice(originalPrice)}";
+            //     }
+            //
+            //     return null;
+            //   },
+            // ),
+            // const SizedBox(height: 12),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _negotiablePriceController,
+                      style: TextStyle(fontSize: AppFontSizes.bodySmall),
+                      decoration: InputDecoration(
+                        hintText: 'Enter your negotiable price',
+                        hintStyle: TextStyle(fontSize: AppFontSizes.small),
+                        labelStyle: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          fontWeight: AppFontWeights.medium,
                         ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Required";
-                          }
-
-                          final enteredPrice = num.tryParse(value);
-                          if (enteredPrice == null) {
-                            return "Enter a valid amount";
-                          }
-
-                          if (enteredPrice < miniPrice ||
-                              enteredPrice > currentPrice) {
-                            return "Price must be between "
-                                "${Formatter.formatFullPrice(miniPrice)} "
-                                "and ${Formatter.formatPrice(currentPrice)}";
-                          }
-
-                          return null;
-                        },
+                        prefixIcon: const Icon(
+                          Icons.currency_rupee_outlined,
+                          size: 18,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: ColorRes.overlay),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: ColorRes.overlay),
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      if (widget.listingType.toLowerCase() == "pg") ...[
-                        Text(
-                          "Base room price: ${Formatter.formatPrice(currentPrice)}",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Negotiate on the selected room's price",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                      ] else ...[
-                        Text(
-                          "Original property price: ${Formatter.formatPrice(currentPrice)}",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Minimum acceptable price (2% discount): ${Formatter.formatFullPrice(miniPrice)}",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            fontWeight: AppFontWeights.medium,
-                            color: ColorRes.primary,
-                          ),
-                        ),
-                      ],
-                    ],
-                  );
-                },
-              ),
-            // ],
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Required";
+                        }
 
+                        final enteredPrice = num.tryParse(value);
+                        if (enteredPrice == null) {
+                          return "Enter a valid amount";
+                        }
+
+                        if (enteredPrice < miniPrice ||
+                            enteredPrice > currentPrice) {
+                          return "Price must be between "
+                              "${Formatter.formatFullPrice(miniPrice)} "
+                              "and ${Formatter.formatPrice(currentPrice)}";
+                        }
+
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    if (widget.listingType.toLowerCase() == "pg") ...[
+                      Text(
+                        "Base room price: ${Formatter.formatPrice(currentPrice)}",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Negotiate on the selected room's price",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                    ] else ...[
+                      Text(
+                        "Original property price: ${Formatter.formatPrice(currentPrice)}",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Minimum acceptable price (2% discount): ${Formatter.formatFullPrice(miniPrice)}",
+                        style: TextStyle(
+                          fontSize: AppFontSizes.caption,
+                          fontWeight: AppFontWeights.medium,
+                          color: ColorRes.primary,
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+
+            // ],
             Row(
               children: [
                 Checkbox(

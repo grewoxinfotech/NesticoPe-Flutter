@@ -29,7 +29,6 @@ class CalenderCategoryController
       );
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     } finally {
       isLoading.value = false;

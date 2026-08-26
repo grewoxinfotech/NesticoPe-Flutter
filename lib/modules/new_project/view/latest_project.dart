@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 import 'package:nesticope_app/modules/home/widgets/home_header.dart';
 import 'package:nesticope_app/modules/new_project/view/widget/hotspot_location.dart';
 import 'package:nesticope_app/modules/new_project/view/widget/top_developer.dart';
-
 
 import '../../property/controllers/property_controller.dart';
 
@@ -96,14 +94,18 @@ class MumbaiProjectsScreen extends StatelessWidget {
                             color: ColorRes.white,
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: buildPositionedTextField(controller,context, () {},),
+                          child: buildPositionedTextField(
+                            controller,
+                            context,
+                            () {},
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       // Hotspots section
                       HotspotSection(
                         title: "Hotspots in Mumbai",
-                        onMapView: () => print("Map view clicked"),
+                        onMapView: () => null,
                         hotspots: [
                           Hotspot(
                             name: "Western Suburbs",
@@ -151,7 +153,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                     "Delivered": "23",
                   },
                   projectsTitle: "Projects by Lodha Group",
-                  onSeeAll: () => print("See all clicked"),
+                  onSeeAll: () => null,
                   isLoading: controller.isLoading.value,
                   projects: controller.items,
                 ),
@@ -165,7 +167,7 @@ class MumbaiProjectsScreen extends StatelessWidget {
                     "Delivered": "25",
                   },
                   projectsTitle: "Projects by Unimont Group",
-                  onSeeAll: () => print("See all clicked"),
+                  onSeeAll: () => null,
                   isLoading: controller.isLoading.value,
                   projects: controller.items,
                 ),

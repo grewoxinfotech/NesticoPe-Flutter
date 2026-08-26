@@ -18,7 +18,8 @@ class ContractorCategoryServiceExplorer extends StatefulWidget {
       _ContractorCategoryServiceExplorerState();
 }
 
-class _ContractorCategoryServiceExplorerState extends State<ContractorCategoryServiceExplorer> {
+class _ContractorCategoryServiceExplorerState
+    extends State<ContractorCategoryServiceExplorer> {
   final Set<int> expanded = {};
 
   String _keyForMap(String name) {
@@ -33,12 +34,13 @@ class _ContractorCategoryServiceExplorerState extends State<ContractorCategorySe
 
   @override
   Widget build(BuildContext context) {
-  final controller = Get.isRegistered<HireContractorFilterProfileController>()
-    ? Get.find<HireContractorFilterProfileController>()
-    : Get.put(HireContractorFilterProfileController());
+    final controller =
+        Get.isRegistered<HireContractorFilterProfileController>()
+            ? Get.find<HireContractorFilterProfileController>()
+            : Get.put(HireContractorFilterProfileController());
 
     final key = _keyForMap(widget.categoryName);
-    print('Category Key : $key');
+
     final groups = controller.getServiceNamesForCategory(key);
 
     return Scaffold(
@@ -47,7 +49,6 @@ class _ContractorCategoryServiceExplorerState extends State<ContractorCategorySe
           widget.categoryName,
           style: const TextStyle(fontWeight: AppFontWeights.semiBold),
         ),
-      
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -74,7 +75,9 @@ class _ContractorCategoryServiceExplorerState extends State<ContractorCategorySe
                     final visibleCount =
                         isExpanded
                             ? displayItems.length
-                            : (displayItems.length > 5 ? 5 : displayItems.length);
+                            : (displayItems.length > 5
+                                ? 5
+                                : displayItems.length);
                     return Material(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -121,19 +124,13 @@ class _ContractorCategoryServiceExplorerState extends State<ContractorCategorySe
                                         vertical: 12,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: ColorRes.grey.withOpacity(
-                                          0.06,
-                                        ),
+                                        color: ColorRes.grey.withOpacity(0.06),
                                         border: Border.all(
                                           color:
-                                              ColorRes
-                                                  .leadGreyColor
-                                                  .shade300,
+                                              ColorRes.leadGreyColor.shade300,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                          10,
-                                        ),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Row(
                                         children: [
@@ -141,17 +138,14 @@ class _ContractorCategoryServiceExplorerState extends State<ContractorCategorySe
                                             Icons.check_circle,
                                             size: 14,
                                             color:
-                                                ColorRes
-                                                    .leadGreyColor
-                                                    .shade700,
+                                                ColorRes.leadGreyColor.shade700,
                                           ),
                                           const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
                                               item,
                                               style: const TextStyle(
-                                                fontSize:
-                                                    AppFontSizes.caption,
+                                                fontSize: AppFontSizes.caption,
                                                 fontWeight:
                                                     AppFontWeights.medium,
                                               ),

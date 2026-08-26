@@ -597,7 +597,7 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
   @override
   void initState() {
     super.initState();
-    log("Check for project item: ${widget.projectItem?.toJson()}");
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isEdit) {
         controller.populateProjectForm(widget.projectItem!);
@@ -658,12 +658,12 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                         controller.startDate.value,
                         () async {
                           final now = DateTime.now();
-                          final today =
-                              DateTime(now.year, now.month, now.day);
+                          final today = DateTime(now.year, now.month, now.day);
                           final stored = controller.startDate.value;
-                          final initialStart = stored == null
-                              ? today
-                              : (stored.isBefore(today) ? today : stored);
+                          final initialStart =
+                              stored == null
+                                  ? today
+                                  : (stored.isBefore(today) ? today : stored);
                           final picked = await showDatePicker(
                             context: context,
                             initialDate: initialStart,
@@ -840,9 +840,6 @@ class _AddOrEditProjectScreenState extends State<AddOrEditProjectScreen> {
                           ),
                         ),
                       ),
-
-
-
                     ],
                   ),
                 ),

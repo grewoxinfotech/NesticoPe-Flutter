@@ -43,7 +43,7 @@ class ContractorInquiryController
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
-    log("Apply Filter in Inquiry Contractor Section ${filters} ");
+
     // await loadInitial();
     refreshList();
   }
@@ -85,10 +85,8 @@ class ContractorInquiryController
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
 
-    print("Fetched itemsdsfkdf: ${items.length}");
     itemInquiryList.value =
         items.where((item) => item.contractorId == userId).toList();
-    print("Filtered items;gofdpog: ${itemInquiryList.length}");
   }
 
   // bool isExpanded(String id) => expandedCards.contains(id);
@@ -158,7 +156,6 @@ class ContractorInquiryController
       },
     };
 
-    print("Lead Payload: $payload");
     final response = await ContractorInquiryService.contractorInquiryService
         .convertInquiryIntoLead(payload);
     if (response) {
@@ -495,7 +492,6 @@ class ContractorInquiryController
         "status": status.toLowerCase().replaceAll(" ", "_"),
       };
 
-      AppLogger.structured("Contractor quotation Payload", payload);
       final response = await ContractorInquiryService.contractorInquiryService
           .convertInquiryQuotation(payload);
 
@@ -535,15 +531,12 @@ class ContractorInquiryController
       final response = await ContractorInquiryService.contractorInquiryService
           .fetchContractorInquiry(page: page, filters: filters, id: userId);
 
-      print("Fetched items: ${response.items.length}");
       // final filteredItems =
       //     response.items.where((item) => item.contractorId == userId).toList();
 
-      print("Filtered items: ${response.items.length}");
       getFilterData();
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }

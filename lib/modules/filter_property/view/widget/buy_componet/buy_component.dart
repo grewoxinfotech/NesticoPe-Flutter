@@ -127,7 +127,9 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
                             : ColorRes.white,
                     border: Border.all(
                       color:
-                          isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor.shade300,
                       width: isSelected ? 1.8 : 1.5,
                     ),
                     borderRadius: BorderRadius.circular(10),
@@ -158,6 +160,12 @@ class _FilterPropertyTypesListState extends State<FilterPropertyTypesList> {
 Padding buildPropertyFilterHeadingPadding(String title) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-    child: buildCommonText(title,AppFontSizes.medium, AppFontWeights.semiBold, ColorRes.textColor, 1),
+    child: buildCommonText(
+      title,
+      AppFontSizes.medium,
+      AppFontWeights.semiBold,
+      ColorRes.textColor,
+      1,
+    ),
   );
 }

@@ -290,9 +290,6 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                                   .toList(),
                           onChanged: (val) {
                             controller.setValue(controller.statusChange, val);
-                            log(
-                              "Contractor_status ${controller.statusChange.value}",
-                            );
                           },
                           darkText: true,
                         );
@@ -349,7 +346,6 @@ class _ContractorProjectFilterState extends State<ContractorProjectFilter> {
                         onPressed: () {
                           final filters = _buildFilterResult();
 
-                          log("Applied Filters: $filters");
                           Get.back(result: filters);
                         },
                         style: ElevatedButton.styleFrom(

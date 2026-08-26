@@ -56,7 +56,12 @@ class PropertyFavoriteController extends GetxController {
 
   Future<void> loadFavorite() async {
     if (isClosed) return;
-    final favorites = favoriteResponse.value?.data?.favorite.where((element) => element.details != null && element.details.id!.isNotEmpty ) ?? [];
+    final favorites =
+        favoriteResponse.value?.data?.favorite.where(
+          (element) =>
+              element.details != null && element.details.id!.isNotEmpty,
+        ) ??
+        [];
 
     for (final item in favorites) {
       if (isClosed) return;
@@ -77,7 +82,15 @@ class PropertyFavoriteController extends GetxController {
 
   Future<void> loadViews(List<PropertyView> viewedProperties) async {
     if (isClosed) return;
-    List<PropertyView> favorites = viewedProperties.where((element) => element.details != null && element.details?.id != null && element.details!.id!.isNotEmpty).toList();
+    List<PropertyView> favorites =
+        viewedProperties
+            .where(
+              (element) =>
+                  element.details != null &&
+                  element.details?.id != null &&
+                  element.details!.id!.isNotEmpty,
+            )
+            .toList();
 
     for (final item in favorites) {
       if (isClosed) return;
@@ -117,19 +130,25 @@ class PropertyFavoriteController extends GetxController {
 
         final ids =
             response.data?.favorite.map((e) => e.propertyId).toList() ?? [];
-            final validFavorites = response.data?.favorite.where((element) => element.details != null && element.details.id != null && element.details.id!.isNotEmpty).toList() ?? [];
+        final validFavorites =
+            response.data?.favorite
+                .where(
+                  (element) =>
+                      element.details != null &&
+                      element.details.id != null &&
+                      element.details.id!.isNotEmpty,
+                )
+                .toList() ??
+            [];
 
         favorites
           ..clear()
           ..addAll(validFavorites.map((e) => e.propertyId).toSet().toList());
-
-        print("✅ Favorites loaded: ${favorites.length}");
       } else {
         // Get.snackbar('Error', 'Failed to fetch favorites');
         favorites.clear();
       }
     } catch (e) {
-      print("❌ Exception in getFavorite: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'Something went wrong',
@@ -167,10 +186,7 @@ class PropertyFavoriteController extends GetxController {
       loadData();
       favoriteResponse.refresh();
       favorites.refresh();
-      print("✅ Added to favorites: $id");
-    } else {
-      print("❌ Failed to add to favorites: $id");
-    }
+    } else {}
   }
 
   Future<void> removeFavorite(String propertyId) async {
@@ -182,15 +198,12 @@ class PropertyFavoriteController extends GetxController {
     loadData();
     favoriteResponse.refresh();
     favorites.refresh();
-    print("🗑️ Removed from favorites: $propertyId");
   }
 
   void addAllFavorites(List<String> items) {
     favorites
       ..clear()
       ..addAll(items);
-
-    print("✅ Added all favorites (${items.length})");
   }
 
   /// --- TOGGLE FAVORITE ---
@@ -202,28 +215,25 @@ class PropertyFavoriteController extends GetxController {
     } else {
       try {
         if (isFavorite(propertyId)) {
-          
           removeFavorite(propertyId);
         } else {
           addFavorite(propertyId);
         }
         favorites.refresh();
-      } catch (e) {
-        print("❌ Exception in toggleFavorite: $e");
-      }
+      } catch (e) {}
     }
   }
 
   Future<void> getAllInQuireData(String propertyId) async {
-    log('Property Id For Inquiry $propertyId');
-
     try {
       if (isClosed) return;
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
       if (isClosed) return;
       final userId = user.user?.id ?? '';
       if (inquiryResponse.isEmpty) {
-        final inquiries = await _contactedService.fetchContactedInquiries(userId);
+        final inquiries = await _contactedService.fetchContactedInquiries(
+          userId,
+        );
         if (isClosed) return;
         inquiryResponse.assignAll(inquiries);
       }
@@ -232,18 +242,10 @@ class PropertyFavoriteController extends GetxController {
 
       hasSubmittedInquiryMap[propertyId] = result;
       hasSubmittedInquiryMap.refresh();
-      print(
-        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ",
-      );
-      print("Inquiry Response ** ${result} ");
-    } catch (e) {
-      print("Error fetching inquiries: $e");
-    }
+    } catch (e) {}
   }
 
   Future<bool> getHasInQuireData(String propertyId) async {
-    log('Property Id For Inquiry $propertyId');
-
     try {
       if (isClosed) return false;
       final UserModel user = await SecureStorage.getUserData() ?? UserModel();
@@ -257,15 +259,12 @@ class PropertyFavoriteController extends GetxController {
 
       hasSubmittedInquiryMap[propertyId] = inquiries;
       hasSubmittedInquiryMap.refresh();
-      print(
-        "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ",
-      );
-      print("Inquiry Response ** ${inquiries} ");
+
       return inquiries;
     } catch (e) {
       // When the screen/app is closing or network is off, we don't want
       // cascading errors. Just return false.
-      print("Error fetching inquiries: $e");
+
       return false;
     }
   }
@@ -303,7 +302,6 @@ class PropertyFavoriteController extends GetxController {
       negotiableOfferPriceMap[propertyId] = null;
       hasNegotiableOfferMap.refresh();
       negotiableOfferPriceMap.refresh();
-      print("Error fetching negotiable meta: $e");
     }
   }
 

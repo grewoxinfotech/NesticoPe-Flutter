@@ -29,9 +29,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(16),
-        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
       ),
       child: SafeArea(
         bottom: false,

@@ -742,10 +742,7 @@ class _BuilderLeadState extends State<BuilderLeads> {
       final tag = "project_detail_${widget.projectId}";
       if (Get.isRegistered<ProjectWizardController>(tag: tag)) {
         projectController = Get.find<ProjectWizardController>(tag: tag);
-        print("✅ Found existing ProjectWizardController with tag: $tag");
-      } else {
-        print("⚠️ No ProjectWizardController found with tag: $tag");
-      }
+      } else {}
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -990,16 +987,11 @@ class _BuilderLeadState extends State<BuilderLeads> {
           project = projectController!.items.firstWhereOrNull(
             (p) => p.id == lead.propertyId,
           );
-          print("✅ Found project in existing controller");
-        } catch (e) {
-          print("⚠️ Error finding project in controller: $e");
-        }
+        } catch (e) {}
       }
 
       // If not found and we have a propertyId, fetch it
       if (project == null && lead.propertyId != null) {
-        print("🔍 Fetching project from API: ${lead.propertyId}");
-
         // Get or create a temporary controller to fetch the project
         final tempController =
             Get.isRegistered<ProjectWizardController>(tag: "temp_lead")
@@ -1014,8 +1006,6 @@ class _BuilderLeadState extends State<BuilderLeads> {
         if (project == null) {
           throw Exception("Failed to fetch project details");
         }
-
-        print("✅ Successfully fetched project: ${project.projectName}");
       }
 
       if (project == null) {
@@ -1024,8 +1014,6 @@ class _BuilderLeadState extends State<BuilderLeads> {
 
       await Get.to(() => BuilderLeadOverView(lead: lead, project: project!));
     } catch (e, st) {
-      log('❌ Builder lead open error: $e\n$st');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to open lead details: ${e.toString()}',

@@ -44,7 +44,6 @@ class _SplashScreenState extends State<SplashScreen>
       await _logoVideoController.play();
       if (!mounted) return;
       setState(() => _isLogoVideoReady = true);
-      
     } catch (_) {
       if (!mounted) return;
       setState(() => _isLogoVideoReady = false);
@@ -204,14 +203,11 @@ class _SplashScreenState extends State<SplashScreen>
     }
 
     if (isLogin && token != null && token.isNotEmpty) {
-      print("Step -1 ");
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id?.toString();
       final role = UserHelper.userType?.name ?? 'buyer';
 
       if (userId != null && userId.isNotEmpty) {
-        print("Step -3 ");
-
         await NotificationService.instance.attachLoggedInUser(
           userId: userId,
           role: role,
@@ -238,19 +234,12 @@ class _SplashScreenState extends State<SplashScreen>
 
   /// Avoid default GetX horizontal slide; fade matches splash → first-run handoff.
   void _goToOnboarding() {
-    Get.offAll(
-      () => const OnboardingScreen(),
-      transition: Transition.fadeIn,
-      
-    );
+    Get.offAll(() => const OnboardingScreen(), transition: Transition.fadeIn);
   }
 
   /// Use a consistent non-sliding transition for splash exits.
   void _goTo(Widget page) {
-    Get.offAll(
-      () => page,
-      transition: Transition.fadeIn,
-    );
+    Get.offAll(() => page, transition: Transition.fadeIn);
   }
 
   void _navigate() {
@@ -289,7 +278,6 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       backgroundColor: Color(0xff284FE3),
       body: Stack(
         fit: StackFit.expand,
@@ -426,22 +414,24 @@ class _SplashScreenState extends State<SplashScreen>
           // ),
           ////=======================NEW CODE =======================
           Center(
-            child: _isLogoVideoReady
-                ? SizedBox(
-                    width: double.infinity,
-                    child: AspectRatio(
-                      aspectRatio: _logoVideoController.value.aspectRatio,
-                      // Clip + slight top-anchored scale: some devices decode MP4
-                      // with a 1px black line at the bottom of the texture.
-                      child: ClipRect(
-                        child: Transform.scale(
-                          scale: 1.02,
-                          alignment: Alignment.topCenter,
-                          child: VideoPlayer(_logoVideoController),
+            child:
+                _isLogoVideoReady
+                    ? SizedBox(
+                      width: double.infinity,
+                      child: AspectRatio(
+                        aspectRatio: _logoVideoController.value.aspectRatio,
+                        // Clip + slight top-anchored scale: some devices decode MP4
+                        // with a 1px black line at the bottom of the texture.
+                        child: ClipRect(
+                          child: Transform.scale(
+                            scale: 1.02,
+                            alignment: Alignment.topCenter,
+                            child: VideoPlayer(_logoVideoController),
+                          ),
                         ),
                       ),
-                    ),
-                  ) : const SizedBox.shrink(),
+                    )
+                    : const SizedBox.shrink(),
           ),
 
           Positioned(

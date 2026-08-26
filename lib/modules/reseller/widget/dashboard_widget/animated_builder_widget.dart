@@ -218,10 +218,6 @@ class ProgressWithLabel extends StatelessWidget {
   }
 }
 
-
-
-
-
 class ProgressWithLabelAndImage extends StatelessWidget {
   final double progressValue;
   final Color progressColor;
@@ -248,8 +244,7 @@ class ProgressWithLabelAndImage extends StatelessWidget {
         final double clampedProgress = progressValue.clamp(0.0, 1.0);
 
         // ✅ Center image on progress tip
-        final double imageLeft =
-            (barWidth * clampedProgress) - (imageSize / 2);
+        final double imageLeft = (barWidth * clampedProgress) - (imageSize / 2);
 
         final percent = (clampedProgress * 100).toInt();
 
@@ -267,12 +262,15 @@ class ProgressWithLabelAndImage extends StatelessWidget {
                       tween: Tween<double>(begin: 0, end: clampedProgress),
                       duration: const Duration(milliseconds: 800),
                       curve: Curves.easeInOut,
-                      builder: (context, value, _) => LinearProgressIndicator(
-                        value: value,
-                        backgroundColor: backgroundColor.withOpacity(0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                        minHeight: thickness,
-                      ),
+                      builder:
+                          (context, value, _) => LinearProgressIndicator(
+                            value: value,
+                            backgroundColor: backgroundColor.withOpacity(0.1),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              progressColor,
+                            ),
+                            minHeight: thickness,
+                          ),
                     ),
                     // ✨ Shimmer overlay
                     Positioned.fill(
@@ -289,7 +287,10 @@ class ProgressWithLabelAndImage extends StatelessWidget {
 
               // 🐦 Image positioned ABOVE the progress bar tip
               Positioned(
-                left: imageLeft.clamp(0.0, barWidth - imageSize), // 👈 prevent overflow
+                left: imageLeft.clamp(
+                  0.0,
+                  barWidth - imageSize,
+                ), // 👈 prevent overflow
                 top: -imageSize, // 👈 sits directly above the bar
                 child: SizedBox(
                   width: imageSize,

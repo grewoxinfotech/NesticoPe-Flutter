@@ -250,7 +250,6 @@
 //   }
 // }
 
-
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -287,8 +286,8 @@ class VariantMediaController extends ChangeNotifier {
 
   bool get hasNewMedia =>
       _images.any((item) => item.isFile) ||
-          _videos.any((item) => item.isFile) ||
-          _model?.isFile == true;
+      _videos.any((item) => item.isFile) ||
+      _model?.isFile == true;
 
   // -------------------- Load Existing Media --------------------
 
@@ -298,7 +297,6 @@ class VariantMediaController extends ChangeNotifier {
   }
 
   void loadExistingMedia(ProjectVariant? variant) {
-    debugPrint("Loading existing media: ${variant?.toJson()}");
     if (variant?.mediaItems != null) {
       _applyVariantMedia(variant!.mediaItems!);
     } else {
@@ -374,9 +372,7 @@ class VariantMediaController extends ChangeNotifier {
         );
         return true;
       }
-    } catch (e) {
-      debugPrint('Could not parse variant upload response: $e');
-    }
+    } catch (e) {}
     return false;
   }
 
@@ -395,9 +391,7 @@ class VariantMediaController extends ChangeNotifier {
           }
         }
       }
-    } catch (e) {
-      debugPrint('refreshFromProject failed: $e');
-    }
+    } catch (e) {}
   }
 
   // Load existing 3D model (alternative method if needed separately)
@@ -459,7 +453,8 @@ class VariantMediaController extends ChangeNotifier {
   Future<void> pick3DModel() async {
     try {
       if (_model != null) {
-        _errorMessage = 'Only one 3D model is allowed. Please remove the existing one first.';
+        _errorMessage =
+            'Only one 3D model is allowed. Please remove the existing one first.';
         notifyListeners();
         return;
       }
@@ -468,11 +463,19 @@ class VariantMediaController extends ChangeNotifier {
       if (file != null) {
         // Validate file extension
         final fileName = file.path.toLowerCase();
-        final validExtensions = ['.glb', '.gltf', '.fbx', '.obj', '.stl', '.dae'];
+        final validExtensions = [
+          '.glb',
+          '.gltf',
+          '.fbx',
+          '.obj',
+          '.stl',
+          '.dae',
+        ];
         final isValid = validExtensions.any((ext) => fileName.endsWith(ext));
 
         if (!isValid) {
-          _errorMessage = 'Invalid file format. Please select a valid 3D model file (GLB, GLTF, FBX, OBJ, STL, DAE)';
+          _errorMessage =
+              'Invalid file format. Please select a valid 3D model file (GLB, GLTF, FBX, OBJ, STL, DAE)';
           notifyListeners();
           return;
         }
@@ -497,7 +500,7 @@ class VariantMediaController extends ChangeNotifier {
   }
 
   void removeVideo(int index) {
-    if (index >= 0 && index < _videos.length) { 
+    if (index >= 0 && index < _videos.length) {
       _videos.removeAt(index);
       notifyListeners();
     }
@@ -515,10 +518,10 @@ class VariantMediaController extends ChangeNotifier {
     required String variantId,
   }) async {
     final newImages =
-    _images.where((item) => item.isFile).map((item) => item.file!).toList();
+        _images.where((item) => item.isFile).map((item) => item.file!).toList();
 
     final newVideos =
-    _videos.where((item) => item.isFile).map((item) => item.file!).toList();
+        _videos.where((item) => item.isFile).map((item) => item.file!).toList();
 
     final newModel = _model?.isFile == true ? _model!.file : null;
 
@@ -544,10 +547,7 @@ class VariantMediaController extends ChangeNotifier {
       if (result['success'] == true) {
         final applied = _applyUploadResponse(result['data']);
         if (!applied) {
-          await refreshFromProject(
-            projectId: projectId,
-            variantId: variantId,
-          );
+          await refreshFromProject(projectId: projectId, variantId: variantId);
         }
 
         _isUploading = false;

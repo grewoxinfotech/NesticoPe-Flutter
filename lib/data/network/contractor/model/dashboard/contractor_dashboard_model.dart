@@ -1209,7 +1209,6 @@ class ContractorProjectsTrend {
   }
 }*/
 
-
 class ContractorInsightsModel {
   final bool success;
   final String message;
@@ -1230,11 +1229,7 @@ class ContractorInsightsModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 }
 
@@ -1264,27 +1259,34 @@ class ContractorData {
   factory ContractorData.fromJson(Map<String, dynamic> json) {
     return ContractorData(
       contractorId: json['contractorId'] ?? '',
-      performance: json['performance'] != null
-          ? ContractorPerformance.fromJson(json['performance'])
-          : null,
-      leadAnalytics: json['leadAnalytics'] != null
-          ? ContractorLeadAnalytics.fromJson(json['leadAnalytics'])
-          : null,
-      services: json['services'] != null
-          ? ContractorServices.fromJson(json['services'])
-          : null,
-      reviews: json['reviews'] != null
-          ? ContractorReviews.fromJson(json['reviews'])
-          : null,
-      inquiriesTrend: (json['inquiriesTrend'] as List<dynamic>? ?? [])
-          .map((e) => ContractorInquiriesTrend.fromJson(e))
-          .toList(),
-      leadsTrend: (json['leadsTrend'] as List<dynamic>? ?? [])
-          .map((e) => ContractorLeadsTrend.fromJson(e))
-          .toList(),
-      projectsTrend: (json['projectsTrend'] as List<dynamic>? ?? [])
-          .map((e) => ContractorProjectsTrend.fromJson(e))
-          .toList(),
+      performance:
+          json['performance'] != null
+              ? ContractorPerformance.fromJson(json['performance'])
+              : null,
+      leadAnalytics:
+          json['leadAnalytics'] != null
+              ? ContractorLeadAnalytics.fromJson(json['leadAnalytics'])
+              : null,
+      services:
+          json['services'] != null
+              ? ContractorServices.fromJson(json['services'])
+              : null,
+      reviews:
+          json['reviews'] != null
+              ? ContractorReviews.fromJson(json['reviews'])
+              : null,
+      inquiriesTrend:
+          (json['inquiriesTrend'] as List<dynamic>? ?? [])
+              .map((e) => ContractorInquiriesTrend.fromJson(e))
+              .toList(),
+      leadsTrend:
+          (json['leadsTrend'] as List<dynamic>? ?? [])
+              .map((e) => ContractorLeadsTrend.fromJson(e))
+              .toList(),
+      projectsTrend:
+          (json['projectsTrend'] as List<dynamic>? ?? [])
+              .map((e) => ContractorProjectsTrend.fromJson(e))
+              .toList(),
       lastUpdated: json['lastUpdated'],
     );
   }
@@ -1364,8 +1366,9 @@ class ContractorPerformance {
       previousMonthInquiries: json['previousMonthInquiries'] ?? 0,
       currentMonthLeads: json['currentMonthLeads'] ?? 0,
       previousMonthLeads: json['previousMonthLeads'] ?? 0,
-      inquiryStatusBreakdown:
-      Map<String, dynamic>.from(json['inquiryStatusBreakdown'] ?? {}),
+      inquiryStatusBreakdown: Map<String, dynamic>.from(
+        json['inquiryStatusBreakdown'] ?? {},
+      ),
     );
   }
 
@@ -1406,12 +1409,15 @@ class ContractorLeadAnalytics {
 
   factory ContractorLeadAnalytics.fromJson(Map<String, dynamic> json) {
     return ContractorLeadAnalytics(
-      leadStatusBreakdown:
-      Map<String, dynamic>.from(json['leadStatusBreakdown'] ?? {}),
-      leadStageBreakdown:
-      Map<String, dynamic>.from(json['leadStageBreakdown'] ?? {}),
-      leadSourceBreakdown:
-      Map<String, dynamic>.from(json['leadSourceBreakdown'] ?? {}),
+      leadStatusBreakdown: Map<String, dynamic>.from(
+        json['leadStatusBreakdown'] ?? {},
+      ),
+      leadStageBreakdown: Map<String, dynamic>.from(
+        json['leadStageBreakdown'] ?? {},
+      ),
+      leadSourceBreakdown: Map<String, dynamic>.from(
+        json['leadSourceBreakdown'] ?? {},
+      ),
     );
   }
 
@@ -1435,11 +1441,13 @@ class ContractorServices {
 
   factory ContractorServices.fromJson(Map<String, dynamic> json) {
     return ContractorServices(
-      topRatedServices: (json['topRatedServices'] as List<dynamic>? ?? [])
-          .map((e) => ContractorTopService.fromJson(e))
-          .toList(),
-      ratingsDistribution:
-      Map<String, int>.from(json['ratingsDistribution'] ?? {}),
+      topRatedServices:
+          (json['topRatedServices'] as List<dynamic>? ?? [])
+              .map((e) => ContractorTopService.fromJson(e))
+              .toList(),
+      ratingsDistribution: Map<String, int>.from(
+        json['ratingsDistribution'] ?? {},
+      ),
     );
   }
 
@@ -1523,9 +1531,10 @@ class ContractorReviews {
   factory ContractorReviews.fromJson(Map<String, dynamic> json) {
     return ContractorReviews(
       totalReviews: json['totalReviews'] ?? 0,
-      recentReviews: (json['recentReviews'] as List<dynamic>? ?? [])
-          .map((e) => ContractorReview.fromJson(e))
-          .toList(),
+      recentReviews:
+          (json['recentReviews'] as List<dynamic>? ?? [])
+              .map((e) => ContractorReview.fromJson(e))
+              .toList(),
       ratingBreakdown: Map<String, int>.from(json['ratingBreakdown'] ?? {}),
       averageRating: (json['averageRating'] ?? 0).toDouble(),
     );
@@ -1589,10 +1598,7 @@ class ContractorInquiriesTrend {
   final String month;
   final int inquiries;
 
-  ContractorInquiriesTrend({
-    required this.month,
-    required this.inquiries,
-  });
+  ContractorInquiriesTrend({required this.month, required this.inquiries});
 
   factory ContractorInquiriesTrend.fromJson(Map<String, dynamic> json) {
     return ContractorInquiriesTrend(
@@ -1602,10 +1608,7 @@ class ContractorInquiriesTrend {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'month': month,
-      'inquiries': inquiries,
-    };
+    return {'month': month, 'inquiries': inquiries};
   }
 }
 
@@ -1613,10 +1616,7 @@ class ContractorLeadsTrend {
   final String month;
   final int leads;
 
-  ContractorLeadsTrend({
-    required this.month,
-    required this.leads,
-  });
+  ContractorLeadsTrend({required this.month, required this.leads});
 
   factory ContractorLeadsTrend.fromJson(Map<String, dynamic> json) {
     return ContractorLeadsTrend(
@@ -1626,10 +1626,7 @@ class ContractorLeadsTrend {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'month': month,
-      'leads': leads,
-    };
+    return {'month': month, 'leads': leads};
   }
 }
 
@@ -1637,10 +1634,7 @@ class ContractorProjectsTrend {
   final String month;
   final int projects;
 
-  ContractorProjectsTrend({
-    required this.month,
-    required this.projects,
-  });
+  ContractorProjectsTrend({required this.month, required this.projects});
 
   factory ContractorProjectsTrend.fromJson(Map<String, dynamic> json) {
     return ContractorProjectsTrend(
@@ -1650,11 +1644,6 @@ class ContractorProjectsTrend {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'month': month,
-      'projects': projects,
-    };
+    return {'month': month, 'projects': projects};
   }
 }
-
-

@@ -367,8 +367,6 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                     ),
 
                     onCitySelected: (selectedCity) {
-                      print("✅ Selected city: ${selectedCity.description}");
-
                       // Update text controller
                       contractorServiceController.cityController.text =
                           selectedCity.description ?? '';
@@ -418,7 +416,6 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                   LocationSelectionWidget(
                     controller: contractorServiceController.locationController,
                     onLocationSelected: (data) {
-                      print("✅ Selected location: ${data.description}");
                       contractorServiceController.locationController.text =
                           data.description ?? '';
                     },
@@ -436,8 +433,6 @@ class ContractorAddInquiryScreen extends StatelessWidget {
                         contractorServiceController.descriptionController,
                     hintText: "Enter service description",
                     maxLines: 5,
-                    
-              
                   ),
 
                   const SizedBox(height: 20),

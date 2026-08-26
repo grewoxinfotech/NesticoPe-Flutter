@@ -15,7 +15,6 @@ class ContractorLeadOverview extends StatelessWidget {
   final ContractorLeadItem leadItem;
   final ContractorServiceItem serviceItem;
 
-
   const ContractorLeadOverview({
     super.key,
     required this.leadItem,
@@ -24,8 +23,6 @@ class ContractorLeadOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Service Id ${serviceItem.id}");
-    log("Lead Items ${leadItem.id}  ${leadItem.customFields?.serviceId}");
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -44,17 +41,15 @@ class ContractorLeadOverview extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            child:  Text('Follow Up'),
+            child: Text('Follow Up'),
             onPressed: () {
-
-              Get.to(()=>ContractorFollowUpScreen(lead:leadItem));
-              log("Lead To Follow Up ${leadItem}");
+              Get.to(() => ContractorFollowUpScreen(lead: leadItem));
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           children: [
             _buildServiceDetailsCard(),
@@ -71,11 +66,14 @@ class ContractorLeadOverview extends StatelessWidget {
     final meta = serviceItem.meta;
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+      ),
       elevation: 1,
       color: ColorRes.surface,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -95,35 +93,37 @@ class ContractorLeadOverview extends StatelessWidget {
               serviceItem.description,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style:  TextStyle(
-
+              style: TextStyle(
                 fontSize: AppFontSizes.small,
                 color: ColorRes.leadGreyColor.shade700,
-                fontWeight: AppFontWeights.medium
+                fontWeight: AppFontWeights.medium,
               ),
             ),
             const SizedBox(height: 8),
 
             Row(
               children: [
-                 Icon(Icons.star, color: Colors.amber, size: 20),
-                 SizedBox(width: 4),
+                Icon(Icons.star, color: Colors.amber, size: 20),
+                SizedBox(width: 4),
                 Text(
-                  "${serviceItem.averageRating} (${Formatter.formatNumber(serviceItem.totalReviews??0)} review)",
+                  "${serviceItem.averageRating} (${Formatter.formatNumber(serviceItem.totalReviews ?? 0)} review)",
                   style: const TextStyle(
                     fontSize: AppFontSizes.small,
                     fontWeight: AppFontWeights.medium,
-                    color: ColorRes.textColor
+                    color: ColorRes.textColor,
                   ),
                 ),
                 const Spacer(),
                 Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: serviceItem.isActive
-                        ? ColorRes.green.shade50
-                        : ColorRes.error.shade50,
+                    color:
+                        serviceItem.isActive
+                            ? ColorRes.green.shade50
+                            : ColorRes.error.shade50,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -132,18 +132,20 @@ class ContractorLeadOverview extends StatelessWidget {
                         serviceItem.isActive
                             ? Icons.check_box
                             : Icons.close_rounded,
-                        color: serviceItem.isActive
-                            ? ColorRes.green
-                            : ColorRes.error,
+                        color:
+                            serviceItem.isActive
+                                ? ColorRes.green
+                                : ColorRes.error,
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         serviceItem.isActive ? "Active" : "Inactive",
                         style: TextStyle(
-                          color: serviceItem.isActive
-                              ? ColorRes.green
-                              : ColorRes.error,
+                          color:
+                              serviceItem.isActive
+                                  ? ColorRes.green
+                                  : ColorRes.error,
                           fontSize: AppFontSizes.small,
                           fontWeight: AppFontWeights.medium,
                         ),
@@ -155,38 +157,51 @@ class ContractorLeadOverview extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-             Divider(
-              color: ColorRes.leadGreyColor.shade300,
-            ),
+            Divider(color: ColorRes.leadGreyColor.shade300),
 
             _rowTwoColumns("Price", "${capitalizeEachWord(meta.priceModel)}"),
-            _rowTwoColumns("Minimum Price", "${Formatter.formatPrice(meta.minPriceRange??0)}"),
-            _rowTwoColumns("Maximum Price", "${Formatter.formatPrice(meta.maxPriceRange??0)}"),
-            _rowTwoColumns("Availability", capitalizeEachWord(meta.workAvailability),),
-            _rowTwoColumns("Provides Materials", (meta.provideMaterials??false) ? "Yes" : "No"),
-            _rowTwoColumns("Equipment", (meta.equipmentProvided??false) ? "Yes" : "No"),
-            _rowTwoColumns("Insurance", (meta.insuranceAvailable??false) ? "Yes" : "No"),
+            _rowTwoColumns(
+              "Minimum Price",
+              "${Formatter.formatPrice(meta.minPriceRange ?? 0)}",
+            ),
+            _rowTwoColumns(
+              "Maximum Price",
+              "${Formatter.formatPrice(meta.maxPriceRange ?? 0)}",
+            ),
+            _rowTwoColumns(
+              "Availability",
+              capitalizeEachWord(meta.workAvailability),
+            ),
+            _rowTwoColumns(
+              "Provides Materials",
+              (meta.provideMaterials ?? false) ? "Yes" : "No",
+            ),
+            _rowTwoColumns(
+              "Equipment",
+              (meta.equipmentProvided ?? false) ? "Yes" : "No",
+            ),
+            _rowTwoColumns(
+              "Insurance",
+              (meta.insuranceAvailable ?? false) ? "Yes" : "No",
+            ),
 
             const SizedBox(height: 8),
-             Divider(
-              color: ColorRes.leadGreyColor.shade300,
-            ),
+            Divider(color: ColorRes.leadGreyColor.shade300),
 
             const Text(
               "Payment Modes",
-              style: TextStyle(
-                fontSize: AppFontSizes.small,
-              ),
+              style: TextStyle(fontSize: AppFontSizes.small),
             ),
             const SizedBox(height: 4),
             Text(
-              meta.acceptedPaymentModes?.map((e) => e.toUpperCase().split("_").join(" ")).join(", ")??'',
-              style:  TextStyle(
+              meta.acceptedPaymentModes
+                      ?.map((e) => e.toUpperCase().split("_").join(" "))
+                      .join(", ") ??
+                  '',
+              style: TextStyle(
                 color: ColorRes.textPrimary,
                 fontSize: AppFontSizes.medium,
-                fontWeight:AppFontWeights.medium
-
-
+                fontWeight: AppFontWeights.medium,
               ),
             ),
           ],
@@ -197,11 +212,14 @@ class ContractorLeadOverview extends StatelessWidget {
 
   Widget _buildLeadDetailsCard() {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
+      ),
       elevation: 1,
       color: ColorRes.surface,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -210,10 +228,14 @@ class ContractorLeadOverview extends StatelessWidget {
 
             Row(
               children: [
-                Container(padding: EdgeInsets.all(10),decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: ColorRes.primary.withOpacity(0.2)
-                ),child: Icon(Icons.person, size: 20, color: ColorRes.primary)),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: ColorRes.primary.withOpacity(0.2),
+                  ),
+                  child: Icon(Icons.person, size: 20, color: ColorRes.primary),
+                ),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,10 +250,13 @@ class ContractorLeadOverview extends StatelessWidget {
                         fontWeight: AppFontWeights.medium,
                       ),
                     ),
-                    const Text("Lead Name",
-                        style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.textSecondary)),
+                    const Text(
+                      "Lead Name",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.caption,
+                        color: ColorRes.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -241,20 +266,11 @@ class ContractorLeadOverview extends StatelessWidget {
             _infoRow(Icons.email_outlined, leadItem.email ?? "", "Email"),
             const SizedBox(height: 5),
             _infoRow(Icons.phone, leadItem.phone ?? "", "Phone"),
-             Divider(height: 24,color: ColorRes.leadGreyColor.shade300,),
+            Divider(height: 24, color: ColorRes.leadGreyColor.shade300),
 
-            _infoLabelValue(
-              "Status",
-              _formatLabel(leadItem.status),
-            ),
-            _infoLabelValue(
-              "Stage",
-              _formatLabel(leadItem.stage),
-            ),
-            _infoLabelValue(
-              "Source",
-              _formatLabel(leadItem.source),
-            ),
+            _infoLabelValue("Status", _formatLabel(leadItem.status)),
+            _infoLabelValue("Stage", _formatLabel(leadItem.stage)),
+            _infoLabelValue("Source", _formatLabel(leadItem.source)),
 
             _infoLabelValue(
               "Created At",
@@ -262,7 +278,6 @@ class ContractorLeadOverview extends StatelessWidget {
                   ? DateFormat('MMM dd, yyyy').format(leadItem.createdAt!)
                   : "-",
             ),
-
           ],
         ),
       ),
@@ -275,7 +290,7 @@ class ContractorLeadOverview extends StatelessWidget {
       style: const TextStyle(
         fontWeight: AppFontWeights.semiBold,
         fontSize: AppFontSizes.medium,
-        color: ColorRes.textColor
+        color: ColorRes.textColor,
       ),
     );
   }
@@ -286,8 +301,21 @@ class ContractorLeadOverview extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label1, style:  TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small)),
-          Text(value1, style: TextStyle(fontWeight: AppFontWeights.medium,color: ColorRes.textColor,fontSize: AppFontSizes.bodySmall)),
+          Text(
+            label1,
+            style: TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.small,
+            ),
+          ),
+          Text(
+            value1,
+            style: TextStyle(
+              fontWeight: AppFontWeights.medium,
+              color: ColorRes.textColor,
+              fontSize: AppFontSizes.bodySmall,
+            ),
+          ),
         ],
       ),
     );
@@ -298,23 +326,34 @@ class ContractorLeadOverview extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Container(padding: EdgeInsets.all(10),decoration: BoxDecoration(
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: ColorRes.primary.withOpacity(0.2)
-          ),child: Icon(icon, size: 20, color: ColorRes.primary)),
+              color: ColorRes.primary.withOpacity(0.2),
+            ),
+            child: Icon(icon, size: 20, color: ColorRes.primary),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value,
-                    style: const TextStyle(fontSize: AppFontSizes.bodySmall,
-                      color: ColorRes.textPrimary,
-                      fontWeight: AppFontWeights.medium,)),
-                Text(label,
-                    style:  TextStyle(
-                        fontSize: AppFontSizes.caption,
-                        color: ColorRes.textSecondary)),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    color: ColorRes.textPrimary,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: AppFontSizes.caption,
+                    color: ColorRes.textSecondary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -329,8 +368,21 @@ class ContractorLeadOverview extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: ColorRes.textSecondary,fontSize: AppFontSizes.small)),
-          Text(value, style: const TextStyle(fontWeight: AppFontWeights.medium,color: ColorRes.textColor,fontSize: AppFontSizes.bodySmall)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: ColorRes.textSecondary,
+              fontSize: AppFontSizes.small,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontWeight: AppFontWeights.medium,
+              color: ColorRes.textColor,
+              fontSize: AppFontSizes.bodySmall,
+            ),
+          ),
         ],
       ),
     );
@@ -344,8 +396,7 @@ class ContractorLeadOverview extends StatelessWidget {
           backgroundColor: bg,
           foregroundColor: fg,
           elevation: 0,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(vertical: 14),
         ),
         onPressed: () {},
@@ -356,20 +407,23 @@ class ContractorLeadOverview extends StatelessWidget {
       ),
     );
   }
-
 }
 
 extension on String {
   String capitalize() =>
       isNotEmpty ? "${this[0].toUpperCase()}${substring(1)}" : this;
 }
+
 String _formatLabel(String? text) {
   if (text == null || text.isEmpty) return "";
   return text
       .replaceAll("_", " ")
       .split(" ")
-      .map((word) => word.isEmpty
-      ? ""
-      : "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}")
+      .map(
+        (word) =>
+            word.isEmpty
+                ? ""
+                : "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}",
+      )
       .join(" ");
 }

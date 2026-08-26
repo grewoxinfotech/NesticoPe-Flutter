@@ -1,4 +1,3 @@
-
 class EmployeeTaskItem {
   final String id;
   final String createdBy;
@@ -43,15 +42,26 @@ class EmployeeTaskItem {
       taskDescription: json['taskDescription']?.toString() ?? '',
       status: json['status']?.toString() ?? 'pending',
       priority: json['priority']?.toString() ?? 'low',
-      dueDate: json['dueDate'] != null ? DateTime.tryParse(json['dueDate']) : null,
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt']) : null,
-      project: json['project'] is Map<String, dynamic>
-          ? ProjectSummary.fromJson(json['project'] as Map<String, dynamic>)
-          : null,
-      employee: json['employee'] is Map<String, dynamic>
-          ? EmployeeSummary.fromJson(json['employee'] as Map<String, dynamic>)
-          : null,
+      dueDate:
+          json['dueDate'] != null ? DateTime.tryParse(json['dueDate']) : null,
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.tryParse(json['createdAt'])
+              : null,
+      updatedAt:
+          json['updatedAt'] != null
+              ? DateTime.tryParse(json['updatedAt'])
+              : null,
+      project:
+          json['project'] is Map<String, dynamic>
+              ? ProjectSummary.fromJson(json['project'] as Map<String, dynamic>)
+              : null,
+      employee:
+          json['employee'] is Map<String, dynamic>
+              ? EmployeeSummary.fromJson(
+                json['employee'] as Map<String, dynamic>,
+              )
+              : null,
     );
   }
 
@@ -94,7 +104,8 @@ class EmployeeTaskListResponse {
 
   factory EmployeeTaskListResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] ?? {};
-    final items = (data['items'] as List?)
+    final items =
+        (data['items'] as List?)
             ?.map((e) => EmployeeTaskItem.fromJson(e))
             .toList() ??
         [];
@@ -128,11 +139,7 @@ class EmployeeSummary {
   final String id;
   final String name;
   final String email;
-  EmployeeSummary({
-    required this.id,
-    required this.name,
-    required this.email,
-  });
+  EmployeeSummary({required this.id, required this.name, required this.email});
   factory EmployeeSummary.fromJson(Map<String, dynamic> json) {
     return EmployeeSummary(
       id: json['id']?.toString() ?? '',

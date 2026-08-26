@@ -28,14 +28,13 @@ class DataWrapper {
   DataWrapper({this.referrals, this.points, this.settings});
 
   factory DataWrapper.fromJson(Map<String, dynamic> json) => DataWrapper(
-    referrals: json['referrals'] != null
-        ? (json['referrals'] as List)
-        .map((v) => Data.fromJson(v))
-        .toList()
-        : [],
+    referrals:
+        json['referrals'] != null
+            ? (json['referrals'] as List).map((v) => Data.fromJson(v)).toList()
+            : [],
     points: json['points'] != null ? Points.fromJson(json['points']) : null,
     settings:
-    json['settings'] != null ? Settings.fromJson(json['settings']) : null,
+        json['settings'] != null ? Settings.fromJson(json['settings']) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -101,7 +100,8 @@ class Data {
         }
       } catch (_) {}
     } else if (referred is List) {
-      referredUsersList = referred.map((v) => ReferredUser.fromJson(v)).toList();
+      referredUsersList =
+          referred.map((v) => ReferredUser.fromJson(v)).toList();
     }
 
     return Data(
@@ -157,7 +157,13 @@ class ReferredUser {
   String? registeredAt;
   String? status;
 
-  ReferredUser({this.userId, this.username, this.email, this.registeredAt, this.status});
+  ReferredUser({
+    this.userId,
+    this.username,
+    this.email,
+    this.registeredAt,
+    this.status,
+  });
 
   factory ReferredUser.fromJson(Map<String, dynamic> json) => ReferredUser(
     userId: json['userId'],

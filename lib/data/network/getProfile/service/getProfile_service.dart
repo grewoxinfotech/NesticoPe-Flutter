@@ -24,17 +24,13 @@ class GetProfileService {
         headers: await header(),
       );
       final decoded = jsonDecode(response.body);
-      print('📦 Reseller Dashboard Raw Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded;
       } else {
-        print('⚠️ Reseller Dashboard Error Response: $decoded');
         return decoded;
       }
     } catch (e, stack) {
-      print('❌ Exception in fetchResellerDashboard: $e');
-      print(stack);
       return null;
     }
   }

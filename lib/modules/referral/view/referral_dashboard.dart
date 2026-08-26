@@ -592,7 +592,7 @@ import '../../../app/utils/helper_function/contact_helper.dart';
 import '../../../data/network/referral/model/referrel_model.dart';
 import '../controller/referral_controller.dart';
 
-  class ReferralProgramScreen extends StatelessWidget {
+class ReferralProgramScreen extends StatelessWidget {
   final ReferralController controller = Get.put(ReferralController());
 
   @override

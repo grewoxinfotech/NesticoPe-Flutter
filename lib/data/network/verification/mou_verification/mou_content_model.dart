@@ -3,11 +3,7 @@ class MouResponse {
   final String? message;
   final MouData? data;
 
-  MouResponse({
-    this.success,
-    this.message,
-    this.data,
-  });
+  MouResponse({this.success, this.message, this.data});
 
   factory MouResponse.fromJson(Map<String, dynamic> json) {
     return MouResponse(
@@ -18,11 +14,7 @@ class MouResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
@@ -45,13 +37,10 @@ class MouData {
 
   factory MouData.fromJson(Map<String, dynamic> json) {
     return MouData(
-      items: (json['items'] as List?)
-    ?.map(
-      (e) => MouItem.fromJson(
-        Map<String, dynamic>.from(e),
-      ),
-    )
-    .toList(),
+      items:
+          (json['items'] as List?)
+              ?.map((e) => MouItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList(),
       total: json['total'],
       currentPage: json['currentPage'],
       totalPages: json['totalPages'],
@@ -98,12 +87,10 @@ class MouItem {
       updatedBy: json['updated_by'],
       title: json['title'],
       content: json['content'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 

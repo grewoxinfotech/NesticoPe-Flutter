@@ -230,7 +230,9 @@ class _AllCategoryCard extends StatelessWidget {
             const SizedBox(height: 12),*/
             const SizedBox(height: 8),
             // Bullet points description
-            ...((item.description).where((line) => line.trim().isNotEmpty).map((line) {
+            ...((item.description).where((line) => line.trim().isNotEmpty).map((
+              line,
+            ) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Row(
@@ -247,7 +249,9 @@ class _AllCategoryCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        line.trim().startsWith('•') ? line.trim().substring(1).trim() : line.trim(),
+                        line.trim().startsWith('•')
+                            ? line.trim().substring(1).trim()
+                            : line.trim(),
                         style: TextStyle(
                           fontSize: 11,
                           color: ColorRes.leadGreyColor.shade700,

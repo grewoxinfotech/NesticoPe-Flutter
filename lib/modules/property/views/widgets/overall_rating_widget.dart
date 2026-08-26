@@ -281,8 +281,6 @@
 //   }
 // }
 
-
-
 // import 'package:flutter/material.dart';
 // import 'package:nesticope_app/app/constants/app_font_sizes.dart';
 // import 'package:nesticope_app/app/constants/color_res.dart';
@@ -472,7 +470,7 @@ class OverallRatingWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: ColorRes.leadGreyColor.shade300,width: 1)
+        side: BorderSide(color: ColorRes.leadGreyColor.shade300, width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -486,7 +484,7 @@ class OverallRatingWidget extends StatelessWidget {
                 // Rating value
                 Text(
                   overallRating.toStringAsFixed(1),
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppFontSizes.displayMediumSmall,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textPrimary,
@@ -552,8 +550,6 @@ class OverallRatingWidget extends StatelessWidget {
                 ),
               ),
             ),
-
-
           ],
         ),
       ),

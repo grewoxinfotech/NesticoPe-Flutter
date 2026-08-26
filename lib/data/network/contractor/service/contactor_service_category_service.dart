@@ -7,6 +7,7 @@ import 'package:nesticope_app/utils/logger/app_logger.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/contractot_service_model/contractor_service_category_model.dart';
+
 class TopCategoryService {
   final String baseUrl = ApiConstants.contractorTopServiceCategory;
 
@@ -25,16 +26,12 @@ class TopCategoryService {
     String? city,
   }) async {
     try {
-      final uri = Uri.parse(baseUrl).replace(queryParameters: {
-        if (limit != null) 'limit': limit.toString(),
-       
-      });
+      final uri = Uri.parse(baseUrl).replace(
+        queryParameters: {if (limit != null) 'limit': limit.toString()},
+      );
       // debugPrint("Fetching Top Categories from: $uri");
 
-      final response = await http.get(
-        uri,
-        headers: await headers(),
-      );
+      final response = await http.get(uri, headers: await headers());
 
       // debugPrint("Top Categories API Response: ${response.body}");
 
@@ -43,7 +40,6 @@ class TopCategoryService {
 
         final model = TopCategoryResponse.fromJson(jsonData);
         // AppLogger.structured('Top Categorise of full ',model.toJson() );
-
 
         return model.data?.items ?? [];
       } else {
@@ -81,7 +77,7 @@ class TopCategoryService {
         return model.data?.items.first;
       } else {
         // debugPrint(
-            // "Failed to get category by ID: ${response.statusCode}");
+        // "Failed to get category by ID: ${response.statusCode}");
       }
     } catch (e) {
       // debugPrint("Get category by ID exception: $e");

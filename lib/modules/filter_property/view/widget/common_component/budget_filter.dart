@@ -6,7 +6,6 @@ import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 import '../../../../../app/constants/app_font_sizes.dart';
 import '../../../../../widgets/New folder/inputs/dropdown_field.dart';
 
-
 class BudgetFilter extends StatelessWidget {
   final double minValue;
   final double maxValue;
@@ -154,17 +153,7 @@ class BudgetFilter extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
 class BudgetFilterChange extends StatefulWidget {
-
   final double minSelected;
   final double maxSelected;
   final ValueChanged<double?> onMinChanged;
@@ -181,7 +170,8 @@ class BudgetFilterChange extends StatefulWidget {
     required this.onMinChanged,
     required this.onMaxChanged,
     required this.minLabel,
-    required this.maxLabel, required this.budgetList,
+    required this.maxLabel,
+    required this.budgetList,
   });
 
   @override
@@ -189,9 +179,6 @@ class BudgetFilterChange extends StatefulWidget {
 }
 
 class _BudgetFilterChangeState extends State<BudgetFilterChange> {
-
-
-
   String _formatBudget(double value) {
     if (value == 0) return "₹0";
 
@@ -211,9 +198,7 @@ class _BudgetFilterChangeState extends State<BudgetFilterChange> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -241,7 +226,10 @@ class _BudgetFilterChangeState extends State<BudgetFilterChange> {
                   label: widget.maxLabel,
                   value: widget.maxSelected,
                   // Filter to show only values greater than minSelected
-                  items: widget.budgetList.where((e) => e > widget.minSelected).toList(),
+                  items:
+                      widget.budgetList
+                          .where((e) => e > widget.minSelected)
+                          .toList(),
                   onChanged: widget.onMaxChanged,
                 ),
               ),
@@ -263,10 +251,7 @@ class _BudgetFilterChangeState extends State<BudgetFilterChange> {
       decoration: BoxDecoration(
         color: ColorRes.primary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: ColorRes.primary.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: ColorRes.primary.withOpacity(0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,20 +266,21 @@ class _BudgetFilterChangeState extends State<BudgetFilterChange> {
           const SizedBox(height: 4),
           NesticoPeDropdownField<double>(
             value: value,
-            items: items
-                .map(
-                  (v) => DropdownMenuItem<double>(
-                value: v,
-                child: Text(
-                  Formatter.formatPrice(v),
-                  style: TextStyle(
-                    color: ColorRes.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            )
-                .toList(),
+            items:
+                items
+                    .map(
+                      (v) => DropdownMenuItem<double>(
+                        value: v,
+                        child: Text(
+                          Formatter.formatPrice(v),
+                          style: TextStyle(
+                            color: ColorRes.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
             onChanged: (va) {
               onChanged(va);
             },
@@ -304,4 +290,3 @@ class _BudgetFilterChangeState extends State<BudgetFilterChange> {
     );
   }
 }
-

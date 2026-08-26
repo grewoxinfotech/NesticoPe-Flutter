@@ -34,7 +34,13 @@ class StatCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           /// Title
-          buildCommonText(title, AppFontSizes.small, AppFontWeights.semiBold, ColorRes.textColor, 1),
+          buildCommonText(
+            title,
+            AppFontSizes.small,
+            AppFontWeights.semiBold,
+            ColorRes.textColor,
+            1,
+          ),
           const SizedBox(height: 4),
 
           /// Value + optional icon + subtext

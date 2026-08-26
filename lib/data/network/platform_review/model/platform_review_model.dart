@@ -92,7 +92,7 @@ class ReviewItem {
   final String? responseDate;
   final int? helpfulCount;
   final int? reportCount;
-    final DateTime? createdAt;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
   final Reviewer? reviewer;
   final Reviewer? adminReviewer;
@@ -178,7 +178,7 @@ class ReviewItem {
       responseDate: json['response_date'],
       helpfulCount: json['helpful_count'],
       reportCount: json['report_count'],
-            createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
   }
@@ -271,7 +271,7 @@ class Reviewer {
   final String? userType;
   final String? profilePic;
 
-  Reviewer({this.id, this.username, this.userType,this.profilePic});
+  Reviewer({this.id, this.username, this.userType, this.profilePic});
 
   factory Reviewer.fromJson(Map<String, dynamic> json) {
     return Reviewer(
@@ -279,7 +279,6 @@ class Reviewer {
       username: json['username'],
       userType: json['userType'],
       profilePic: json['profilePic'],
-
     );
   }
 
@@ -287,7 +286,7 @@ class Reviewer {
     'id': id,
     'username': username,
     'userType': userType,
-    'profilePic':profilePic
+    'profilePic': profilePic,
   };
 }
 

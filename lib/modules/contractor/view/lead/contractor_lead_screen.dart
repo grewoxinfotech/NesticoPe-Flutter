@@ -39,20 +39,14 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.loadInitial();
       controller.refreshLead();
-
-
     });
   }
 
   @override
-
   Widget build(BuildContext context) {
-
     var contractorEmployee = Get.put(ContractorEmployeeController());
     RxMap<String, String> selectedFilters = <String, String>{}.obs;
     final serviceController = Get.find<ContractorMyServiceController>();
-
-
 
     return Scaffold(
       backgroundColor: ColorRes.background,
@@ -79,7 +73,6 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
               );
 
               if (result != null) {
-                log("Selected Filters → $result");
                 if (result != null) {
                   selectedFilters.value = result;
                   controller.applyFilters(result);
@@ -91,7 +84,10 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
             label: const Text(
               "Filter",
-              style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -151,7 +147,9 @@ class _ContractorLeadScreenState extends State<ContractorLeadScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: ColorRes.primary,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -326,7 +324,7 @@ class ContractorLeadCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-       boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
@@ -349,7 +347,8 @@ class ContractorLeadCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      item.name?.trim()?.replaceAll('_', ' ')?.capitalize ?? "Unknown Lead",
+                      item.name?.trim()?.replaceAll('_', ' ')?.capitalize ??
+                          "Unknown Lead",
                       style: const TextStyle(
                         fontSize: AppFontSizes.medium,
                         color: ColorRes.textColor,
@@ -487,7 +486,11 @@ class ContractorLeadCard extends StatelessWidget {
                 _buildSectionTitle('Service Description'),
                 const SizedBox(height: 8),
                 Text(
-                  item.customFields?.serviceName?.capitalize?.replaceAll('_', ' ') ?? '',
+                  item.customFields?.serviceName?.capitalize?.replaceAll(
+                        '_',
+                        ' ',
+                      ) ??
+                      '',
                   style: const TextStyle(
                     fontSize: AppFontSizes.caption,
                     color: ColorRes.textSecondary,
@@ -900,9 +903,6 @@ void _showStatusDialog(
                                 .toList(),
                         onChanged: (val) {
                           controller.setValue(controller.changeStatus, val);
-                          log(
-                            "Contractor_status ${controller.changeStatus.value}",
-                          );
                         },
                         darkText: true,
                       );
@@ -928,9 +928,6 @@ void _showStatusDialog(
                                 .toList(),
                         onChanged: (val) {
                           controller.setValue(controller.changeStage, val);
-                          log(
-                            "Contractor_stage ${controller.changeStage.value}",
-                          );
                         },
                         darkText: true,
                       );

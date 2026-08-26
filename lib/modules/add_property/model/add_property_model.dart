@@ -510,7 +510,7 @@ class FinancialInfo {
   FinancialInfo({
     this.platformFees,
     this.is_for_sellorrent,
-this.paintingCharges,
+    this.paintingCharges,
     this.propertyPrice,
     this.propertyRentPerMonth,
     this.monthlyRent,
@@ -539,7 +539,7 @@ this.paintingCharges,
       pricePerSqft: (json['price_per_sqft'] as num?)?.toDouble(),
       brokerCommission: (json['broker_commission'] as num?)?.toDouble(),
       paintingCharges: json['painting_charges']?.toString(),
-            electricityChargesType: json['electricity_charges_type'],
+      electricityChargesType: json['electricity_charges_type'],
       electricityChargesUnit: json['electricity_charges_per_unit'],
       electricityChargesPerMonth: json['electricity_charges_per_month'],
 

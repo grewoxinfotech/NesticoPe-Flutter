@@ -191,7 +191,6 @@ class SellerListingController extends GetxController {
         "image": IMGRes.furnished,
       },
     ]);
-
   }
 
   void deleteProperty(int id) {

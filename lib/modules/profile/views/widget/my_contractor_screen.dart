@@ -452,7 +452,6 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
 
       setState(() => hasReviewed = result);
     } catch (e) {
-      debugPrint("❌ Error checking review: $e");
     } finally {
       setState(() => isLoadingReview = false);
     }
@@ -493,7 +492,8 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      meta?.serviceName?.replaceAll("_", " ").capitalize ?? 'N/A',
+                      meta?.serviceName?.replaceAll("_", " ").capitalize ??
+                          'N/A',
                       // maxLines: 2,
                       style: const TextStyle(
                         fontWeight: AppFontWeights.semiBold,
@@ -634,12 +634,12 @@ class _ContractorCardWidgetState extends State<ContractorCardWidget> {
                               ? null
                               : () {
                                 () async {
-                                  final ok =
-                                      await widget.controller.openAddFollowUpDialog(
-                                    meta?.serviceName ?? '',
-                                    project.title ?? '',
-                                    meta?.serviceId ?? '',
-                                  );
+                                  final ok = await widget.controller
+                                      .openAddFollowUpDialog(
+                                        meta?.serviceName ?? '',
+                                        project.title ?? '',
+                                        meta?.serviceId ?? '',
+                                      );
                                   if (!mounted) return;
                                   if (ok) {
                                     setState(() => hasReviewed = true);

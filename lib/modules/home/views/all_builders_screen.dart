@@ -59,9 +59,7 @@ class _AllBuildersScreenState extends State<AllBuildersScreen> {
             ),
           );
         }
-        log(
-          'Check All Builder Data : ${items.map((e) => e.toMap()).toString()}',
-        );
+
         return RefreshIndicator(
           onRefresh: () => topBuilderAllController.refreshTopBuilderAll(),
           child:
@@ -273,7 +271,6 @@ class BuilderCardShimmer extends StatelessWidget {
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
         child: SingleChildScrollView(
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             // mainAxisSize: MainAxisSize.min, // ✅ keep this

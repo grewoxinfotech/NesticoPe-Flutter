@@ -50,32 +50,26 @@ class PropertyService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("Reseller uri Property Approved : $uri");
+
       final response = await http.get(uri, headers: await headers());
 
       var logger = Logger();
 
       // logger.d("📦 Response Body → ${response.body}");
 
-      print("New ly add proeprtyu response: ${response.body}");
       // logger.d("New ly add proeprtyu response: response.body");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("PROPERTY DATA XJFNSDFSDJ ", data);
 
         return PaginationResponse<Items>.fromJson(
-          
           data,
           (json) => Items.fromJson(json),
         );
       } else {
-        print("Failed to load properties: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load properties");
       }
     } catch (e) {
-      print("Exception in fetchProperties: $e");
       rethrow; // Let controller handle error
     }
   }
@@ -94,15 +88,15 @@ class PropertyService {
       }
       final queryParameters = {
         'page': page.toString(),
-        'limit':"5",
+        'limit': "5",
         if (sanitized.isNotEmpty) ...sanitized,
       };
 
-      final uri = Uri.parse(topPropertyUrl).replace(queryParameters: queryParameters);
-      print("top property uri: $uri");
-      final response = await http.get(uri, headers: await headers());
+      final uri = Uri.parse(
+        topPropertyUrl,
+      ).replace(queryParameters: queryParameters);
 
-      print("response: ${response.body}");
+      final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -112,12 +106,9 @@ class PropertyService {
           (json) => Items.fromJson(json),
         );
       } else {
-        print("Failed to load properties: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load properties");
       }
     } catch (e) {
-      print("Exception in fetchProperties: $e");
       rethrow; // Let controller handle error
     }
   }
@@ -125,7 +116,6 @@ class PropertyService {
   /// Get single property by ID
   Future<Items?> getPropertyById(String id) async {
     try {
-      print("baseUrl : $baseUrl/$id");
       final response = await http.get(
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
@@ -136,9 +126,7 @@ class PropertyService {
 
         return Items.fromJson(jsonData['data']);
       }
-    } catch (e) {
-      print("Get property by ID exception: $e");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -151,8 +139,6 @@ class PropertyService {
   ) async {
     try {
       final url = Uri.parse(baseUrl);
-      print("url: $url");
-      debugPrint("Property JSON: ${jsonEncode(property)}");
 
       var request = http.MultipartRequest("POST", url);
 
@@ -209,7 +195,7 @@ class PropertyService {
       // Send request
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-      AppLogger.structured("Create property response: ", response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: "Success",
@@ -228,7 +214,6 @@ class PropertyService {
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      debugPrint("Create property exception: $e");
       return false;
     }
   }
@@ -367,8 +352,9 @@ class PropertyService {
 
       final hasLocalImage = (images ?? []).any((f) => !isNetworkFile(f.path));
       final hasLocalVideo = (videos ?? []).any((f) => !isNetworkFile(f.path));
-      final hasLocalDocument =
-          (documents ?? []).any((f) => !isNetworkFile(f.path));
+      final hasLocalDocument = (documents ?? []).any(
+        (f) => !isNetworkFile(f.path),
+      );
       final hasLocalMediaUpload =
           hasLocalImage || hasLocalVideo || hasLocalDocument;
 
@@ -403,8 +389,6 @@ class PropertyService {
           headers: await headers(),
           body: jsonEncode(payload),
         );
-
-        AppLogger.structured("Update property response: ", response.body);
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           NesticoPeSnackBar.showAwesomeSnackbar(
@@ -506,21 +490,9 @@ class PropertyService {
         request.fields['propertyMedia[documents][$i]'] = retainDocumentUrls[i];
       }
 
-      log("retainImageUrls: $retainImageUrls");
-      log("retainVideoUrls: $retainVideoUrls");
-      log("retainDocumentUrls: $retainDocumentUrls");
-      log(
-        "propertyMedia fields sent: "
-        "images=${retainImageUrls.length}, "
-        "videos=${retainVideoUrls.length}, "
-        "documents=${retainDocumentUrls.length}",
-      );
-
       // ─── Send ─────────────────────────────────────────────────
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      AppLogger.structured("Update property response: ", response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -538,7 +510,6 @@ class PropertyService {
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      print("Update property exception: $e");
       return false;
     }
   }
@@ -550,18 +521,15 @@ class PropertyService {
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
       );
-      print("Delete property response: ${response.body}");
+
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
-      print("Delete property exception: $e");
       return false;
     }
   }
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
     try {
-      print("data : ${data}");
-      print("baseUrl : $baseUrl/$id/inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/inquiry"),
         headers:
@@ -570,19 +538,15 @@ class PropertyService {
                 : await ApiConstants.getHeaders(),
         body: jsonEncode(data),
       );
-      print("response : ${response.body}");
-      print("Status code : ${response.statusCode}");
+
       return (response.statusCode == 200 || response.statusCode == 201);
     } catch (e) {
-      print("Delete property exception: $e");
       return false;
     }
   }
 
   Future<bool> addInquiryForNesticoPeService(Map<String, dynamic> data) async {
     try {
-      print("data : ${data}");
-      print("baseUrl : $baseUrl/general-inquiry");
       final response = await http.post(
         Uri.parse("$baseUrl/general-inquiry"),
         headers:
@@ -591,26 +555,22 @@ class PropertyService {
                 : await ApiConstants.getHeaders(),
         body: jsonEncode(data),
       );
-      print("response : ${response.body}");
-      print("Status code : ${response.statusCode}");
+
       return (response.statusCode == 200 || response.statusCode == 201);
     } catch (e) {
-      print("Delete property exception: $e");
       return false;
     }
   }
 
   Future<bool> addView(String id) async {
     try {
-      print("baseUrl : ${baseUrl}/${id}");
       final response = await http.post(
         Uri.parse("$baseUrl/$id/view"),
         headers: await headers(),
       );
-      print("response : ${response.body}");
+
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      print("Delete property exception: $e");
       return false;
     }
   }
@@ -645,21 +605,14 @@ class PropertyService {
   Future<List<Items>> getRecommendedPropertyByUserId(String userId) async {
     try {
       final uri = Uri.parse("$recommendedPropertyUrl/$userId");
-      print("ReCommanded Property baseUrl : $uri");
 
       final response = await http.get(uri, headers: await headers());
 
-      debugPrint("Recommended properties response: ${response.body}");
-
       if (response.statusCode != 200) {
-        debugPrint(
-          "Failed to fetch recommended properties. Status: ${response.statusCode}",
-        );
         return [];
       }
 
       final Map<String, dynamic> jsonData = json.decode(response.body);
-      AppLogger.structured("Recommended properties data: ", jsonData);
 
       final properties = jsonData['data']?['properties'] as List<dynamic>?;
 
@@ -671,14 +624,9 @@ class PropertyService {
           properties
               .map((e) => Items.fromJson(e as Map<String, dynamic>))
               .toList();
-      print(
-        "Recommended properties data count: ${data.map((e) => e.id).toList()}",
-      );
+
       return data;
     } catch (e, stackTrace) {
-      debugPrint(
-        "getRecommendedPropertyByUserId service error: $e\n$stackTrace",
-      );
       return [];
     }
   }

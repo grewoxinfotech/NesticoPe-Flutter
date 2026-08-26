@@ -20,7 +20,10 @@ class SupportTicketScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Support Tickets'),backgroundColor: ColorRes.white,),
+      appBar: AppBar(
+        title: const Text('Support Tickets'),
+        backgroundColor: ColorRes.white,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           controller.resetFormField();
@@ -95,7 +98,6 @@ class SupportTicketScreen extends StatelessWidget {
           // Ticket list
           Expanded(
             child: Obx(() {
-              
               if (controller.isLoading.value && controller.items.isEmpty) {
                 return SupportTicketScreenShimmer();
               }

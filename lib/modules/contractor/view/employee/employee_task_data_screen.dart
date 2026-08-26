@@ -499,7 +499,7 @@ class _EmployeeTaskDataScreenState extends State<EmployeeTaskDataScreen> {
           /// 📝 DESCRIPTION
           Text(
             t.taskDescription,
-     
+
             // overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 11,
@@ -547,7 +547,6 @@ class _EmployeeTaskDataScreenState extends State<EmployeeTaskDataScreen> {
                   color: ColorRes.leadGreyColor.shade600,
                 ),
               ),
-              
             ],
           ),
         ],
@@ -596,7 +595,11 @@ class _EmployeeTaskDataScreenState extends State<EmployeeTaskDataScreen> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      ShimmerShapes.rounded(width: 80, height: 22, borderRadius: 20),
+                      ShimmerShapes.rounded(
+                        width: 80,
+                        height: 22,
+                        borderRadius: 20,
+                      ),
                       const Spacer(),
                       ShimmerShapes.text(width: 90, height: 12),
                     ],

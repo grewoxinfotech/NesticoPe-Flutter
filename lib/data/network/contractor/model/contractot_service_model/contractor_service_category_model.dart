@@ -13,18 +13,13 @@ class TopCategoryResponse {
     return TopCategoryResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? TopCategoryData.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null ? TopCategoryData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
@@ -32,25 +27,20 @@ class TopCategoryData {
   final List<TopCategoryItem> items;
   final int total;
 
-  TopCategoryData({
-    required this.items,
-    required this.total,
-  });
+  TopCategoryData({required this.items, required this.total});
 
   factory TopCategoryData.fromJson(Map<String, dynamic> json) {
     return TopCategoryData(
-      items: (json['items'] as List<dynamic>? ?? [])
-          .map((e) => TopCategoryItem.fromJson(e))
-          .toList(),
+      items:
+          (json['items'] as List<dynamic>? ?? [])
+              .map((e) => TopCategoryItem.fromJson(e))
+              .toList(),
       total: json['total'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'items': items.map((e) => e.toJson()).toList(),
-      'total': total,
-    };
+    return {'items': items.map((e) => e.toJson()).toList(), 'total': total};
   }
 }
 
@@ -91,7 +81,7 @@ class TopCategoryItem {
       createdBy: json['created_by'] ?? '',
       updatedBy: json['updated_by'],
       name: json['name'] ?? '',
-      icon: json['icon']??'',
+      icon: json['icon'] ?? '',
       description: List<String>.from(json['description'] ?? []),
       isActive: json['isActive'] ?? 0,
       displayOrder: json['displayOrder'] ?? 0,
@@ -99,8 +89,7 @@ class TopCategoryItem {
       updatedAt: DateTime.parse(json['updatedAt']),
       serviceCount: json['serviceCount'] ?? 0,
       totalReviews: json['totalReviews'] ?? 0,
-      averageRating:
-      (json['averageRating'] as num?)?.toDouble() ?? 0.0,
+      averageRating: (json['averageRating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -110,7 +99,7 @@ class TopCategoryItem {
       'created_by': createdBy,
       'updated_by': updatedBy,
       'name': name,
-      'icon':icon,
+      'icon': icon,
       'description': description,
       'isActive': isActive,
       'displayOrder': displayOrder,

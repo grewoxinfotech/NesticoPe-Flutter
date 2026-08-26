@@ -14,9 +14,7 @@ class CompareManager extends GetxController {
 
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
-
   void toggle(Items item, {int max = 5}) {
-    
     final id = item.id;
     if (id == null) return;
     if (_selected.containsKey(id)) {
@@ -28,30 +26,23 @@ class CompareManager extends GetxController {
       // Ignore if max reached; UI can show a message
       return;
     }
-    
 
     if (_selected.isEmpty && Get.isRegistered<ProjectCompareManager>()) {
       try {
         ProjectCompareManager.to.clear();
-      } catch (e) {
-        print('Error clearing project comparison: $e');
-      }
+      } catch (e) {}
     }
     if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
       try {
         ContractorCompareManager.to.clear();
-      } catch (e) {
-        print('Error clearing Contractor comparison: $e');
-      }
+      } catch (e) {}
     }
     if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
       try {
         ContractorCompareManager.to.clear();
-      } catch (e) {
-        print('Error clearing Contractor comparison: $e');
-      }
+      } catch (e) {}
     }
-    
+
     _selected[id] = item;
     _selected.refresh();
   }

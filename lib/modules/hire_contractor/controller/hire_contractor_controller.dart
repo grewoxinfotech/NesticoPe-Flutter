@@ -29,7 +29,6 @@ class HireContractorController
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
 
-    log("Apply Filter in Inquiry Contractor Section ${filters} ");
     // await loadInitial();
     refreshList();
   }
@@ -40,7 +39,7 @@ class HireContractorController
   ) async {
     final response = await HireContractorService.contractorMyService
         .getContractorCategory(page: page, filter: filters.value);
-    print("Fetched items: ${response.items.length}");
+
     return response;
   }
 

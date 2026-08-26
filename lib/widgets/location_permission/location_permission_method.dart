@@ -81,20 +81,6 @@ Future<String?> getCurrentCityFromDevice() async {
 
   if (placemarks.isEmpty) return null;
 
-  print(
-    "Market App Current City: $placemarks    ${placemarks.first.locality ?? ""}   ${position.latitude}   ${position.longitude}",
-  );
-  print("Market App Current City: ${placemarks.first.locality ?? ""}");
-  print(
-    "Market App Current City: ${position.latitude}   ${position.longitude}",
-  );
-  print("Market App Current City: ${position.accuracy}");
-  print("Market App Current City: ${position.speed}");
-  print(
-    "Market App Current City: ${placemarks.map((e) => e.toJson()).toList()}",
-  );
-  print("Market App Current City: ${position.toJson()}");
-
   return placemarks.first.locality;
 }
 

@@ -1124,7 +1124,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
 
             isRequiredTitle: false,
             onCitySelected: (selectedCity) {
-              print("✅ Selected city: ${selectedCity.description}");
               controller.positionController.text =
                   selectedCity.description ?? '';
               controller.companyController.text = selectedCity.reference ?? '';
@@ -1147,7 +1146,6 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
 
             controller: controller.companyController,
             onCitySelected: (selectedCity) {
-              print("✅ Selected city: ${selectedCity.description}");
               controller.companyController.text =
                   selectedCity.description ?? '';
               // You can also store city details in your controller here
@@ -1703,7 +1701,10 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                   ),
                 ),
                 Obx(() {
-                  final isAadharVerified = ((controller.profileData.value?.user?.isAadharVerified == true) || UserHelper.isAadharVerified);
+                  final isAadharVerified =
+                      ((controller.profileData.value?.user?.isAadharVerified ==
+                              true) ||
+                          UserHelper.isAadharVerified);
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1714,15 +1715,23 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
                           ),
                           color: const Color.fromARGB(255, 28, 28, 44),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          isAadharVerified ? 'Verified' : 'Pending / Not Verified',
+                          isAadharVerified
+                              ? 'Verified'
+                              : 'Pending / Not Verified',
                           style: TextStyle(
-                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
@@ -1735,14 +1744,17 @@ class _SellerProfileScreenState extends State<SellerProfileScreen> {
                           height: 28,
                           child: ElevatedButton(
                             onPressed: () async {
-                              final verified = await AadharVerificationDialog.show(context);
+                              final verified =
+                                  await AadharVerificationDialog.show(context);
                               if (verified == true) {
                                 controller.refreshProfile();
                               }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorRes.primary,
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),

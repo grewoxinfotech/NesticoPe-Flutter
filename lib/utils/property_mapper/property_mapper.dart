@@ -42,7 +42,6 @@ extension ItemsMapper on Items.Items {
   AddPropertyModel.PropertyDetails _mapPropertyDetails(
     Items.PropertyDetails source,
   ) {
-    print("PropertyDetails ============ : ${source.amenities}");
     return AddPropertyModel.PropertyDetails(
       pgInfo: source.pgInfo != null ? _mapPgInfo(source.pgInfo!) : null,
       bhk: source.bhk,
@@ -95,8 +94,6 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.PgInfo _mapPgInfo(Items.PgInfo source) {
-    print("Mapping PgInfo: ${source.toJson()}");
-
     return AddPropertyModel.PgInfo(
       pgName: source.pgName,
       pgFor: source.pgFor,
@@ -208,8 +205,6 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.FinancialInfo _mapFinancialInfo(Items.FinancialInfo source) {
-    AppLogger.structured("Financial Info in edit section ", source.toJson());
-    
     return AddPropertyModel.FinancialInfo(
       propertyPrice: source.price,
       propertyRentPerMonth: source.propertyRentPerMonth,
@@ -279,7 +274,7 @@ extension ItemsMapper on Items.Items {
 
       // possessionDate: source.possessionDate,
     );
-    AppLogger.structured("Plot from Api ", data.toJson());
+
     return data;
   }
 
@@ -298,18 +293,12 @@ extension ItemsMapper on Items.Items {
   }
 
   AddPropertyModel.PropertyMedia _mapMedia(Items.PropertyMedia source) {
-    print("_mapMedia called");
-    print("Images: ${source.images}");
-    print("Videos: ${source.videos}");
-    print("Documents: ${source.documents}");
-
     final mapped = AddPropertyModel.PropertyMedia(
       images: source.images,
       videos: source.videos,
       documents: source.documents,
     );
 
-    print("Mapped Media: ${mapped.toJson()}");
     return mapped;
   }
 

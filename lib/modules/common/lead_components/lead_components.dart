@@ -1,5 +1,5 @@
 /// Lead Components Library
-/// 
+///
 /// Reusable UI components for lead screens across the app
 /// Used by: Reseller, Seller, and Builder modules
 

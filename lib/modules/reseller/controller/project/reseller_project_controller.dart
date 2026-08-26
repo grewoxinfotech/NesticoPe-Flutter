@@ -187,11 +187,8 @@ class ResellerProjectController extends PaginatedController<ProjectItem> {
         filters: filters,
       );
 
-      print("Reseller Projects → Page $page | Items: ${response.items.length}");
-
       return response;
     } catch (e) {
-      print("❌ Error fetching reseller projects: $e");
       rethrow;
     }
   }

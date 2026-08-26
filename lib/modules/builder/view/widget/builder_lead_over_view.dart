@@ -143,15 +143,10 @@ class BuilderLeadOverView extends StatelessWidget {
                 title: "Visit",
                 icon: Icons.history,
                 onTap: () {
-                  debugPrint('Fetching lead details for ${lead.id}');
                   leadVisitController.getLeadId(lead.id);
 
                   // final buyerId=propertyInquiryController?.selectedInquiry.value?.userId;
                   // final propertyId=propertyInquiryController?.selectedInquiry.value?.propertyId;
-
-                  print(
-                    "Buyer Data ${leadPropertyInquiryController?.selectedInquiry.value?.userId}============== ${leadPropertyInquiryController?.selectedInquiry.value?.propertyId}",
-                  );
 
                   Get.to(
                     () => LeadVisit(
@@ -222,17 +217,12 @@ class BuilderLeadOverView extends StatelessWidget {
 
                   if (selectedInquiry != null) {
                     // Set visit id
-                    print(
-                      'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
-                    );
+
                     leadPropertyNegotiablePriceController
                         .setLeadNegotiablePriceId(
                           selectedInquiry.propertyId ?? '',
                           buyerID: selectedInquiry.userId ?? '',
                         );
-                    print(
-                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                    );
                   }
                   Get.to(
                     () => LeadNegotiablePriceScreen(
@@ -291,17 +281,12 @@ class BuilderLeadOverView extends StatelessWidget {
                       leadPropertyInquiryController?.selectedInquiry.value;
                   if (selectedInquiry != null) {
                     // Set visit id
-                    print(
-                      'Setting visit ID for user ${selectedInquiry.userId} and property ${selectedInquiry.propertyId}',
-                    );
+
                     leadPropertyNegotiablePriceController
                         .setLeadNegotiablePriceId(
                           selectedInquiry.propertyId ?? '',
                           buyerID: selectedInquiry.userId ?? '',
                         );
-                    print(
-                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                    );
                   }
                   Get.to(
                     () => LeadFollowUpScreen(controller: leadVisitController),
@@ -1056,280 +1041,297 @@ class BuilderLeadOverView extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Column(
                   children: [
-                  // Configuration Header
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                    // Configuration Header
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.home,
+                          color: ColorRes.primary,
+                          size: 20,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.home,
-                        color: ColorRes.primary,
-                        size: 20,
+                      title: Text(
+                        "${config.bhk} BHK",
+                        style: TextStyle(
+                          color: ColorRes.textPrimary,
+                          fontSize: AppFontSizes.bodySmall,
+                          fontWeight: AppFontWeights.semiBold,
+                        ),
                       ),
-                    ),
-                    title: Text(
-                      "${config.bhk} BHK",
-                      style: TextStyle(
-                        color: ColorRes.textPrimary,
-                        fontSize: AppFontSizes.bodySmall,
-                        fontWeight: AppFontWeights.semiBold,
+                      subtitle: Text(
+                        "${config.variants.length} variant${config.variants.length != 1 ? 's' : ''}",
+                        style: const TextStyle(
+                          color: ColorRes.textSecondary,
+                          fontSize: AppFontSizes.caption,
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      "${config.variants.length} variant${config.variants.length != 1 ? 's' : ''}",
-                      style: const TextStyle(
+                      trailing: Icon(
+                        expanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
                         color: ColorRes.textSecondary,
-                        fontSize: AppFontSizes.caption,
                       ),
+                      onTap: () => controller.toggleConfig(index),
                     ),
-                    trailing: Icon(
-                      expanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: ColorRes.textSecondary,
-                    ),
-                    onTap: () => controller.toggleConfig(index),
-                  ),
 
-                  // Expanded Variants List
-                  if (expanded && config.variants.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: Column(
-                        children: List.generate(config.variants.length, (
-                          variantIndex,
-                        ) {
-                          final variant = config.variants[variantIndex];
-                          final isLastVariant =
-                              variantIndex == config.variants.length - 1;
+                    // Expanded Variants List
+                    if (expanded && config.variants.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        child: Column(
+                          children: List.generate(config.variants.length, (
+                            variantIndex,
+                          ) {
+                            final variant = config.variants[variantIndex];
+                            final isLastVariant =
+                                variantIndex == config.variants.length - 1;
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Divider before each variant
-                              _buildDivider(),
-                              const SizedBox(height: 12),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Divider before each variant
+                                _buildDivider(),
+                                const SizedBox(height: 12),
 
-                              // Variant Name and Details
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      variant.name,
-                                      style: const TextStyle(
-                                        fontWeight: AppFontWeights.semiBold,
-                                        color: ColorRes.textPrimary,
-                                        fontSize: AppFontSizes.medium,
+                                // Variant Name and Details
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        variant.name,
+                                        style: const TextStyle(
+                                          fontWeight: AppFontWeights.semiBold,
+                                          color: ColorRes.textPrimary,
+                                          fontSize: AppFontSizes.medium,
+                                        ),
                                       ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+
+                                // Area Information
+                                Text(
+                                  "${Formatter.formatNumber(variant.builtUpArea)} sqft Built-up  -  ${Formatter.formatNumber(variant.carpetArea.toInt())} sqft Carpet",
+                                  style: const TextStyle(
+                                    color: ColorRes.textSecondary,
+                                    fontSize: AppFontSizes.small,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+
+                                // Price Information
+                                Text(
+                                  "${Formatter.formatPrice(variant.price)}",
+                                  style: const TextStyle(
+                                    color: ColorRes.primary,
+                                    fontSize: AppFontSizes.body,
+                                    fontWeight: AppFontWeights.semiBold,
+                                  ),
+                                ),
+                                if (variant.bookingAmount != null &&
+                                    variant.bookingAmount! > 0) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Booking Amount: ${Formatter.formatPrice(variant.bookingAmount!)}",
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: AppFontSizes.small,
+                                      fontWeight: AppFontWeights.medium,
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 8),
-
-                              // Area Information
-                              Text(
-                                "${Formatter.formatNumber(variant.builtUpArea)} sqft Built-up  -  ${Formatter.formatNumber(variant.carpetArea.toInt())} sqft Carpet",
-                                style: const TextStyle(
-                                  color: ColorRes.textSecondary,
-                                  fontSize: AppFontSizes.small,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-
-                              // Price Information
-                              Text(
-                                "${Formatter.formatPrice(variant.price)}",
-                                style: const TextStyle(
-                                  color: ColorRes.primary,
-                                  fontSize: AppFontSizes.body,
-                                  fontWeight: AppFontWeights.semiBold,
-                                ),
-                              ),
-                              if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
                                 const SizedBox(height: 4),
+
+                                // Units Information
                                 Text(
-                                  "Booking Amount: ${Formatter.formatPrice(variant.bookingAmount!)}",
+                                  "${variant.availableUnits} available of ${variant.totalUnits} units",
                                   style: const TextStyle(
-                                    color: Colors.green,
-                                    fontSize: AppFontSizes.small,
-                                    fontWeight: AppFontWeights.medium,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(height: 4),
-
-                              // Units Information
-                              Text(
-                                "${variant.availableUnits} available of ${variant.totalUnits} units",
-                                style: const TextStyle(
-                                  color: ColorRes.textSecondary,
-                                  fontSize: AppFontSizes.caption,
-                                ),
-                              ),
-
-                              // Specifications
-                              if (variant.specifications.isNotEmpty) ...[
-                                const SizedBox(height: 12),
-                                const Text(
-                                  "SPECIFICATIONS",
-                                  style: TextStyle(
                                     color: ColorRes.textSecondary,
                                     fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    letterSpacing: 0.5,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children:
-                                      variant.specifications.map((spec) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: ColorRes.primary.withOpacity(
-                                              0.1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              6,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            spec,
-                                            style: const TextStyle(
-                                              color: ColorRes.textPrimary,
-                                              fontSize: AppFontSizes.caption,
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                ),
-                              ],
 
-                              // Gallery Images
-                              if (variant.mediaItems?.images.isNotEmpty == true) ...[
-                                const SizedBox(height: 12),
-                                const Text(
-                                  "GALLERY",
-                                  style: TextStyle(
-                                    color: ColorRes.textSecondary,
-                                    fontSize: AppFontSizes.caption,
-                                    fontWeight: AppFontWeights.semiBold,
-                                    letterSpacing: 0.5,
+                                // Specifications
+                                if (variant.specifications.isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    "SPECIFICATIONS",
+                                    style: TextStyle(
+                                      color: ColorRes.textSecondary,
+                                      fontSize: AppFontSizes.caption,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                SizedBox(
-                                  height: 80,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount:
-                                        (variant.mediaItems?.images.length ?? 0) > 3
-                                            ? 3
-                                            : variant.mediaItems?.images.length ?? 0,
-                                    itemBuilder: (context, imgIndex) {
-                                      final img = variant.mediaItems?.images[imgIndex];
-                                      final remainingCount =
-                                          (variant.mediaItems?.images.length ?? 0) - 3;
-
-                                      return Stack(
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                              right: 8,
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children:
+                                        variant.specifications.map((spec) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 6,
                                             ),
                                             decoration: BoxDecoration(
+                                              color: ColorRes.primary
+                                                  .withOpacity(0.1),
                                               borderRadius:
-                                                  BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: ColorRes.border,
+                                                  BorderRadius.circular(6),
+                                            ),
+                                            child: Text(
+                                              spec,
+                                              style: const TextStyle(
+                                                color: ColorRes.textPrimary,
+                                                fontSize: AppFontSizes.caption,
                                               ),
                                             ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              child: Image.network(
-                                                img ?? '',
-                                                width: 100,
-                                                height: 80,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (
-                                                  context,
-                                                  error,
-                                                  stackTrace,
-                                                ) {
-                                                  return Container(
-                                                    width: 100,
-                                                    height: 80,
-                                                    color:
-                                                        ColorRes
-                                                            .leadGreyColor
-                                                            .shade200,
-                                                    child: const Icon(
-                                                      Icons.image_not_supported,
+                                          );
+                                        }).toList(),
+                                  ),
+                                ],
+
+                                // Gallery Images
+                                if (variant.mediaItems?.images.isNotEmpty ==
+                                    true) ...[
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    "GALLERY",
+                                    style: TextStyle(
+                                      color: ColorRes.textSecondary,
+                                      fontSize: AppFontSizes.caption,
+                                      fontWeight: AppFontWeights.semiBold,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    height: 80,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount:
+                                          (variant.mediaItems?.images.length ??
+                                                      0) >
+                                                  3
+                                              ? 3
+                                              : variant
+                                                      .mediaItems
+                                                      ?.images
+                                                      .length ??
+                                                  0,
+                                      itemBuilder: (context, imgIndex) {
+                                        final img =
+                                            variant
+                                                .mediaItems
+                                                ?.images[imgIndex];
+                                        final remainingCount =
+                                            (variant
+                                                    .mediaItems
+                                                    ?.images
+                                                    .length ??
+                                                0) -
+                                            3;
+
+                                        return Stack(
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                right: 8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: ColorRes.border,
+                                                ),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.network(
+                                                  img ?? '',
+                                                  width: 100,
+                                                  height: 80,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) {
+                                                    return Container(
+                                                      width: 100,
+                                                      height: 80,
                                                       color:
                                                           ColorRes
-                                                              .textSecondary,
-                                                    ),
-                                                  );
-                                                },
+                                                              .leadGreyColor
+                                                              .shade200,
+                                                      child: const Icon(
+                                                        Icons
+                                                            .image_not_supported,
+                                                        color:
+                                                            ColorRes
+                                                                .textSecondary,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          // Show "+X" overlay on last image if more images exist
-                                          if (imgIndex == 2 &&
-                                              remainingCount > 0)
-                                            Positioned.fill(
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                  right: 8,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: ColorRes.overlay,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "+$remainingCount",
-                                                    style: const TextStyle(
-                                                      color: ColorRes.white,
-                                                      fontSize:
-                                                          AppFontSizes.body,
-                                                      fontWeight:
-                                                          AppFontWeights.bold,
+                                            // Show "+X" overlay on last image if more images exist
+                                            if (imgIndex == 2 &&
+                                                remainingCount > 0)
+                                              Positioned.fill(
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                    right: 8,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: ColorRes.overlay,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          8,
+                                                        ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "+$remainingCount",
+                                                      style: const TextStyle(
+                                                        color: ColorRes.white,
+                                                        fontSize:
+                                                            AppFontSizes.body,
+                                                        fontWeight:
+                                                            AppFontWeights.bold,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                        ],
-                                      );
-                                    },
+                                          ],
+                                        );
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
 
-                              // Bottom spacing (only if not last variant)
-                              if (!isLastVariant) const SizedBox(height: 12),
-                            ],
-                          );
-                        }),
+                                // Bottom spacing (only if not last variant)
+                                if (!isLastVariant) const SizedBox(height: 12),
+                              ],
+                            );
+                          }),
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
         ),
       ),
     );
@@ -1578,7 +1580,7 @@ class BuilderLeadOverView extends StatelessWidget {
                 " ",
                 "_",
               );
-              print("Project deatils ${project.amenities.map((e) => e)}");
+
               /*final Map<String, String> amenityIcons = {
                 'Swimming Pool': AppSvgRes.swimming,
                 "Fire Safety": AppSvgRes.fire_extinguisher,

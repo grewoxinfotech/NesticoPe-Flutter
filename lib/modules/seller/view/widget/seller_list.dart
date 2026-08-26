@@ -18,7 +18,6 @@ class SellerListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("[TopSeller] topSeller : ${topSeller.map((e) => e.toJson())}");
     return SizedBox(
       height: 140,
       // smaller height
@@ -133,7 +132,6 @@ class SellerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("sller name $name");
     final displayLocation =
         location ??
         [

@@ -575,124 +575,131 @@ class _CityFilterListState extends State<CityFilterList> {
                 ),
               );
             },
-            child:(city.projectCount > 0) ? AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.only(right: 8),
-              width: 120,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 2,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
-                    child: CustomImage(
-                      type: CustomImageType.network,
-                      src: city.cityImage,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        AppRadius.mediumLarge,
-                      ),
-                      gradient: LinearGradient(
-                        colors: [
-                          ColorRes.black.withOpacity(0.4),
-                          ColorRes.transparentColor,
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                  ),
-                  // Positioned(
-                  //   bottom: 10,
-                  //   left: 8,
-                  //   right: 8, // 👈 gives width constraint
-                  //   child: Text(
-                  //     city.city,
-                  //     maxLines: 2,
-                  //     overflow: TextOverflow.ellipsis,
-                  //     textAlign: TextAlign.center,
-                  //     style: const TextStyle(
-                  //       color: ColorRes.white,
-                  //       fontWeight: FontWeight.bold,
-                  //       fontSize: 14,
-                  //     ),
-                  //   ),
-                  // ),
-                  Positioned(
-                    bottom: 10,
-                    left: 8,
-                    right: 8,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          city.city,
-
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(
-                            color: ColorRes.white,
-                            fontWeight: AppFontWeights.semiBold,
-                            fontSize: 15,
-                          ),
+            child:
+                (city.projectCount > 0)
+                    ? AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.only(right: 8),
+                      width: 120,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          AppRadius.mediumLarge,
                         ),
-                        const SizedBox(height: 2),
-                       if (city.projectCount > 0) ...[
-                          Text(
-                            "${Formatter.formatNumber(city.projectCount)} Projects",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: ColorRes.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 2,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.mediumLarge,
+                            ),
+                            child: CustomImage(
+                              type: CustomImageType.network,
+                              src: city.cityImage,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.mediumLarge,
+                              ),
+                              gradient: LinearGradient(
+                                colors: [
+                                  ColorRes.black.withOpacity(0.4),
+                                  ColorRes.transparentColor,
+                                ],
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                              ),
+                            ),
+                          ),
+                          // Positioned(
+                          //   bottom: 10,
+                          //   left: 8,
+                          //   right: 8, // 👈 gives width constraint
+                          //   child: Text(
+                          //     city.city,
+                          //     maxLines: 2,
+                          //     overflow: TextOverflow.ellipsis,
+                          //     textAlign: TextAlign.center,
+                          //     style: const TextStyle(
+                          //       color: ColorRes.white,
+                          //       fontWeight: FontWeight.bold,
+                          //       fontSize: 14,
+                          //     ),
+                          //   ),
+                          // ),
+                          Positioned(
+                            bottom: 10,
+                            left: 8,
+                            right: 8,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  city.city,
+
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    color: ColorRes.white,
+                                    fontWeight: AppFontWeights.semiBold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                if (city.projectCount > 0) ...[
+                                  Text(
+                                    "${Formatter.formatNumber(city.projectCount)} Projects",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: ColorRes.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.vertical(
+                                  bottom: Radius.circular(20),
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.1),
+                                    Colors.black.withOpacity(0.1),
+                                    Colors.black.withOpacity(0.1),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(20),
-                        ),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.1),
-                            Colors.black.withOpacity(0.1),
-                            Colors.black.withOpacity(0.1),
-                          ],
-                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ) : const SizedBox.shrink(),
+                    )
+                    : const SizedBox.shrink(),
           );
         },
       ),

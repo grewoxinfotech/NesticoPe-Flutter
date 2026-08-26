@@ -34,19 +34,14 @@ class GoogleMapSearchController extends GetxController {
       isLoadingZipcodes.value = true;
       selectedCity.value = cityName;
 
-      print('🔍 Fetching zipcodes for city: $cityName');
-
       final response = await GoogleMapApi.instance.searchZipcodes(cityName);
 
       if (response.isNotEmpty) {
         zipcodes.value = response;
-        print('✅ Found ${response.length} zipcodes for $cityName');
       } else {
         zipcodes.clear();
-        print('⚠️ No zipcodes found for $cityName');
       }
     } catch (e) {
-      print('❌ Error fetching zipcodes: $e');
       zipcodes.clear();
     } finally {
       isLoadingZipcodes.value = false;
@@ -65,7 +60,6 @@ class GoogleMapSearchController extends GetxController {
       final details = await GoogleMapApi.instance.getLocationDetails(placeId);
       return details;
     } catch (e) {
-      print('❌ Error getting zipcode details: $e');
       return null;
     }
   }
@@ -80,26 +74,13 @@ class GoogleMapSearchController extends GetxController {
       isLoading.value = true;
       final String trimmedCity = city.trim().toUpperCase();
 
-      print("\n====== SEARCH DEBUG ======");
-      print("Search query: $trimmedCity");
-      print("Contains BHK: ${trimmedCity.contains("BHK")}");
-      print("=========================\n");
-
       // 🔹 Case 1: BHK Search (Custom property logic)
       if (trimmedCity.contains("BHK")) {
-        print("🏘️ BHK Search Started for: $city");
-
         final bhkMatch = RegExp(r'(\d+)').firstMatch(trimmedCity);
         final bhkNumber = bhkMatch?.group(1) ?? city[0];
 
-        print("🔢 Extracted BHK number: $bhkNumber");
-
         final response = await _propertyService.fetchProperties(
           filters: {'bhk': bhkNumber},
-        );
-
-        print(
-          "✅ BHK Properties Response: ${response.items.length} items found",
         );
 
         if (response.items.isNotEmpty) {
@@ -124,15 +105,11 @@ class GoogleMapSearchController extends GetxController {
       }
       // 🔹 Case 2: Combined Project + Location Search
       else {
-        print("🔍 Combined Search Started for: $city");
-
         List<Prediction> combinedPredictions = [];
 
         // 🔸 1. Fetch and filter PROJECTS
         try {
           final projectResponse = await _builderService.fetchProjects();
-
-          log("Project Response: ${projectResponse.items.length} projects");
 
           if (projectResponse.items.isNotEmpty) {
             final searchQuery = city.toLowerCase();
@@ -142,10 +119,6 @@ class GoogleMapSearchController extends GetxController {
                   final projectName = project.projectName?.toLowerCase() ?? '';
                   return projectName.contains(searchQuery);
                 }).toList();
-
-            print(
-              "✅ Filtered Projects: ${filteredProjects.length} matching projects for '$city'",
-            );
 
             if (filteredProjects.isNotEmpty) {
               final projectPredictions =
@@ -165,49 +138,34 @@ class GoogleMapSearchController extends GetxController {
               combinedPredictions.addAll(projectPredictions);
             }
           }
-        } catch (e) {
-          print("❌ Error fetching projects: $e");
-        }
+        } catch (e) {}
 
         // 🔸 2. Fetch and add GOOGLE PLACES locations
         try {
           final googleResponse = await GoogleMapApi.instance.searchCities(city);
 
-          log("Google Response: $googleResponse");
-
           if (googleResponse != null) {
             final model = SearchFilterModel.fromJson(googleResponse);
-            print("Google Places model ===== ${model.toJson()}");
 
             final predictionsList = model.predictions ?? [];
             final parsedList =
                 predictionsList.map((p) => p.toLocationMap).toList();
-
-            print("Parsed location list ===== $parsedList");
 
             if (predictionsList.isNotEmpty) {
               combinedPredictions.addAll(predictionsList);
               cityStateList.assignAll(parsedList);
             }
           }
-        } catch (e) {
-          print("❌ Error fetching Google Places: $e");
-        }
+        } catch (e) {}
 
         // 🔸 3. Update predictions with combined results
         if (combinedPredictions.isNotEmpty) {
           predictions.value = combinedPredictions;
-          print(
-            "✅ Total Predictions: ${combinedPredictions.length} (Projects + Locations)",
-          );
         } else {
           predictions.clear();
-          print("ℹ️ No results found for '$city'");
         }
       }
     } catch (e, stackTrace) {
-      log("❌ Error fetching predictions: $e");
-      log("Stack trace: $stackTrace");
       predictions.clear();
     } finally {
       isLoading.value = false;
@@ -217,30 +175,19 @@ class GoogleMapSearchController extends GetxController {
   Future<void> fetchGooglePlaces(String city) async {
     try {
       final response = await GoogleMapApi.instance.searchCities(city);
-      print("Google Places response ===== $response");
 
       if (response != null) {
         final model = SearchFilterModel.fromJson(response);
-        print("Google Places model ===== ${model.toJson()}");
 
         final predictionsList = model.predictions ?? [];
         final parsedList = predictionsList.map((p) => p.toLocationMap).toList();
 
-        print("Parsed location list ===== $parsedList");
-
         predictions.value = predictionsList;
         cityStateList.assignAll(parsedList);
-        log(
-          "city List from apo ${cityStateList.map((element) => element.toString()).toList()}",
-        );
-        log(
-          "prediction List from apo ${predictions.map((element) => element.items?.toJson()).toList()}",
-        );
       } else {
         predictions.clear();
       }
     } catch (e) {
-      print("❌ Error fetching Google Places: $e");
       predictions.clear();
     }
   }
@@ -251,17 +198,14 @@ class GoogleMapSearchController extends GetxController {
 
       final response = await GoogleMapApi.instance.searchStates(state);
 
-      print("resposne ===== $response");
-
       if (response != null) {
         final model = SearchFilterModel.fromJson(response);
-        print("model ===== ${model.toJson()}");
+
         predictions.value = model.predictions ?? [];
       } else {
         predictions.clear();
       }
     } catch (e) {
-      print("❌ Error fetching predictions: $e");
       predictions.clear();
     } finally {
       isLoading.value = false;
@@ -274,17 +218,14 @@ class GoogleMapSearchController extends GetxController {
 
       final response = await GoogleMapApi.instance.searchAreas(area);
 
-      print("resposne ===== $response");
-
       if (response != null) {
         final model = SearchFilterModel.fromJson(response);
-        print("model ===== ${model.toJson()}");
+
         predictions.value = model.predictions ?? [];
       } else {
         predictions.clear();
       }
     } catch (e) {
-      print("❌ Error fetching predictions: $e");
       predictions.clear();
     } finally {
       isLoading.value = false;
@@ -300,17 +241,14 @@ class GoogleMapSearchController extends GetxController {
         cityFilter: city,
       );
 
-      print("resposne ===== $response");
-
       if (response != null) {
         final model = SearchFilterModel.fromJson(response);
-        print("model ===== ${model.toJson()}");
+
         predictions.value = model.predictions ?? [];
       } else {
         predictions.clear();
       }
     } catch (e) {
-      print("❌ Error fetching predictions: $e");
       predictions.clear();
     } finally {
       isLoading.value = false;
@@ -323,16 +261,11 @@ class GoogleMapSearchController extends GetxController {
       final landmarks = await GoogleMapApi.instance.getNearbyLandmarks(address);
 
       if (landmarks.isNotEmpty) {
-        print("✅ Found ${landmarks.length} landmarks near $address");
         for (final landmark in landmarks) {
           nearbyLandmarks.value = landmarks;
-          print("📏 ${landmark['name']} — ${landmark['address']}");
         }
-      } else {
-        print("⚠️ No landmarks found near $address");
-      }
+      } else {}
     } catch (e) {
-      print("❌ Error fetching landmarks: $e");
     } finally {
       isLoading.value = false;
     }
@@ -349,11 +282,8 @@ class GoogleMapSearchController extends GetxController {
         locality,
       );
 
-      print("🏗 Google TextSearch API Response: $response");
-
       // ✅ Handle null or unexpected formats
       if (response == null) {
-        print("⚠️ API returned null response");
         predictions.clear();
         return;
       }
@@ -364,7 +294,6 @@ class GoogleMapSearchController extends GetxController {
               as List<dynamic>;
 
       if (results.isEmpty) {
-        print("⚠️ No buildings found for '$locality' in $city");
         predictions.clear();
         return;
       }
@@ -382,11 +311,7 @@ class GoogleMapSearchController extends GetxController {
               ),
             );
           }).toList();
-
-      print("✅ Found ${predictions.length} buildings/societies in $city");
     } catch (e, st) {
-      print("❌ Error fetching buildings: $e");
-      print(st);
       predictions.clear();
     } finally {
       isLoading.value = false;
@@ -423,13 +348,10 @@ class GoogleMapSearchController extends GetxController {
 
       if (places.isNotEmpty) {
         categoryPlaces.value = places;
-        print("✅ Found ${places.length} $type places near $address");
       } else {
         categoryPlaces.clear();
-        print("⚠️ No $type places found near $address");
       }
     } catch (e) {
-      print("❌ Error fetching $type places: $e");
       categoryPlaces.clear();
     } finally {
       isCategoryLoading.value = false;
@@ -452,7 +374,6 @@ class GoogleMapSearchController extends GetxController {
       // This will be handled in the API call itself
       return null;
     } catch (e) {
-      print('❌ Error getting coordinates: $e');
       return null;
     }
   }
@@ -526,10 +447,7 @@ class GoogleMapSearchController extends GetxController {
         selectedCategory.value = firstCategoryWithData;
         categoryPlaces.value = allCategoriesData[firstCategoryWithData] ?? [];
       }
-
-      print('✅ Loaded all categories data');
     } catch (e) {
-      print('❌ Error fetching all categories: $e');
     } finally {
       isLoading.value = false;
     }

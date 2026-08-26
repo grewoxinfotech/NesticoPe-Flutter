@@ -267,7 +267,6 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                 onDelete: onDelete,
               ),
             );
-            log("Tapped on property ID: ${property.toJson()}");
           },
           child: Container(
             margin: const EdgeInsets.only(bottom: 20),
@@ -472,7 +471,8 @@ class _PropertyOverviewScreenState extends State<PropertyOverviewScreen> {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      '${property.city} , ${property.state}' ?? 'Location',
+                                      '${property.city} , ${property.state}' ??
+                                          'Location',
                                       style: TextStyle(
                                         fontSize: AppFontSizes.caption,
                                         color: ColorRes.leadGreyColor[600],

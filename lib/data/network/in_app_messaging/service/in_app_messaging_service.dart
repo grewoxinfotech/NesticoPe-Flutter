@@ -37,11 +37,7 @@ class NotificationService {
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      debugPrint("Fetching Notifications from: $uri");
-
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("Notifications API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -51,8 +47,6 @@ class NotificationService {
           (json) => NotificationItem.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch notifications: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
         // NesticoPeSnackBar.showAwesomeSnackbar(
         //   title: 'Error',
         //   message: 'Failed to load notifications',
@@ -62,36 +56,24 @@ class NotificationService {
         throw Exception("Failed to load notifications");
       }
     } catch (e) {
-      debugPrint("Exception in fetchNotifications: $e");
       rethrow;
     }
   }
 
   ///==================== Get Single Notification by ID ====================
   Future<NotificationItem?> getNotificationById(String id) async {
-
-
-
-
-    
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/$id"),
         headers: await headers(),
       );
 
-      debugPrint("Get notification by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
         return NotificationModel.fromJson(jsonData).data?.notifications?.first;
-      } else {
-        debugPrint("Failed to get notification by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get notification by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
 
     return null;
   }
@@ -103,23 +85,12 @@ class NotificationService {
         headers: await headers(),
       );
 
-      debugPrint(
-        "Get notification by ID Url : ${Uri.parse("$baseUrl/$id/read")}",
-      );
-      debugPrint("Get notification by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        log("When the user are from ${jsonData}");
-
         return jsonData['success'];
-      } else {
-        debugPrint("Failed to get notification by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get notification by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
 
     return false;
   }
@@ -131,20 +102,12 @@ class NotificationService {
         headers: await headers(),
       );
 
-      debugPrint("Get notification by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        AppLogger.structured("All Notification Clear ", jsonData);
-
         return jsonData['success'];
-      } else {
-        debugPrint("Failed to get notification by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get notification by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
 
     return false;
   }
@@ -157,21 +120,14 @@ class NotificationService {
         headers: await headers(),
       );
 
-      debugPrint("Get notification by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
 
-        AppLogger.structured("All Notification Clear ", jsonData);
         /*bdgdh uiuhjdb androd*/
 
         return jsonData['data']['unreadCount'];
-      } else {
-        debugPrint("Failed to get notification by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get notification by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
 
     return 0;
   }

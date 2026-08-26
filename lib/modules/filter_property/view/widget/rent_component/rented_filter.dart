@@ -23,9 +23,7 @@ class RentFilter extends StatelessWidget {
         BHKTypes(
           bHKList: controllerForFilter.bHkType,
           controllerForFilter: controllerForFilter,
-          onSelectionChanged: (selectedItems) {
-            debugPrint('rent bhk $selectedItems');
-          },
+          onSelectionChanged: (selectedItems) {},
         ),
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Rent Range'),
@@ -54,14 +52,11 @@ class RentFilter extends StatelessWidget {
             onMinChanged: (val) {
               if (val != null) {
                 controllerForFilter.rentMin.value = val;
-                print("Main ${controllerForFilter.rentMin.value}");
               }
             },
             onMaxChanged: (val) {
               if (val != null) {
                 controllerForFilter.rentMax.value = val;
-
-                print("mxa ${controllerForFilter.rentMax.value}");
               }
             },
             minLabel: "Min Budget",
@@ -75,9 +70,7 @@ class RentFilter extends StatelessWidget {
           items: controllerForFilter.propertyTypesList,
           controllerForFilter: controllerForFilter,
           selectedItems: controllerForFilter.subpropertyType,
-          onSelectionChanged: (index) {
-            debugPrint('Sub property Type $index');
-          },
+          onSelectionChanged: (index) {},
         ),
         const SizedBox(height: 7),
         // buildFilterHeadingPadding('Listed By'),
@@ -88,9 +81,7 @@ class RentFilter extends StatelessWidget {
         const SizedBox(height: 7),
         ListedBy(
           listedByList: controllerForFilter.furnishingType,
-          onTap: (items) {
-            debugPrint('Furnishing $items');
-          },
+          onTap: (items) {},
           controllerForFilter: controllerForFilter,
           selectedString: controllerForFilter.rentFurnishing,
         ),

@@ -20,7 +20,11 @@ class EventDateSection extends StatelessWidget {
         children: [
           Text(
             date,
-            style:  TextStyle(fontSize: AppFontSizes.bodySmall, color: ColorRes.textColor,fontWeight: AppFontWeights.semiBold),
+            style: TextStyle(
+              fontSize: AppFontSizes.bodySmall,
+              color: ColorRes.textColor,
+              fontWeight: AppFontWeights.semiBold,
+            ),
           ),
           const SizedBox(height: 4),
           ...events,
@@ -70,67 +74,67 @@ class EventCard extends StatelessWidget {
           const SizedBox(width: 12),
 
           // Content Section
-
-
-      Expanded(
-              child: InkWell(
-                onTap: () {
-                  showContentDialog(context: context,content: description);
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title + Tag
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              fontSize: AppFontSizes.medium,
-                              fontWeight: AppFontWeights.semiBold,
-                              color: ColorRes.textColor
-                            ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                showContentDialog(context: context, content: description);
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title + Tag
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.medium,
+                            fontWeight: AppFontWeights.semiBold,
+                            color: ColorRes.textColor,
                           ),
                         ),
+                      ),
 
-                        // Tag chip
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: tagColor.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            capitalizeEachWord(tag),
+                      // Tag chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: tagColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          capitalizeEachWord(tag),
 
-                            style: TextStyle(
-                              fontSize: AppFontSizes.extraSmall,
-                              color: tagColor,
-                              fontWeight: AppFontWeights.medium,
-                            ),
+                          style: TextStyle(
+                            fontSize: AppFontSizes.extraSmall,
+                            color: tagColor,
+                            fontWeight: AppFontWeights.medium,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
 
-                    const SizedBox(height: 6),
+                  const SizedBox(height: 6),
 
-                    Text('${
-                        description
-                    }',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: AppFontSizes.caption, color: ColorRes.leadGreyColor.shade600,fontWeight: AppFontWeights.medium),
+                  Text(
+                    '${description}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: AppFontSizes.caption,
+                      color: ColorRes.leadGreyColor.shade600,
+                      fontWeight: AppFontWeights.medium,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-
+          ),
 
           // ---- 3 DOT MENU ----
           PopupMenuButton<String>(

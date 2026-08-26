@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/modules/property/controllers/property_controller.dart';

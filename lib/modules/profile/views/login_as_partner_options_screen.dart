@@ -186,7 +186,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                         userId: (await SecureStorage.getClientId()) ?? '',
                         role: Roles.reseller.name,
                       );
-                  debugPrint("Has Subscription Inquiry For : $data");
+
                   Get.to(
                     () => SubscriptionPlansScreen(
                       isNotFromBuyerSide: false,
@@ -358,7 +358,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                         userId: (await SecureStorage.getClientId()) ?? '',
                         role: Roles.sellerOwner.name,
                       );
-                  debugPrint("Has Subscription Inquiry For : $data");
+
                   Get.to(
                     () => SubscriptionPlansScreen(
                       role: Roles.sellerOwner.name,
@@ -633,7 +633,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                         userId: (await SecureStorage.getClientId()) ?? '',
                         role: Roles.contractor.name,
                       );
-                  debugPrint("Has Subscription Inquiry For : $data");
+
                   Get.to(
                     () => SubscriptionPlansScreen(
                       role: Roles.contractor.name,
@@ -825,7 +825,7 @@ class LoginAsPartnerOptionsScreen extends StatelessWidget {
                         userId: (await SecureStorage.getClientId()) ?? '',
                         role: Roles.sellerBuilder.name,
                       );
-                  debugPrint("Has Subscription Inquiry For : $data");
+
                   Get.to(
                     () => SubscriptionPlansScreen(
                       role: Roles.sellerBuilder.name,

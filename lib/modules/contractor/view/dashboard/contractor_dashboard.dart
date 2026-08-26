@@ -29,9 +29,9 @@ class ContractorDashboard extends StatefulWidget {
 
 class _ContractorDashboardState extends State<ContractorDashboard> {
   final contractorDashboardController =
-    Get.isRegistered<ContractorDashboardController>()
-        ? Get.find<ContractorDashboardController>()
-        : Get.put(ContractorDashboardController());
+      Get.isRegistered<ContractorDashboardController>()
+          ? Get.find<ContractorDashboardController>()
+          : Get.put(ContractorDashboardController());
   final controller = Get.put(ContractorMyServiceController());
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _ContractorDashboardState extends State<ContractorDashboard> {
                       activePlan
                           ? 'Limit Reached, please upgrade your plan.'
                           : 'You do not have an active subscription. Please activate a plan to continue.',
-                          buttonText: activePlan?'Upgrade Plan':'Buy Plan'
+                  buttonText: activePlan ? 'Upgrade Plan' : 'Buy Plan',
                 );
                 return;
               }

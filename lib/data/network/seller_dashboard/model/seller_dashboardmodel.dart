@@ -568,18 +568,15 @@ class SellerInsightsModel {
     return SellerInsightsModel(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? SellerInsightsData.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null
+              ? SellerInsightsData.fromJson(json['data'])
+              : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 }
 
@@ -604,21 +601,26 @@ class SellerInsightsData {
 
   factory SellerInsightsData.fromJson(Map<String, dynamic> json) {
     return SellerInsightsData(
-      propertyMetrics: json['propertyMetrics'] != null
-          ? PropertyMetrics.fromJson(json['propertyMetrics'])
-          : null,
-      leadAnalytics: json['leadAnalytics'] != null
-          ? LeadAnalytics.fromJson(json['leadAnalytics'])
-          : null,
-      financialMetrics: json['financialMetrics'] != null
-          ? FinancialMetrics.fromJson(json['financialMetrics'])
-          : null,
-      engagementMetrics: json['engagementMetrics'] != null
-          ? EngagementMetrics.fromJson(json['engagementMetrics'])
-          : null,
-      subscriptionInfo: json['subscriptionInfo'] != null
-          ? SubscriptionInfo.fromJson(json['subscriptionInfo'])
-          : null,
+      propertyMetrics:
+          json['propertyMetrics'] != null
+              ? PropertyMetrics.fromJson(json['propertyMetrics'])
+              : null,
+      leadAnalytics:
+          json['leadAnalytics'] != null
+              ? LeadAnalytics.fromJson(json['leadAnalytics'])
+              : null,
+      financialMetrics:
+          json['financialMetrics'] != null
+              ? FinancialMetrics.fromJson(json['financialMetrics'])
+              : null,
+      engagementMetrics:
+          json['engagementMetrics'] != null
+              ? EngagementMetrics.fromJson(json['engagementMetrics'])
+              : null,
+      subscriptionInfo:
+          json['subscriptionInfo'] != null
+              ? SubscriptionInfo.fromJson(json['subscriptionInfo'])
+              : null,
       sellerType: json['sellerType'],
       lastUpdated: json['lastUpdated'],
     );
@@ -665,13 +667,15 @@ class PropertyMetrics {
       pendingListings: json['pendingListings'] ?? 0,
       rejectedListings: json['rejectedListings'] ?? 0,
       selectedYear: json['selectedYear'] ?? 0,
-      viewsHistory: (json['viewsHistory'] as List?)
-          ?.map((e) => ViewHistory.fromJson(e))
-          .toList() ??
+      viewsHistory:
+          (json['viewsHistory'] as List?)
+              ?.map((e) => ViewHistory.fromJson(e))
+              .toList() ??
           [],
-      propertyTimeline: (json['propertyTimeline'] as List?)
-          ?.map((e) => PropertyTimeline.fromJson(e))
-          .toList() ??
+      propertyTimeline:
+          (json['propertyTimeline'] as List?)
+              ?.map((e) => PropertyTimeline.fromJson(e))
+              .toList() ??
           [],
       statusDistribution: json['statusDistribution'] ?? {},
     );
@@ -698,14 +702,12 @@ class ViewHistory {
   ViewHistory({required this.month, required this.views});
 
   factory ViewHistory.fromJson(Map<String, dynamic> json) {
-    return ViewHistory(
-      month: json['month'] ?? '',
-      views: json['views'] ?? 0,
-    );
+    return ViewHistory(month: json['month'] ?? '', views: json['views'] ?? 0);
   }
 
   Map<String, dynamic> toMap() => {'month': month, 'views': views};
 }
+
 class PropertyTimeline {
   final String month;
   final int count;
@@ -748,16 +750,18 @@ class LeadAnalytics {
       totalLeads: json['totalLeads'] ?? 0,
       currentMonthLeads: json['currentMonthLeads'] ?? 0,
       previousMonthLeads: json['previousMonthLeads'] ?? 0,
-      statusBreakdown:
-      LeadStatusBreakdown.fromJson(json['statusBreakdown'] ?? {}),
-      sourceDistribution:
-      LeadSourceDistribution.fromJson(json['sourceDistribution'] ?? {}),
-      stageBreakdown:
-      LeadStageBreakdown.fromJson(json['stageBreakdown'] ?? {}),
+      statusBreakdown: LeadStatusBreakdown.fromJson(
+        json['statusBreakdown'] ?? {},
+      ),
+      sourceDistribution: LeadSourceDistribution.fromJson(
+        json['sourceDistribution'] ?? {},
+      ),
+      stageBreakdown: LeadStageBreakdown.fromJson(json['stageBreakdown'] ?? {}),
       conversionRate: (json['conversionRate'] ?? 0).toDouble(),
-      leadsTimeline: (json['leadsTimeline'] as List?)
-          ?.map((e) => LeadsTimeline.fromJson(e))
-          .toList() ??
+      leadsTimeline:
+          (json['leadsTimeline'] as List?)
+              ?.map((e) => LeadsTimeline.fromJson(e))
+              .toList() ??
           [],
     );
   }
@@ -895,10 +899,7 @@ class LeadsTimeline {
   LeadsTimeline({required this.month, required this.count});
 
   factory LeadsTimeline.fromJson(Map<String, dynamic> json) {
-    return LeadsTimeline(
-      month: json['month'] ?? '',
-      count: json['count'] ?? 0,
-    );
+    return LeadsTimeline(month: json['month'] ?? '', count: json['count'] ?? 0);
   }
 
   Map<String, dynamic> toMap() => {'month': month, 'count': count};

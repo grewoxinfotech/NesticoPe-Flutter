@@ -91,11 +91,9 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
         tag: 'property_$propertyId',
       );
       isLoadingProperty.value = true;
-      print('propertyId: $propertyId');
+
       leadProperty.value = await propertyController.getPropertyById(propertyId);
-      print(
-        'leadProperty: ${leadProperty.value?.scoreBreakdown?.toJson() ?? ''}',
-      );
+
       isLoadingProperty.value = false;
     });
   }
@@ -135,8 +133,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           ? leadProperty.value?.propertyType ?? ''
           : widget.property!.propertyType ?? '';
 
-
-
   String get listingType =>
       widget.isFromLead
           ? leadProperty.value?.listingType ?? ''
@@ -167,10 +163,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
           ? leadProperty.value?.propertyDetails
           : widget.property!.propertyDetails;
 
-    PgInfo ? get pgInfo=>widget.isFromLead
-          ? leadProperty.value?.propertyDetails!.pgInfo??PgInfo.fromJson({})
-          : widget.property!.propertyDetails!.pgInfo  ?? PgInfo.fromJson({});
-  
+  PgInfo? get pgInfo =>
+      widget.isFromLead
+          ? leadProperty.value?.propertyDetails!.pgInfo ?? PgInfo.fromJson({})
+          : widget.property!.propertyDetails!.pgInfo ?? PgInfo.fromJson({});
 
   Items get property =>
       widget.isFromLead
@@ -180,10 +176,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.of(context).size.width < 600;
-
-    log(
-      "Building Name in Reseller ${property.propertyDetails?.furnishInfo?.furnishDetails?.toJson()}",
-    );
 
     return Scaffold(
       backgroundColor: ColorRes.white,
@@ -545,7 +537,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     LeadPropertyNegotiablePriceController leadPropertyNegotiablePriceController,
     bool isFromLead,
     bool isLeadIsempty,
-    
   ) {
     return Column(
       children: [
@@ -700,12 +691,6 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
             title: "Visit",
             icon: Icons.history,
             onTap: () {
-              log(
-                "Buyer Data ${property.id}    ============== ${propertyInquiryController?.selectedInquiry.value?.propertyId}",
-              );
-              log(
-                "Buyer Id from api ${propertyInquiryController?.selectedInquiry.value?.userId}",
-              );
               Get.to(
                 () => LeadVisit(
                   leadVisitController: leadVisitController,
@@ -774,15 +759,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   propertyInquiryController?.selectedInquiry.value;
 
               // Set visit id
-              log(
-                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-              );
+
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
                 selectedInquiry?.propertyId ?? property.id ?? '',
                 buyerID: selectedInquiry?.userId ?? '',
-              );
-              log(
-                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
               );
 
               Get.to(
@@ -839,18 +819,12 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
                   propertyInquiryController?.selectedInquiry.value;
 
               // Set visit id
-              log(
-                'Setting visit ID for user ${selectedInquiry?.userId} and property ${selectedInquiry?.propertyId}',
-              );
+
               leadPropertyNegotiablePriceController.setLeadNegotiablePriceId(
                 selectedInquiry?.propertyId ?? property.id ?? '',
                 buyerID: selectedInquiry?.userId ?? '',
               );
-              log(
-                'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-              );
 
-              log("Set the lead user ${widget.lead?.toJson()}");
               leadVisitController.getLeadId(widget.lead?.id ?? '');
               Get.to(() => LeadFollowUpScreen(controller: leadVisitController));
             },
@@ -1359,25 +1333,28 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
               _buildSectionHeader(
                 'Property Overview',
                 Icons.home_outlined,
-              
+
                 isCompact,
               ),
 
-            if(property.propertyStatus?.toLowerCase()=='sold' || property.propertyStatus?.toLowerCase()=='rented')...[
+              if (property.propertyStatus?.toLowerCase() == 'sold' ||
+                  property.propertyStatus?.toLowerCase() == 'rented') ...[
                 _buildOverviewChip(
-                property.propertyStatus?.toUpperCase()??'',
-                Icons.sell_outlined,
-                (property.propertyStatus?.toLowerCase()=='sold')?ColorRes.error:ColorRes.homeAmber,
-                isCompact,
-              ),
-            ]else...[
+                  property.propertyStatus?.toUpperCase() ?? '',
+                  Icons.sell_outlined,
+                  (property.propertyStatus?.toLowerCase() == 'sold')
+                      ? ColorRes.error
+                      : ColorRes.homeAmber,
+                  isCompact,
+                ),
+              ] else ...[
                 _buildOverviewChip(
-                property.propertyStatus??'',
-                Icons.sell_outlined,
-                ColorRes.deepPurpleColor,
-                isCompact,
-              ),
-            ]
+                  property.propertyStatus ?? '',
+                  Icons.sell_outlined,
+                  ColorRes.deepPurpleColor,
+                  isCompact,
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 16),
@@ -2095,7 +2072,7 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
   //                         decoration: BoxDecoration(
   //                           borderRadius: BorderRadius.circular(12),
   //                           border: Border.all(
-  //                             color: ColorRes.leadGreyColor.shade300, bchdbbnsdiun cnjsn 
+  //                             color: ColorRes.leadGreyColor.shade300, bchdbbnsdiun cnjsn
   //                             width: 1,
   //                           ),
   //                         ),
@@ -2487,12 +2464,10 @@ class _LeadDetailScreenState extends State<LeadDetailScreen> {
     final financialInfo = _resolvedFinancialInfo;
     if (financialInfo == null) return const SizedBox.shrink();
 
-    print("financial Informtion : ${financialInfo.toJson()}");
-
     final priceManager = PropertyPriceManager(
       listingType: propertyType,
       financialInfo: financialInfo,
-      pgInfo:pgInfo
+      pgInfo: pgInfo,
     );
 
     return Padding(

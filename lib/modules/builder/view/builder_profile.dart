@@ -391,9 +391,7 @@ class BuilderProfile extends StatelessWidget {
               image: DecorationImage(
                 image: NetworkImage(image),
                 fit: BoxFit.cover,
-                onError: (exception, stackTrace) {
-                  debugPrint('Image load error: $exception');
-                },
+                onError: (exception, stackTrace) {},
               ),
             ),
           ),

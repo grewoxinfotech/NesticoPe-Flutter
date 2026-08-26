@@ -106,10 +106,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
 
   Widget _buildPlanCard(SubscriptionPlan plan, int index) {
     return Obx(() {
-      log("Plan is Active or Not  ${plan.isActive}");
       final bool isSelected = selectedPlanIndex.value == index;
-
-      log("Plan Selected : ${selectedPlanIndex.value == index}");
 
       return GestureDetector(
         onTap: () async {
@@ -327,7 +324,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
             onPressed: () async {
               if (isSelected) {
                 if (isProcessing) return;
-                log("Handling plan inquiry for plan: ${plan.id}");
+
                 try {
                   final user = await SecureStorage.getUserData();
 
@@ -348,15 +345,16 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
                       phone.isNotEmpty) {
                     // All user details are present -> Submit API call directly
                     widget.controller.isProcessingPayment.value = true;
-                    final success = await widget.controller.subscriptionPlanInquiry({
-                      "planId": plan.id,
-                      "name": displayName,
-                      "phone": phone,
-                      "email": email,
-                      "userId": userId,
-                      "status": "pending",
-                      "pageSource": "mobile-app",
-                    });
+                    final success = await widget.controller
+                        .subscriptionPlanInquiry({
+                          "planId": plan.id,
+                          "name": displayName,
+                          "phone": phone,
+                          "email": email,
+                          "userId": userId,
+                          "status": "pending",
+                          "pageSource": "mobile-app",
+                        });
                     widget.controller.isProcessingPayment.value = false;
 
                     if (success) {
@@ -388,8 +386,6 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
                   }
                 } catch (e, s) {
                   widget.controller.isProcessingPayment.value = false;
-                  debugPrint('❌ Error in handling enquiry: $e');
-                  debugPrint('$s');
 
                   NesticoPeSnackBar.showAwesomeSnackbar(
                     title: "Error",
@@ -426,9 +422,7 @@ class _SubscriptionPlansCarouselState extends State<SubscriptionPlansCarousel> {
                       ),
                     )
                     : Text(
-                      isSelected
-                          ? "Send Enquiry"
-                          : "Select Plan",
+                      isSelected ? "Send Enquiry" : "Select Plan",
                       style: const TextStyle(
                         fontWeight: AppFontWeights.semiBold,
                         fontSize: AppFontSizes.bodySmall,
@@ -766,10 +760,7 @@ void showEnquirySuccessDialog() {
             const Text(
               'Your enquiry has been successfully submitted. Our team will contact you soon.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: ColorRes.leadGreyColor,
-              ),
+              style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor),
             ),
             const SizedBox(height: 24),
             SizedBox(

@@ -330,10 +330,6 @@ class PhotoUpload extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print(
-        "vfsdgytgfgsdytfgydy ===========${controller.propertyType.value}  djhfiuw ${controller.lookingTo.value}",
-      );
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -767,7 +763,6 @@ class PhotoUpload extends StatelessWidget {
   }
 
   Widget _buildProjectDocumentsSection() {
-    print("jbdvksjfdbsknblkvfdjnvglskd: ${controller.selectedIndex.value}");
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1090,7 +1085,6 @@ Future<String?> generateVideoThumbnail(String videoPath) async {
       quality: 50,
     );
   } catch (e) {
-    debugPrint('Thumbnail error: $e');
     return null;
   }
 }

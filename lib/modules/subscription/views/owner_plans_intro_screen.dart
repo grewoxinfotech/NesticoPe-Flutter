@@ -56,13 +56,10 @@ class OwnerPlansIntroScreen extends StatelessWidget {
                         Get.put(AuthController());
                       }
 
-                  
                       return;
                     }
                   } catch (e, stackTrace) {
                     /// Print error in debug
-                    debugPrint("Error in onViewPlans: $e");
-                    debugPrint("StackTrace: $stackTrace");
 
                     /// Show user message
                     Get.snackbar(
@@ -163,11 +160,10 @@ class OwnerPlansIntroScreen extends StatelessWidget {
   }
 
   Future<void> _openPlans() async {
-    
     Get.to(
       () => SubscriptionPlansScreen(
         role: Roles.sellerOwner.name,
-     
+
         origin: 'buyer',
         isNotFromBuyerSide: false,
       ),

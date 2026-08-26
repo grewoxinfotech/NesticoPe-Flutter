@@ -25,8 +25,6 @@ class AadharAuthService {
 
       final data = jsonDecode(response.body);
 
-      print("cbshdc${data}");
-
       if (response.statusCode == 200) {
         return data;
       } else {
@@ -35,7 +33,6 @@ class AadharAuthService {
         );
       }
     } catch (e) {
-      print("Error in initiateAadharVerification: $e");
       rethrow;
     }
   }
@@ -59,7 +56,6 @@ class AadharAuthService {
         throw Exception(data['message'] ?? 'Failed to verify Aadhar OTP');
       }
     } catch (e) {
-      print("Error in verifyAadharOtp: $e");
       rethrow;
     }
   }

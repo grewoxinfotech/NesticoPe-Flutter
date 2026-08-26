@@ -41,7 +41,7 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
-    log("Apply Filter in Inquiry Contractor Section ${filters} ");
+
     // await loadInitial();
     refreshList();
   }
@@ -66,7 +66,6 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     // Step 1️⃣: Fetch the user list
     final response = await HireContractorService.contractorMyService
         .fetchUserContractorProfile(page: page, filter: filters.value);
-    log("Fetched ${response.items.length} users");
 
     // Step 2️⃣: Fetch user profiles
     await fetchUserProfile();
@@ -99,11 +98,7 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
           HireContractorUserWithProfile(user: user, profile: profile),
         );
       }
-
-      log('✅ Combined list length: ${combinedList.length}');
-    } else {
-      log('⚠️ No profile data found to combine');
-    }
+    } else {}
 
     return response;
   }
@@ -112,14 +107,9 @@ class HireContractorListOfProfileController extends PaginatedController<User> {
     userProfileData.value = await HireContractorService.contractorMyService
         .fetchUserProfileData({'moduleName': 'contractor'});
     if (userProfileData.value != null) {
-      print('Fetched ${userProfileData.value?.count} profiles');
       for (HireContractorUserProfile profile
-          in userProfileData.value?.profiles ?? []) {
-        print('${profile.userId} → Rating: ${profile.overallRating}');
-      }
-    } else {
-      print('No data received.');
-    }
+          in userProfileData.value?.profiles ?? []) {}
+    } else {}
   }
 
   Future<void> refreshContractorData() async {

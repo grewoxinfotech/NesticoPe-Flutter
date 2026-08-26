@@ -195,7 +195,6 @@
 //   }
 // }
 
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -241,7 +240,6 @@ class MediaUploadService {
       }
       return [];
     } catch (e) {
-      debugPrint('Error picking images: $e');
       throw Exception('Failed to pick images: $e');
     }
   }
@@ -258,7 +256,6 @@ class MediaUploadService {
       }
       return null;
     } catch (e) {
-      debugPrint('Error picking video: $e');
       throw Exception('Failed to pick video: $e');
     }
   }
@@ -278,26 +275,25 @@ class MediaUploadService {
         // Additional validation to ensure the file extension is correct
         final fileName = file.path.toLowerCase();
         final isValidExtension = valid3DExtensions.any(
-                (ext) => fileName.endsWith('.$ext')
+          (ext) => fileName.endsWith('.$ext'),
         );
 
         if (!isValidExtension) {
-          debugPrint('Invalid file extension: $fileName');
           throw Exception(
-              'Invalid file format. Please select a valid 3D model file:\n'
-                  '${valid3DExtensions.map((e) => e.toUpperCase()).join(', ')}'
+            'Invalid file format. Please select a valid 3D model file:\n'
+            '${valid3DExtensions.map((e) => e.toUpperCase()).join(', ')}',
           );
         }
 
         // Optional: Check file size (e.g., max 50MB)
         final fileSize = await file.length();
         const maxSize = 50 * 1024 * 1024; // 50MB in bytes
-         // bcjhb 
+        // bcjhb
 
         if (fileSize > maxSize) {
           throw Exception(
-              'File size too large. Maximum allowed size is 50MB.\n'
-                  'Selected file: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB'
+            'File size too large. Maximum allowed size is 50MB.\n'
+            'Selected file: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB',
           );
         }
 
@@ -306,7 +302,6 @@ class MediaUploadService {
 
       return null;
     } catch (e) {
-      debugPrint('Error picking 3D model: $e');
       if (e.toString().contains('Invalid file format') ||
           e.toString().contains('File size too large')) {
         rethrow;
@@ -344,14 +339,7 @@ class MediaUploadService {
         '${ApiConstants.builderProject}/$projectId/$variantId/media',
       );
 
-      debugPrint("Upload URI: $uri");
-
       var request = http.MultipartRequest('POST', uri);
-
-
-      debugPrint("Uploading images: $images");
-      debugPrint("Uploading videos: $videos");
-      debugPrint("Uploading model: $model");
 
       // Add images
       for (var image in images) {
@@ -379,7 +367,6 @@ class MediaUploadService {
         }
 
         final extension = getFileExtension(model);
-        debugPrint("Uploading 3D model with extension: $extension");
 
         request.files.add(
           await http.MultipartFile.fromPath('variant_3d_model', model.path),
@@ -390,8 +377,6 @@ class MediaUploadService {
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
-      print("Upload response status: ${response.statusCode}");
-      print("Upload response body: $responseBody");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         dynamic parsed;
@@ -413,7 +398,6 @@ class MediaUploadService {
         };
       }
     } catch (e) {
-      debugPrint('Upload error: $e');
       return {
         'success': false,
         'message': 'Upload error',
@@ -426,19 +410,16 @@ class MediaUploadService {
     required String projectId,
     required String variantId,
     required String mediaType, // "image", "video", or "model"
-    required String mediaUrl, // exact URL from variant list this node and this is api that helps me
-    // thsiu is for that 
+    required String
+    mediaUrl, // exact URL from variant list this node and this is api that helps me
+    // thsiu is for that
   }) async {
     try {
       final uri = Uri.parse(
         '${ApiConstants.builderProject}/$projectId/$variantId/media',
       );
 
-      debugPrint("Remove Media URI: $uri");
-
       final body = {"mediaType": mediaType, "mediaUrl": mediaUrl};
-
-      debugPrint("Remove Payload: $body");
 
       final response = await http.delete(
         uri,

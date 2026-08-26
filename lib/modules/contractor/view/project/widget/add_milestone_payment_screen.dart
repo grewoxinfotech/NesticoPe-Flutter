@@ -13,16 +13,13 @@ class AddMilestonePaymentScreen extends StatelessWidget {
   final String tag;
   final MilestonePaymentItem? payment;
 
-  const AddMilestonePaymentScreen({
-    super.key,
-    required this.tag,
-    this.payment,
-  });
+  const AddMilestonePaymentScreen({super.key, required this.tag, this.payment});
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-    Get.find<ContractorProjectMilestonePaymentController>(tag: tag);
+    final controller = Get.find<ContractorProjectMilestonePaymentController>(
+      tag: tag,
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (payment != null) {
@@ -43,7 +40,7 @@ class AddMilestonePaymentScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
         ),
         title: Obx(
-              () => Text(
+          () => Text(
             controller.isEditMode.value
                 ? "Edit Milestone Payment"
                 : "Add Milestone Payment",
@@ -69,40 +66,42 @@ class AddMilestonePaymentScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               Obx(
-                    () => NesticoPeDropdownField<String>(
+                () => NesticoPeDropdownField<String>(
                   isRequired: true,
-                  value: controller.selectedMilestoneId.value.isEmpty
-                      ? null
-                      : controller.selectedMilestoneId.value,
+                  value:
+                      controller.selectedMilestoneId.value.isEmpty
+                          ? null
+                          : controller.selectedMilestoneId.value,
                   hintText: "Select milestone",
                   prefixIcon: Icons.flag_outlined,
                   enabled: !controller.isEditMode.value, // Disable when editing
-                  items: controller.milestones
-                      .where((e) => e.paymentStatus?.toLowerCase() != 'paid')
-                      .map(
-                        (e) => DropdownMenuItem(
-                      value: e.id,
-                      child: Text(e.title ?? ''),
-                    ),
-                  )
-                      .toList(),
+                  items:
+                      controller.milestones
+                          .where(
+                            (e) => e.paymentStatus?.toLowerCase() != 'paid',
+                          )
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.id,
+                              child: Text(e.title ?? ''),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (val) {
-                    print('kkmkoowoqoiopqoplopkmmpmsoqomppPPM');
                     if (val != null) {
-                      print('jibidjdjinkjinkjnjndjjndjino');
                       controller.selectedMilestoneId.value = val;
 
                       // Auto-fill amount from milestone
                       final milestone = controller.milestones.firstWhere(
-                            (element) => element.id == val,
+                        (element) => element.id == val,
                       );
 
-                      final amount = double.tryParse(
-                        milestone.milestoneAmount ?? '0',
-                      ) ??
+                      final amount =
+                          double.tryParse(milestone.milestoneAmount ?? '0') ??
                           0;
-                      controller.amountController.text =
-                          amount.toStringAsFixed(0);
+                      controller.amountController.text = amount.toStringAsFixed(
+                        0,
+                      );
                     }
                   },
                   darkText: true,
@@ -120,14 +119,13 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                 controller.amountController,
                 inputType: const TextInputType.numberWithOptions(decimal: true),
                 formatter: [
-                  FilteringTextInputFormatter.allow(
-                    RegExp(r'^\d+\.?\d{0,2}'),
-                  ),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                 ],
                 validator: (v) {
                   if (v == null || v.isEmpty) return "Amount is required";
                   if (double.tryParse(v) == null) return "Invalid amount";
-                  if (double.parse(v) <= 0) return "Amount must be greater than 0";
+                  if (double.parse(v) <= 0)
+                    return "Amount must be greater than 0";
                   return null;
                 },
               ),
@@ -144,19 +142,20 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                         buildSectionTitle("Payment Mode *"),
                         const SizedBox(height: 8),
                         Obx(
-                              () => NesticoPeDropdownField<String>(
+                          () => NesticoPeDropdownField<String>(
                             isRequired: true,
                             value: controller.selectedPaymentMode.value,
                             hintText: "Select mode",
                             prefixIcon: Icons.payments_outlined,
-                            items: controller.paymentModes
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e),
-                              ),
-                            )
-                                .toList(),
+                            items:
+                                controller.paymentModes
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (val) {
                               if (val != null) {
                                 controller.selectedPaymentMode.value = val;
@@ -176,19 +175,20 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                         buildSectionTitle("Payment Status *"),
                         const SizedBox(height: 8),
                         Obx(
-                              () => NesticoPeDropdownField<String>(
+                          () => NesticoPeDropdownField<String>(
                             isRequired: true,
                             value: controller.selectedPaymentStatus.value,
                             hintText: "Select status",
                             prefixIcon: Icons.info_outline,
-                            items: controller.paymentStatus
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e),
-                              ),
-                            )
-                                .toList(),
+                            items:
+                                controller.paymentStatus
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (val) {
                               if (val != null) {
                                 controller.selectedPaymentStatus.value = val;
@@ -209,23 +209,21 @@ class AddMilestonePaymentScreen extends StatelessWidget {
               buildSectionTitle("Paid On *"),
               const SizedBox(height: 8),
               Obx(
-                    () => _buildDateField(
-                  context,
-                  controller.paidOn.value,
-                      () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: controller.paidOn.value ?? DateTime.now(),
-                      firstDate:
-                      DateTime.now().subtract(const Duration(days: 365)),
-                      // allow selecting upcoming days too
-                      lastDate: DateTime(2100),
-                    );
-                    if (picked != null) {
-                      controller.paidOn.value = picked;
-                    }
-                  },
-                ),
+                () =>
+                    _buildDateField(context, controller.paidOn.value, () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: controller.paidOn.value ?? DateTime.now(),
+                        firstDate: DateTime.now().subtract(
+                          const Duration(days: 365),
+                        ),
+                        // allow selecting upcoming days too
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        controller.paidOn.value = picked;
+                      }
+                    }),
               ),
 
               const SizedBox(height: 16),
@@ -248,15 +246,17 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: Obx(
-                        () => ElevatedButton(
-                      onPressed: controller.isLoading.value
-                          ? null
-                          : () {
-                        if (controller.formKey.currentState?.validate() ??
-                            false) {
-                          controller.saveMilestone();
-                        }
-                      },
+                    () => ElevatedButton(
+                      onPressed:
+                          controller.isLoading.value
+                              ? null
+                              : () {
+                                if (controller.formKey.currentState
+                                        ?.validate() ??
+                                    false) {
+                                  controller.saveMilestone();
+                                }
+                              },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -265,25 +265,26 @@ class AddMilestonePaymentScreen extends StatelessWidget {
                         backgroundColor: ColorRes.primary,
                         disabledBackgroundColor: Colors.grey.shade300,
                       ),
-                      child: controller.isLoading.value
-                          ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                          : Text(
-                        controller.isEditMode.value
-                            ? "Update Payment"
-                            : "Add Payment",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child:
+                          controller.isLoading.value
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : Text(
+                                controller.isEditMode.value
+                                    ? "Update Payment"
+                                    : "Add Payment",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                     ),
                   ),
                 ),
@@ -298,10 +299,10 @@ class AddMilestonePaymentScreen extends StatelessWidget {
   }
 
   Widget _buildDateField(
-      BuildContext context,
-      DateTime? date,
-      VoidCallback onTap,
-      ) {
+    BuildContext context,
+    DateTime? date,
+    VoidCallback onTap,
+  ) {
     return buildTextField(
       date == null
           ? "Select payment date"

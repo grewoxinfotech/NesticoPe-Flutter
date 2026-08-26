@@ -27,7 +27,8 @@ class NesticoPeNavigationBar extends StatelessWidget {
       final primary = Get.theme.colorScheme.primary;
       final goldColor = Colors.amber.shade600;
       final baseSize = iconSize * 1.2;
-      final circleSize = isServicesSelected ? baseSize * 1.35 + 12 : baseSize + 10;
+      final circleSize =
+          isServicesSelected ? baseSize * 1.35 + 12 : baseSize + 10;
       final servicesIcon = Stack(
         clipBehavior: Clip.none,
         children: [
@@ -37,7 +38,10 @@ class NesticoPeNavigationBar extends StatelessWidget {
             height: circleSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isServicesSelected ? goldColor.withOpacity(0.4) : Colors.transparent,
+              color:
+                  isServicesSelected
+                      ? goldColor.withOpacity(0.4)
+                      : Colors.transparent,
               boxShadow: [
                 BoxShadow(
                   color: (isServicesSelected ? goldColor : primary).withOpacity(
@@ -130,25 +134,23 @@ class NesticoPeNavigationBar extends StatelessWidget {
                 ),
                 title: Text("Saved", style: style),
               ),
-             
+
               SalomonBottomBarItem(
                 icon: servicesIcon,
                 title: Text(
                   "Services",
                   style: style.copyWith(
-                    fontWeight: isServicesSelected
-                        ? AppFontWeights.extraBold
-                        : AppFontWeights.bold,
+                    fontWeight:
+                        isServicesSelected
+                            ? AppFontWeights.extraBold
+                            : AppFontWeights.bold,
                     color: isServicesSelected ? Colors.black : style.color,
                   ),
                 ),
                 selectedColor: goldColor,
               ),
-               SalomonBottomBarItem(
-                icon: Icon(
-                  Icons.menu_outlined,
-                  size: iconSize * 1.2,
-                ),
+              SalomonBottomBarItem(
+                icon: Icon(Icons.menu_outlined, size: iconSize * 1.2),
                 title: Text("Plans", style: style),
               ),
             ],

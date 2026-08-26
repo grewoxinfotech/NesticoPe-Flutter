@@ -40,10 +40,7 @@ class CalenderCategoryService {
         calendarCategory,
       ).replace(queryParameters: queryParameters);
 
-      print("uri: $uri");
-
       final response = await http.get(uri, headers: await headers());
-      print("response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -56,7 +53,6 @@ class CalenderCategoryService {
         throw Exception("Failed to load Category");
       }
     } catch (e) {
-      print("Exception in load Events: $e");
       rethrow;
     }
   }
@@ -73,7 +69,6 @@ class CalenderCategoryService {
       }
       return null;
     } catch (e) {
-      print("Exception in load Events: $e");
       rethrow;
     }
   }
@@ -98,12 +93,11 @@ class CalenderCategoryService {
       final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']?? "Fail to Add Event",
+        message: jsonData['message'] ?? "Fail to Add Event",
         contentType: ContentType.failure,
       );
       return null;
     } catch (e) {
-      print("Exception in load Events: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
@@ -135,13 +129,11 @@ class CalenderCategoryService {
       final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']??'Failed to update event',
+        message: jsonData['message'] ?? 'Failed to update event',
         contentType: ContentType.failure,
       );
       return null;
-
     } catch (e) {
-      print("Exception in load Events: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
@@ -159,7 +151,7 @@ class CalenderCategoryService {
         headers: await headers(),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final jsonData=jsonDecode(response.body);
+        final jsonData = jsonDecode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
           message: jsonData['message'],
@@ -167,15 +159,14 @@ class CalenderCategoryService {
         );
         return true;
       }
-      final jsonData=jsonDecode(response.body);
+      final jsonData = jsonDecode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']??'Failed to deleted event',
+        message: jsonData['message'] ?? 'Failed to deleted event',
         contentType: ContentType.failure,
       );
       return false;
     } catch (e) {
-      print("Exception in load Events: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",

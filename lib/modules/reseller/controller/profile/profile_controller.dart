@@ -23,74 +23,71 @@ import '../../../../data/network/user/service/user_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
 import '../../model/user/user_model.dart';
 
-
 class ProfileController extends GetxController {
   final RxBool isDownloadingCertificate = false.obs;
   RxDouble downloadProgress = 0.0.obs;
 
- Future<void> downloadCertificate() async {
-  try {
-    isDownloadingCertificate.value = true;
-    downloadProgress.value = 0;
+  Future<void> downloadCertificate() async {
+    try {
+      isDownloadingCertificate.value = true;
+      downloadProgress.value = 0;
 
-    final response = await GetMyCertificateService.getMyCertificate();
+      final response = await GetMyCertificateService.getMyCertificate();
 
-    if (response['success'] == true && response['data'] != null) {
-      final certificateUrl = response['data']['certificateUrl'];
+      if (response['success'] == true && response['data'] != null) {
+        final certificateUrl = response['data']['certificateUrl'];
 
-      if (certificateUrl != null && certificateUrl.isNotEmpty) {
+        if (certificateUrl != null && certificateUrl.isNotEmpty) {
+          final dir = await getApplicationDocumentsDirectory();
+          final filePath =
+              "${dir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.pdf";
 
-        final dir = await getApplicationDocumentsDirectory();
-        final filePath =
-            "${dir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.pdf";
+          final dio = Dio();
 
-        final dio = Dio();
+          await dio.download(
+            certificateUrl,
+            filePath,
+            onReceiveProgress: (received, total) {
+              if (total != -1) {
+                downloadProgress.value = received / total;
+              }
+            },
+          );
 
-        await dio.download(
-          certificateUrl,
-          filePath,
-          onReceiveProgress: (received, total) {
-            if (total != -1) {
-              downloadProgress.value = received / total;
-            }
-          },
-        );
+          /// Open downloaded PDF
+          await OpenFilex.open(filePath);
 
-        /// Open downloaded PDF
-        await OpenFilex.open(filePath);
-
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Certificate downloaded successfully',
-          contentType: ContentType.success,
-        );
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: 'Certificate downloaded successfully',
+            contentType: ContentType.success,
+          );
+        } else {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Info',
+            message: 'No certificate found',
+            contentType: ContentType.warning,
+          );
+        }
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Info',
-          message: 'No certificate found',
-          contentType: ContentType.warning,
+          title: 'Error',
+          message: response['message'] ?? 'Failed to get certificate',
+          contentType: ContentType.failure,
         );
       }
-    } else {
+    } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: response['message'] ?? 'Failed to get certificate',
+        message: 'Something went wrong while downloading certificate',
         contentType: ContentType.failure,
       );
+    } finally {
+      isDownloadingCertificate.value = false;
+      downloadProgress.value = 0;
     }
-  } catch (e) {
-    print('Error downloading certificate: $e');
-
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: 'Error',
-      message: 'Something went wrong while downloading certificate',
-      contentType: ContentType.failure,
-    );
-  } finally {
-    isDownloadingCertificate.value = false;
-    downloadProgress.value = 0;
   }
-}
+
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
   final RxBool isSaving = false.obs;
@@ -160,8 +157,6 @@ class ProfileController extends GetxController {
       try {
         _populateControllers();
       } catch (e, st) {
-        debugPrint('Error loading reseller profile: $e');
-        debugPrint('$st');
       } finally {
         if (!isClosed) {
           isLoading.value = false;
@@ -177,7 +172,6 @@ class ProfileController extends GetxController {
     if (user != null) {
       return user;
     } else {
-      print("Failed to fetch user profile");
       return User();
     }
   }
@@ -206,25 +200,17 @@ class ProfileController extends GetxController {
     profileData.value = UserModel(user: user);
 
     if (profileData.value?.user?.userType == 'reseller') {
-      print("jfhfhh ${profileData.value?.toJson()}");
       final data = await GetProfileService.getProfileService.getUserProfileData(
         profileData.value?.user?.id ?? '',
       );
       resellerProfile.value = ResellerProfile.fromJson(data ?? {});
     }
     _populateControllers();
-    print("Lok ${resellerProfile.value?.data}");
   }
 
   Future<Map<String, dynamic>> updateResellerProfile(User userProfile) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'reseller') {
-      print("jfhfhh ${profileData.value?.toJson()}");
-      print(
-        "🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}",
-      );
-      print("🟩 Payload: ${userProfile.toJson()}");
-
       final data = await ProfileUpdate.profileUpdate.updateProfileDetails(
         userProfile,
         profileData.value?.user?.id ?? '',
@@ -255,7 +241,7 @@ class ProfileController extends GetxController {
 
   void toggleEdit() {
     isEditing.value = !isEditing.value;
-    log("jfsdgdyhfg ndhfdhgf ${isEditing.value}");
+
     if (isEditing.value) {
       _populateControllers();
     }
@@ -274,7 +260,6 @@ class ProfileController extends GetxController {
       try {
         isLoadingIMage.value = true;
         final XFile? image = await _picker.pickImage(
-
           // preferredCameraDevice: CameraDevice.rear,
           // preferredImageCaptureResolution: ResolutionPreset.max,
           source: ImageSource.gallery,
@@ -506,23 +491,14 @@ class ProfileController extends GetxController {
       'address': addressController.text,
       'phone': phoneController.text,
     };
-    print("usr data ${user.toJson()}");
 
     try {
       final response = await updateResellerProfile(user);
-      print('🔍 FULL API RESPONSE: $response');
-      print('🔍 Response Type: ${response.runtimeType}');
 
       // Check if response is valid Map
       if (response is! Map<String, dynamic>) {
-        print('⚠️ ERROR: Response is not a Map! Type: ${response.runtimeType}');
         throw Exception('Invalid response format');
       }
-
-      print('🔍 otpRequired value: ${response['otpRequired']}');
-      print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 success value: ${response['success']}');
-      print('🔍 message value: ${response['message']}');
 
       final isOtpRequired =
           response['otpRequired'] == true ||
@@ -532,8 +508,6 @@ class ProfileController extends GetxController {
                   true);
 
       if (isOtpRequired) {
-        print('🔵 OTP Required detected!');
-
         pendingUserData = user;
 
         // Safely extract phone number
@@ -542,14 +516,8 @@ class ProfileController extends GetxController {
           phoneNumber = response['phone'] as String;
         }
         pendingPhone.value = phoneNumber;
-        print('🔵 Pending phone: ${pendingPhone.value}');
 
         if (response['updatePhoneToken'] == null) {
-          print(
-            '⚠️ Warning: API did not send updatePhoneToken in initial response',
-          );
-          print('⚠️ Triggering resend OTP to obtain token...');
-
           // Show dialog first
           isSaving.value = false;
           _showOtpVerificationDialog(
@@ -600,9 +568,10 @@ class ProfileController extends GetxController {
             token: profileData.value?.token,
           );
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
         }
@@ -633,9 +602,6 @@ class ProfileController extends GetxController {
         );
       }
     } catch (e, stackTrace) {
-      print('❌ Error saving profile: $e');
-      print('❌ Stack trace: $stackTrace');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'An error occurred while updating profile: ${e.toString()}',
@@ -702,9 +668,10 @@ class ProfileController extends GetxController {
           );
 
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
 
@@ -735,8 +702,6 @@ class ProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error verifying OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to verify OTP',
@@ -784,8 +749,6 @@ class ProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error resending OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to resend OTP',
@@ -814,9 +777,6 @@ class ProfileController extends GetxController {
     required String phone,
     required String message,
   }) {
-    print('🟢 Opening OTP Dialog for phone: $phone');
-    print('🟢 Message: $message');
-
     final otpController = TextEditingController();
 
     Get.dialog(

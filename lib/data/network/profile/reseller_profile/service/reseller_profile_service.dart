@@ -20,9 +20,11 @@ class ProfileUpdate {
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
   }
+
   static Future<Map<String, String>> headerUpdateToken() async {
     return await ApiConstants.getUpdatedHeaders();
   }
+
   // Future<Map<String, dynamic>> updateProfileDetails(
   //   User user,
   //   String userId,
@@ -68,10 +70,10 @@ class ProfileUpdate {
   //   }
   // }
   Future<Map<String, dynamic>> updateProfileDetails(
-      User user,
-      String userId,
-      File? profileImageFile,
-      ) async {
+    User user,
+    String userId,
+    File? profileImageFile,
+  ) async {
     try {
       final uri = Uri.parse('$_baseUrl/$userId');
       final request = http.MultipartRequest('PUT', uri);
@@ -88,32 +90,28 @@ class ProfileUpdate {
             profileImageFile.path,
           ),
         );
-        print('🖼️ Added profile image: ${profileImageFile.path}');
       }
 
       // ✅ Add user fields as form fields
       final userMap = user.toJson(); // ensure your `User` model has `toJson()`
       userMap.forEach((key, value) {
-        if(key == 'profilePic') return; // already handled above
+        if (key == 'profilePic') return; // already handled above
         if (value != null) {
           request.fields[key] = value.toString();
         }
       });
 
-      print('📤 Sending multipart request to $uri');
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
       final decoded = jsonDecode(response.body);
-      print('📦 Reseller Profile Update Response: $decoded');
-      print('📦 Status Code: ${response.statusCode}');
 
       // ✅ Handle OTP requirement
       if (decoded['otpRequired'] == true ||
-          decoded['message']?.toString().toLowerCase().contains('otp') == true) {
+          decoded['message']?.toString().toLowerCase().contains('otp') ==
+              true) {
         if (decoded['updatePhoneToken'] != null) {
           await SecureStorage.saveUpdatePhoneToken(decoded['updatePhoneToken']);
-          print('✅ Saved updatePhoneToken for OTP verification ${decoded['updatePhoneToken']}');
         }
         return decoded;
       }
@@ -137,23 +135,21 @@ class ProfileUpdate {
         contentType: ContentType.failure,
       );
       // ⚠️ Other errors
-      print('⚠️ Reseller Profile Update Error Response: $decoded');
+
       return decoded;
     } catch (e, stack) {
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong",
         contentType: ContentType.failure,
-      );print('❌ Exception in Reseller Profile Update: $e');
-      print(stack);
+      );
+
       return {
         'success': false,
         'message': 'Error updating profile: ${e.toString()}',
       };
     }
   }
-
 
   static const int _phoneUpdateOtpLength = 4;
 
@@ -164,16 +160,8 @@ class ProfileUpdate {
   ) async {
     try {
       if (otp.trim().length != _phoneUpdateOtpLength) {
-        return {
-          'success': false,
-          'message': 'Please enter a 4-digit OTP',
-        };
+        return {'success': false, 'message': 'Please enter a 4-digit OTP'};
       }
-
-      log('user id dshfbd $userId');
-      log('user OTP  $otp');
-      log("user Data ${user}");
-
 
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/verify-phone-update'),
@@ -182,7 +170,6 @@ class ProfileUpdate {
       );
 
       final decoded = jsonDecode(response.body);
-      print('📦 Reseller Verify Update Response: ${decoded.toString()}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
@@ -195,9 +182,13 @@ class ProfileUpdate {
         );
         return decoded;
       } else {
-        final jsonData=jsonDecode(response.body);
-        NesticoPeSnackBar.showAwesomeSnackbar(title: "Failed", message:jsonData['message'] , contentType: ContentType.failure);
-        print('⚠️ Reseller Profile Update Error Response: $decoded');
+        final jsonData = jsonDecode(response.body);
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Failed",
+          message: jsonData['message'],
+          contentType: ContentType.failure,
+        );
+
         return {
           'success': false,
           'message': decoded['message'] ?? 'Failed to verify OTP',
@@ -209,8 +200,7 @@ class ProfileUpdate {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print('❌ Exception in Reseller Profile Update: $e');
-      print(stack);
+
       return {
         'success': false,
         'message': 'Error verifying OTP: ${e.toString()}',
@@ -223,7 +213,6 @@ class ProfileUpdate {
     String userId,
     String phone,
   ) async {
-    log("dhfbhd $phone");
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/resend-phone-update-otp'),
@@ -232,7 +221,6 @@ class ProfileUpdate {
       );
 
       final decoded = jsonDecode(response.body);
-      print('📦 Resend Phone Update OTP Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Save new updatePhoneToken
@@ -240,19 +228,15 @@ class ProfileUpdate {
           await SecureStorage.saveUpdatePhoneToken(
             decoded['data']['updatePhoneToken'],
           );
-          print('✅ Saved new updatePhoneToken after resend');
         }
         return decoded;
       } else {
-        print('⚠️ Resend OTP Error Response: $decoded');
         return {
           'success': false,
           'message': decoded['message'] ?? 'Failed to resend OTP',
         };
       }
     } catch (e, stack) {
-      print('❌ Exception in Resend OTP: $e');
-      print(stack);
       return {
         'success': false,
         'message': 'Error resending OTP: ${e.toString()}',

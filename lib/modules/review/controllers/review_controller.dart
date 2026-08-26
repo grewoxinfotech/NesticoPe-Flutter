@@ -127,10 +127,8 @@ class ReviewController extends PaginatedController<ReviewItem> {
         filters: filters,
       );
 
-      print("Fetched items: ${response.items.length}");
       return response; // contains items + meta (page/total)
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -146,7 +144,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       }
       return success;
     } catch (e) {
-      print("❌ Error creating review: $e");
       return false;
     }
   }
@@ -161,7 +158,7 @@ class ReviewController extends PaginatedController<ReviewItem> {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
       final entityId = user?.user?.userType;
-      log("entityId  jdfghds : $entityId");
+
       // Build review data
       final reviewData = ReviewItem(
         entityType: (entityId == "buyer") ? "user" : entityId,
@@ -184,7 +181,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
 
       return success;
     } catch (e) {
-      print("❌ Error adding app review: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: '${e.toString()}',
@@ -385,17 +381,15 @@ class ReviewController extends PaginatedController<ReviewItem> {
       ].obs;
 
   /// 📌 Get all app reviews for the logged-in user
-  /// 
-  /// 
+  ///
+  ///
   Future<void> getContractorServiceEntity() async {
     isLoadingContractorServiceReviews.value = true;
     try {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
       final entityType = "contractor_service";
-      print("User Entity Type: $entityType");
-      
-      
+
       if (userId == null) {
         // print("❌ No user ID found in secure storage");
         isLoadingContractorServiceReviews.value = false;
@@ -409,13 +403,11 @@ class ReviewController extends PaginatedController<ReviewItem> {
 
       final response = await _service.fetchReviews(
         page: 1,
-        filters: {'entity_type': (entityType == "buyer") ? "user" : entityType, 'created_by': userId},
-        
+        filters: {
+          'entity_type': (entityType == "buyer") ? "user" : entityType,
+          'created_by': userId,
+        },
       );
-
-
-      debugPrint("Fetched app reviews: ${response.items.map((e) => e.toJson())}"); 
-
 
       // ✅ Check if the list is not empty
       if (response.items.isNotEmpty) {
@@ -423,61 +415,53 @@ class ReviewController extends PaginatedController<ReviewItem> {
         isLoadingContractorServiceReviews.value = false;
         return;
       } else {
-        debugPrint("❌ No app reviews found for this user");
         contractorServiceReviews.value = [];
         isLoadingContractorServiceReviews.value = false;
         return;
       }
     } catch (e) {
-      debugPrint("❌ Error fetching app reviews: $e");
       contractorServiceReviews.value = [];
       isLoadingContractorServiceReviews.value = false;
       return;
     }
   }
+
   Future<ReviewItem?> getAppReviews() async {
     try {
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
       final entityType = user?.user?.userType;
-      print("User Entity Type: $entityType");
-      
-      
+
       if (userId == null) {
-        print("❌ No user ID found in secure storage");
         return null;
       }
       if (entityType == null) {
-        print("❌ No entity type found in secure storage");
         return null;
       }
 
       final response = await _service.fetchReviews(
         page: 1,
-        filters: {'entity_type': (entityType == "buyer") ? "user" : entityType, 'created_by': userId},
-        
+        filters: {
+          'entity_type': (entityType == "buyer") ? "user" : entityType,
+          'created_by': userId,
+        },
       );
-
-
-      print("Fetched app reviews: ${response.items.length}");
 
       // ✅ Check if the list is not empty
       if (response.items.isNotEmpty) {
         return response.items.first;
       } else {
-        print("❌ No app reviews found for this user");
         return null;
       }
     } catch (e) {
-      print("❌ Error fetching app reviews: $e");
       return null;
     }
   }
 
   Future<void> getAppReview() async {
     try {
-      final reviews = await getAppReviews(); 
-      getContractorServiceEntity();// Your existing fetch method
+      final reviews = await getAppReviews();
+      getContractorServiceEntity(); // Your existing fetch method
       if (reviews != null) {
         appReview.value = reviews;
       } else {
@@ -505,7 +489,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       }
       return success;
     } catch (e) {
-      print("❌ Error updating review: $e");
       return false;
     }
   }
@@ -520,7 +503,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       }
       return success;
     } catch (e) {
-      print("❌ Error deleting review: $e");
       return false;
     }
   }
@@ -528,7 +510,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
   /// 👍 Mark review as helpful
   Future<bool> markHelpful(String id) async {
     try {
-      print("Second the $id");
       final success = await _service.markHelpful(id);
       if (success) {
         final review = items.firstWhereOrNull((r) => r.id == id);
@@ -543,7 +524,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       }
       return success;
     } catch (e) {
-      print("❌ Error marking helpful: $e");
       return false;
     }
   }
@@ -594,7 +574,6 @@ class ReviewController extends PaginatedController<ReviewItem> {
       final total = response.meta.total;
       return total == 1;
     } catch (e) {
-      print("❌ Error checking existing review: $e");
       return false;
     }
   }

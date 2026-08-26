@@ -42,7 +42,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
   int advancePercentage = 0;
 
   final List<String> _statusOptions = ['Pending', 'Accepted', 'Rejected'];
-   ContractorQuotationController _quotationController =
+  ContractorQuotationController _quotationController =
       Get.find<ContractorQuotationController>();
 
   @override
@@ -640,7 +640,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       decoration: BoxDecoration(
         color: ColorRes.white,
         borderRadius: BorderRadius.circular(12),
-         boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: ColorRes.primary.withOpacity(0.06),
             blurRadius: 10,
@@ -822,7 +822,9 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     );
   }
 
-  Widget _buildActionButtons(ContractorQuotationController _quotationController) {
+  Widget _buildActionButtons(
+    ContractorQuotationController _quotationController,
+  ) {
     return Column(
       children: [
         // Edit Button
@@ -885,9 +887,9 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
               width: double.infinity,
               child: OutlinedButton.icon(
                 // onPressed: _downloadQuotationPDF,
-                  onPressed: () {
-                _quotationController.getQuotation(widget.quotation.id);
-                  },
+                onPressed: () {
+                  _quotationController.getQuotation(widget.quotation.id);
+                },
                 icon: const Icon(
                   Icons.picture_as_pdf_outlined,
                   color: ColorRes.primary,
@@ -914,8 +916,8 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
-              onPressed: (){
-                 _quotationController.getQuotation(widget.quotation.id);
+              onPressed: () {
+                _quotationController.getQuotation(widget.quotation.id);
               },
               icon: const Icon(
                 Icons.picture_as_pdf_outlined,
@@ -947,12 +949,18 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
             child: SizedBox(
               width: double.infinity,
               child: Obx(() {
-                final dashboardController = Get.isRegistered<ContractorDashboardController>()
-                    ? Get.find<ContractorDashboardController>()
-                    : Get.put(ContractorDashboardController());
+                final dashboardController =
+                    Get.isRegistered<ContractorDashboardController>()
+                        ? Get.find<ContractorDashboardController>()
+                        : Get.put(ContractorDashboardController());
 
-                final bool showDisabledStyle = !dashboardController.hasActivePlan ||
-                    (dashboardController.activeSubscription.value?.isLeadLimitReached ?? true);
+                final bool showDisabledStyle =
+                    !dashboardController.hasActivePlan ||
+                    (dashboardController
+                            .activeSubscription
+                            .value
+                            ?.isLeadLimitReached ??
+                        true);
 
                 return ElevatedButton.icon(
                   onPressed: () async {
@@ -1091,8 +1099,10 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
   void _convertToLead() {
     final dashboardController = Get.find<ContractorDashboardController>();
-    final bool showDisabledStyle = !dashboardController.hasActivePlan ||
-        (dashboardController.activeSubscription.value?.isLeadLimitReached ?? true);
+    final bool showDisabledStyle =
+        !dashboardController.hasActivePlan ||
+        (dashboardController.activeSubscription.value?.isLeadLimitReached ??
+            true);
 
     Get.dialog(
       AlertDialog(
@@ -1144,9 +1154,8 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
               controller.convertIntoLead(widget.quotation);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: showDisabledStyle
-                  ? Colors.grey.shade400
-                  : Colors.green,
+              backgroundColor:
+                  showDisabledStyle ? Colors.grey.shade400 : Colors.green,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -1862,7 +1871,7 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
   Future<void> _downloadQuotationPDF() async {
     final user = await SecureStorage.getUserData();
-    log("user : $user");
+
     Uint8List logoBytes =
         (await rootBundle.load(
           'assets/images/NesticoPe_logo.png',
@@ -2404,8 +2413,6 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       Get.to(() => QuotationPdfPreviewScreen(file: file));
     } catch (e, stackTrace) {
       Get.back(); // Close loading dialog
-      print('PDF Generation Error: $e');
-      print('Stack Trace: $stackTrace');
 
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
@@ -2670,19 +2677,19 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
     for (var material in materials) {
       final contentLength = material['value']!.length;
-     /* if (contentLength <= 20) {
+      /* if (contentLength <= 20) {
         shortItems.add(material);
       } else if (contentLength <= 50) {
         mediumItems.add(material);
       } else {*/
-        longItems.add(material);
+      longItems.add(material);
       // }
     }
 
     List<pw.Widget> rows = [];
 
     // Build rows for short items (4 per row)
-/*    rows.addAll(_buildMaterialRows(shortItems, 4));
+    /*    rows.addAll(_buildMaterialRows(shortItems, 4));
 
     // Build rows for medium items (3 per row)
     rows.addAll(_buildMaterialRows(mediumItems, 4));*/
@@ -2701,22 +2708,19 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
 
     List<pw.Widget> rows = [];
 
-
     for (int i = 0; i < materials.length; i += itemsPerRow) {
       final rowMaterials = materials.sublist(
         i,
         i + itemsPerRow > materials.length ? materials.length : i + itemsPerRow,
       );
 
-
       rows.add(
         pw.Padding(
-          padding: pw.EdgeInsets.only(right: 15,top: 4,bottom: 4),
+          padding: pw.EdgeInsets.only(right: 15, top: 4, bottom: 4),
           child: pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.start,
             children: [
               ...rowMaterials.map((material) {
-
                 return pw.SizedBox(
                   width: 130,
                   child: pw.Padding(
@@ -3230,7 +3234,6 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
       final validUntil = date.add(const Duration(days: 15));
       return '${validUntil.month.toString().padLeft(2, '0')}/${validUntil.day.toString().padLeft(2, '0')}/${validUntil.year}';
     } catch (e) {
-      print('Error formatting valid until date: $e');
       return 'N/A';
     }
   }
@@ -3240,7 +3243,6 @@ class _ContractorQuotationScreenState extends State<ContractorQuotationScreen> {
     try {
       return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
     } catch (e) {
-      print('Error formatting date: $e');
       return 'N/A';
     }
   }

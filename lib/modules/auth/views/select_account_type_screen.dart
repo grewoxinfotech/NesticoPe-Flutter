@@ -67,7 +67,6 @@ class SelectAccountTypeScreen extends StatelessWidget {
                   final role = roles[index];
                   return GestureDetector(
                     onTap: () {
-                      print('Selected role: ${_roleToDisplayText(role)}');
                       // Navigate to RegisterScreen with selected role
                       Get.to(() => RegisterScreen(role: role));
                     },
@@ -88,7 +87,7 @@ class SelectAccountTypeScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           Text(
                             _roleToDisplayText(role),
-                            style:  TextStyle(
+                            style: TextStyle(
                               fontSize: AppFontSizes.large,
                               fontWeight: AppFontWeights.semiBold,
                               color: ColorRes.white,

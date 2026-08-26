@@ -91,8 +91,6 @@ class GoogleMapApi {
       '&key=${ApiConfig.mapkey}',
     );
 
-    print('🔍 Google Places TextSearch URL: $url');
-
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -104,14 +102,9 @@ class GoogleMapApi {
               .where((e) => e['name'] != null && e['formatted_address'] != null)
               .toList();
 
-      print(
-        '✅ Found ${validResults.length} buildings/societies for "$input" in $cityName',
-      );
-
       // Return modified map for convenience
       return {'results': validResults};
     } else {
-      print('❌ Failed to fetch buildings: ${response.statusCode}');
       return null;
     }
   }
@@ -132,7 +125,6 @@ class GoogleMapApi {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      print('Google Maps API Response: ${response.body}');
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
         return data;
@@ -163,7 +155,6 @@ class GoogleMapApi {
       }
       return null;
     } catch (e) {
-      print('❌ Error getting city coordinates: $e');
       return null;
     }
   }
@@ -208,7 +199,6 @@ class GoogleMapApi {
           final response = await http.get(uri);
 
           if (response.statusCode == 200) {
-            print('Locality search with location bias: ${response.body}');
             final data = json.decode(response.body);
 
             if (data['status'] == 'OK') {
@@ -312,7 +302,6 @@ class GoogleMapApi {
       // Fallback: search without city filter
       return _fetchPredictions(query, 'geocode');
     } catch (e) {
-      print('❌ Error in searchLocalities: $e');
       return _fetchPredictions(query, 'geocode');
     }
   }
@@ -429,7 +418,6 @@ class GoogleMapApi {
 
       return simplified.take(4).toList(); // ✅ Limit to 4 items
     } catch (e) {
-      print('❌ Error in getNearbyLandmarks: $e');
       return [];
     }
   }
@@ -463,14 +451,12 @@ class GoogleMapApi {
       );
 
       final geoResponse = await http.get(geoUri);
-      print("Geo response Near by location =$geoUri");
+
       if (geoResponse.statusCode != 200) {
         throw Exception('Failed to get coordinates for address');
       }
 
       final geoData = json.decode(geoResponse.body);
-
-      print('Geocoding Response: $geoData');
 
       if (geoData['status'] != 'OK' || geoData['results'].isEmpty) {
         throw Exception('No coordinates found for address');
@@ -494,7 +480,6 @@ class GoogleMapApi {
       final placesData = json.decode(placesResponse.body);
 
       if (placesData['status'] != 'OK') {
-        print('⚠️ Places API Status: ${placesData['status']}');
         return {
           'propertyCoords': {'lat': lat, 'lng': lng},
           'places': <Map<String, dynamic>>[],
@@ -522,7 +507,6 @@ class GoogleMapApi {
         'places': places,
       };
     } catch (e) {
-      print('❌ Error in getNearbyPlacesByCategory: $e');
       return {'propertyCoords': null, 'places': <Map<String, dynamic>>[]};
     }
   }
@@ -537,12 +521,10 @@ class GoogleMapApi {
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
-        print('Zipcode API Response: ${response.body}');
         final data = json.decode(response.body);
 
         if (data['status'] == 'OK') {
           final predictions = data['predictions'] as List;
-          log("Check any zip code ${predictions}");
 
           // Extract unique zipcodes
           final zipcodes = <Map<String, String>>[];
@@ -568,17 +550,14 @@ class GoogleMapApi {
             }
           }
 
-          print('✅ Found ${zipcodes.length} zipcodes for $cityName');
           return zipcodes;
         } else {
-          print('⚠️ Zipcode API Status: ${data['status']}');
           return [];
         }
       } else {
         throw Exception('Failed to fetch zipcodes');
       }
     } catch (e) {
-      print('❌ Error fetching zipcodes: $e');
       return [];
     }
   }
@@ -618,7 +597,6 @@ class GoogleMapApi {
       }
       return null;
     } catch (e) {
-      print('❌ Error getting location details: $e');
       return null;
     }
   }

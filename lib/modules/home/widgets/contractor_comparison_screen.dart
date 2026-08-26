@@ -1461,9 +1461,7 @@ class _ContractorComparisonScreenState
             );
             _contractorData[contractor.userId] = contractorResponse;
           }
-        } catch (e) {
-          print('Error loading contractor ${contractor.id}: $e');
-        }
+        } catch (e) {}
       }
 
       if (_contractorData.isEmpty) {
@@ -2061,7 +2059,7 @@ class _ContractorComparisonTable extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-        height: MediaQuery.of(context).size.height * 0.65,
+          height: MediaQuery.of(context).size.height * 0.65,
           child: PageView.builder(
             controller: pageController,
             itemCount: contractors.length,
@@ -2203,7 +2201,7 @@ class _ContractorServicesCard extends StatelessWidget {
 
           // Services List in Slider
           SizedBox(
-           height: MediaQuery.of(context).size.height * 0.55,
+            height: MediaQuery.of(context).size.height * 0.55,
             child: ListView(
               padding: const EdgeInsets.all(0),
               children: [

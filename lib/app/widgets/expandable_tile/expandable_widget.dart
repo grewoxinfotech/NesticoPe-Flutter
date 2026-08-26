@@ -115,7 +115,6 @@ class _ExpandableTileState extends State<ExpandableTile>
         GestureDetector(
           onTap: _toggleExpand,
           child: Container(
-
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -182,7 +181,10 @@ class _ExpandableTileState extends State<ExpandableTile>
                   duration: const Duration(milliseconds: 300),
                   child: Icon(
                     widget.trailingIcon,
-                    color: _isExpanded ? ColorRes.primary : ColorRes.leadGreyColor[400],
+                    color:
+                        _isExpanded
+                            ? ColorRes.primary
+                            : ColorRes.leadGreyColor[400],
                   ),
                 ),
               ],

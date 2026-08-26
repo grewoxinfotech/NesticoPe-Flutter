@@ -26,8 +26,8 @@ class ContactController extends GetxController {
         page.value = 1;
         items.clear();
       }
-      final PaginationResponse<ContactItem> res =
-          await _service.fetchContactsPaged(page: page.value, limit: limit);
+      final PaginationResponse<ContactItem> res = await _service
+          .fetchContactsPaged(page: page.value, limit: limit);
       items.addAll(res.items);
       hasMore.value = res.meta.hasMore;
 

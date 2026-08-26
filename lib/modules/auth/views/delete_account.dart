@@ -12,40 +12,34 @@ class RequestDeleteAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return SizedBox(
-    width: double.infinity,
-    child: ElevatedButton.icon(
-      onPressed: () {
-        Get.dialog(_buildConfirmationDialog(context));
-      },
-      icon: Icon(
-        Icons.delete_outline,
-        color: ColorRes.error,
-      ),
-      label: Text(
-        'Request to Delete Account',
-        style: TextStyle(
-          color: ColorRes.error,
-          fontSize: AppFontSizes.bodySmall,
-          fontWeight: FontWeight.w500,
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Get.dialog(_buildConfirmationDialog(context));
+        },
+        icon: Icon(Icons.delete_outline, color: ColorRes.error),
+        label: Text(
+          'Request to Delete Account',
+          style: TextStyle(
+            color: ColorRes.error,
+            fontSize: AppFontSizes.bodySmall,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorRes.error.withOpacity(0.08),
+          foregroundColor: ColorRes.error,
+          elevation: 0,
+          side: BorderSide(color: ColorRes.error.withOpacity(0.3), width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: ColorRes.error.withOpacity(0.08),
-        foregroundColor: ColorRes.error,
-        elevation: 0,
-        side: BorderSide(
-          color: ColorRes.error.withOpacity(0.3),
-          width: 1.5,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildConfirmationDialog(BuildContext context) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

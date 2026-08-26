@@ -145,27 +145,12 @@ class _BuyerSideProjectFilterScreenState
     if (userId == null) return;
 
     setState(() {
-      log("cityController.uniqueCities--------------------------------");
-      log(
-        "cityController.uniqueCities ${cityController.uniqueCities.map((e) => e ?? '').toSet().toList()}",
-      );
-      log("cityController.uniqueCities--------------------------------");
       controller.resellerCityPropertyList.value =
           projectController?.items.value
               .map((e) => e.city ?? '')
               .toSet()
               .toList() ??
           [];
-
-      log(
-        "controller.resellerCityPropertyList--------------------------------",
-      );
-      log(
-        "controller.resellerCityPropertyList ${projectController?.items.value.map((e) => e.city ?? '').toSet().toList() ?? []}",
-      );
-      log(
-        "controller.resellerCityPropertyList--------------------------------",
-      );
 
       controller.resellerCityPropertyList.value =
           cityController.uniqueCities.map((e) => e ?? '').toSet().toList() ??
@@ -230,7 +215,7 @@ class _BuyerSideProjectFilterScreenState
       if (controller.resellerBHKType.value.isNotEmpty)
         ...() {
           final bhkValue = controller.resellerBHKType.value.split(' ')[0];
-          log("bhkValue ${bhkValue}");
+
           if (bhkValue == '5+') {
             return {'bhk': 5, 'bhkPlus': true};
           } else {
@@ -597,8 +582,6 @@ class _BuyerSideProjectFilterScreenState
                       selectedCity.structuredFormatting?.mainText ?? '';
 
                   // controller.cityController.text = selectedCity.split(',')[0];
-
-                  print("city ${controller.locationController.text}");
                 },
               ),
               const SizedBox(height: 16),
@@ -635,16 +618,11 @@ class _BuyerSideProjectFilterScreenState
                 BHKTypes(
                   bHKList: controllerForFilter.bHkType,
                   onSelectionChanged: (index) {
-                    debugPrint('BHK Type $index');
                     controllerForFilter.updateFilter(
                       controllerForFilter.bhkType,
                       index,
                     );
                     controller.resellerBHKType.value = index ?? '';
-                    log(
-                      "controller.resellerBHKType ${controller.resellerBHKType.value}",
-                    );
-                    log("index ${index}");
                   },
                   controllerForFilter: controllerForFilter,
                 ),
@@ -661,8 +639,6 @@ class _BuyerSideProjectFilterScreenState
                   onMinChanged: (val) {
                     if (val != null) {
                       controller.resellerMinPrice.value = val;
-
-                      print("Main ${controller.resellerMinPrice.value}");
                     }
                   },
                   onMaxChanged: (val) {
@@ -671,8 +647,6 @@ class _BuyerSideProjectFilterScreenState
                       controller.buyerPriceRange(
                         RangeValues(controller.resellerMinPrice.value, val),
                       );
-
-                      print("mxa ${controller.resellerMaxPrice.value}");
                     }
                   },
                   minLabel: "Min Budget",
@@ -744,9 +718,6 @@ class _BuyerSideProjectFilterScreenState
                                     controller.builderProjectStatus,
                                     option,
                                   );
-                                  log(
-                                    "resellerListingType Type Reseller PropertyFilter ${controller.builderProjectStatus}",
-                                  );
                                 },
                               ),
                             )
@@ -779,9 +750,6 @@ class _BuyerSideProjectFilterScreenState
                               controller.setValue(
                                 controller.resellerPropertyType,
                                 option,
-                              );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyType}",
                               );
                             },
                           );
@@ -904,17 +872,17 @@ class _BuyerSideProjectFilterScreenState
                               .toSet()
                               .toList() ??
                           [];
-            
+
                       // ✅ Repopulate the property type list
                       controller.propertyTypeList.value = List<String>.from(
                         _defaultPropertyTypes,
                       );
-            
+
                       // ✅ Clear the selected values
                       controller.resellerSelectedState.value = '';
                       controller.resellerSelectedCity.value = '';
                       controller.builderProjectStatus.value = '';
-            
+
                       setState(() {
                         startDate = null;
                         endDate = null;
@@ -922,9 +890,9 @@ class _BuyerSideProjectFilterScreenState
                         tempMaxPrice = controller.resellerMaxPrice.value;
                         _showAllAmenities = false;
                       });
-            
+
                       // controller.getPropertyType(propertyController.items);
-            
+
                       NesticoPeSnackBar.showAwesomeSnackbar(
                         title: 'Filters Cleared',
                         message: 'All filters have been reset successfully',
@@ -952,16 +920,18 @@ class _BuyerSideProjectFilterScreenState
                   child: ElevatedButton(
                     onPressed: () {
                       controller.getPropertyType();
-            
+
                       // Build filter result and return it
                       Map<String, dynamic> filterResult = _buildFilterResult();
-            
-                      Get.back(result: filterResult); // ✅ Return the filter result
+
+                      Get.back(
+                        result: filterResult,
+                      ); // ✅ Return the filter result
                       controller.txtStartDate.clear();
                       controller.txtEndDate.clear();
                       controller.txtStateSearch.clear();
                       controller.txtCitySearch.clear();
-            
+
                       controller.txtSearchPropertyByID.clear();
                       controllerForFilter.isPropertyHaveImage.value = false;
                       controllerForFilter.isPropertyHaveVideo.value = false;
@@ -986,24 +956,24 @@ class _BuyerSideProjectFilterScreenState
                       controllerForFilter.selectedState.value = '';
                       controllerForFilter.selectedCity.value = '';
                       // ✅ Clear the dropdown lists
-            
+
                       controller.resellerStatePropertyList.value =
                           projectController?.items.value
                               .map((e) => e.state ?? '')
                               .toSet()
                               .toList() ??
                           [];
-            
+
                       // ✅ Repopulate the property type list
                       controller.propertyTypeList.value = List<String>.from(
                         _defaultPropertyTypes,
                       );
-            
+
                       // ✅ Clear the selected values
                       controller.resellerSelectedState.value = '';
                       controller.resellerSelectedCity.value = '';
                       controller.builderProjectStatus.value = '';
-            
+
                       setState(() {
                         startDate = null;
                         endDate = null;

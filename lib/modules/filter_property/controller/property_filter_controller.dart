@@ -14,7 +14,7 @@ class PropertyFilterControllerForFilter extends GetxController {
   RxBool isPropertyHaveImage = false.obs;
   RxBool isPropertyHaveVideo = false.obs;
   RxList<String> amenities = <String>[].obs;
-  
+
   final showAllAmenities = false.obs;
 
   void addBuilderAmenities(String items) {
@@ -388,9 +388,6 @@ class PropertyFilterControllerForFilter extends GetxController {
         break;
     }
 
-    print(
-      'Property type changed to: ${propertyType[selectedPropertyTypeIndex.value]}',
-    );
     resetFilters();
   }
 
@@ -512,7 +509,6 @@ class PropertyFilterControllerForFilter extends GetxController {
 
   /// Reset ALL filters including search, verification and location (used by Reset button)
   void resetAllFilters() {
-    
     hasUserSelectedPropertyType.value = false;
     // Common
     isRERAVerified.value = false;
@@ -522,7 +518,6 @@ class PropertyFilterControllerForFilter extends GetxController {
     selectedPurchaseType.value = '';
     statusApplicateIndex.value = '';
     searchFilterByID.clear();
-
 
     // Location
     selectedState.value = '';
@@ -905,8 +900,6 @@ class PropertyFilterControllerForFilter extends GetxController {
       if (rentFurnishing.value.isEmpty) return null;
       final v = hyphenSlug(rentFurnishing.value);
 
-      print("fjhf${v.contains('fully')}");
-
       // normalize common variants
       if (v.contains('semi')) return 'semi-furnished';
       if (v.contains('fully')) return 'fully-furnished';
@@ -962,12 +955,6 @@ class PropertyFilterControllerForFilter extends GetxController {
     Map<String, dynamic>? mapPriceRange() {
       final tab = propertyType[selectedPropertyTypeIndex.value];
 
-      log("tab $tab");
-      log("selectedPropertyTypeIndex.value ${selectedPropertyTypeIndex.value}");
-      log("residentialSelectedSubCategory.value ${residentialSelectedSubCategory.value}");
-      log("Project Any ${_rangeValues.value.start}  ${_rangeValues.value.end}");
-
-
       if (tab == 'Residential') {
         final isRent =
             residentialSelectedSubCategory.value.toLowerCase() == 'rent';
@@ -979,30 +966,33 @@ class PropertyFilterControllerForFilter extends GetxController {
           }
           // Fallback to slider with default skip
           if (rentRangeValues.value.start == rentMin.value &&
-              rentRangeValues.value.end == rentMax.value) return null;
-          return {'min': rentRangeValues.value.start, 'max': rentRangeValues.value.end};
+              rentRangeValues.value.end == rentMax.value)
+            return null;
+          return {
+            'min': rentRangeValues.value.start,
+            'max': rentRangeValues.value.end,
+          };
         } else {
           // ✅ Prefer discrete budget picker values when provided
           final double selectedMin = min.value;
           final double selectedMax = max.value;
-          final bool hasDiscreteSelection = (selectedMin > 0 || selectedMax > 0);
+          final bool hasDiscreteSelection =
+              (selectedMin > 0 || selectedMax > 0);
 
           if (hasDiscreteSelection) {
-            return {
-              'min': selectedMin,
-              'max': selectedMax,
-            };
+            return {'min': selectedMin, 'max': selectedMax};
           }
 
           // Fallback to slider values when discrete not used
           // ✅ Skip if both are 0 (default)
-          if (_rangeValues.value.start == 0.0 &&              _rangeValues.value.end == 0.0) {
+          if (_rangeValues.value.start == 0.0 &&
+              _rangeValues.value.end == 0.0) {
             return null;
-
           }
           // ✅ Skip if matches dynamic bounds (no narrowing)
           if (_rangeValues.value.start == min.value &&
-              _rangeValues.value.end == max.value) return null;
+              _rangeValues.value.end == max.value)
+            return null;
           // ✅ Skip if global defaults used but bounds not loaded yet (UI max 10Cr)
           if (min.value == 0.0 &&
               max.value == 0.0 &&
@@ -1039,8 +1029,12 @@ class PropertyFilterControllerForFilter extends GetxController {
         }
         // Fallback to slider with default skip
         if (pgRangeValues.value.start == pgMin.value &&
-            pgRangeValues.value.end == pgMax.value) return null;
-        return {'min': pgRangeValues.value.start, 'max': pgRangeValues.value.end};
+            pgRangeValues.value.end == pgMax.value)
+          return null;
+        return {
+          'min': pgRangeValues.value.start,
+          'max': pgRangeValues.value.end,
+        };
       }
       return null;
     }
@@ -1316,9 +1310,7 @@ class PropertyFilterControllerForFilter extends GetxController {
               pgRangeValues.value = RangeValues(minValue, maxValue);
               break;
           }
-        } catch (e) {
-          debugPrint('Error parsing price range: $e');
-        }
+        } catch (e) {}
       }
 
       // Handle PG specific filters
@@ -1371,9 +1363,7 @@ class PropertyFilterControllerForFilter extends GetxController {
                     ? 'Yes'
                     : 'No';
           }
-        } catch (e) {
-          debugPrint('Error parsing PG info: $e');
-        }
+        } catch (e) {}
       }
 
       // Handle location - properly load cities before setting values
@@ -1411,7 +1401,6 @@ class PropertyFilterControllerForFilter extends GetxController {
         }
       }
     } catch (e) {
-      debugPrint('Error initializing filters: $e');
     } finally {
       // Reset initialization flag
       isInitializing.value = false;

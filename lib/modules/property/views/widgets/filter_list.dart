@@ -47,12 +47,10 @@ class _FilterTagListState extends State<FilterTagList> {
               decoration: BoxDecoration(
                 color: ColorRes.white, // Always white background
                 borderRadius: BorderRadius.circular(AppRadius.medium),
-                border: isSelected
-                    ? Border.all(
-                  color: ColorRes.primary,
-                  width: 1.5,
-                )
-                    : null,
+                border:
+                    isSelected
+                        ? Border.all(color: ColorRes.primary, width: 1.5)
+                        : null,
                 // boxShadow: [
                 //   BoxShadow(
                 //     color: Color(0x1f939393),
@@ -66,20 +64,22 @@ class _FilterTagListState extends State<FilterTagList> {
                 children: [
                   Icon(
                     icons[index],
-                    color: isSelected
-                        ? ColorRes.primary
-                        : ColorRes.leadGreyColor,
+                    color:
+                        isSelected ? ColorRes.primary : ColorRes.leadGreyColor,
                     size: 28,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     tags[index],
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: isSelected
-                          ? ColorRes.primary
-                          : ColorRes.leadGreyColor,
+                      color:
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor,
                       fontWeight:
-                      isSelected ? AppFontWeights.bold : AppFontWeights.medium,
+                          isSelected
+                              ? AppFontWeights.bold
+                              : AppFontWeights.medium,
                     ),
                   ),
                 ],

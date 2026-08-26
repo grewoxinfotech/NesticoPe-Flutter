@@ -42,7 +42,10 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
     this.width,
     this.isMultiSelect = false,
     this.showSelectedItems = true,
-    this.onMenuOpened,  this.fontsize=AppFontSizes.medium,  this.fontWight=AppFontWeights.bold,  this.darkText=false,
+    this.onMenuOpened,
+    this.fontsize = AppFontSizes.medium,
+    this.fontWight = AppFontWeights.bold,
+    this.darkText = false,
   });
 
   @override
@@ -51,28 +54,31 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-        if(title != null && title!.isNotEmpty)
-        Row(
-          children: [
-            Text(
-              title!,
-              style: TextStyle(
-                fontSize: fontsize,
-                color:darkText?ColorRes.textColor: Get.theme.colorScheme.onSecondary,
-                fontWeight: fontWight,
-              ),
-            ),
-            if (isRequired)
+        if (title != null && title!.isNotEmpty)
+          Row(
+            children: [
               Text(
-                ' *',
+                title!,
                 style: TextStyle(
-                  color: ColorRes.error,
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.bold,
+                  fontSize: fontsize,
+                  color:
+                      darkText
+                          ? ColorRes.textColor
+                          : Get.theme.colorScheme.onSecondary,
+                  fontWeight: fontWight,
                 ),
               ),
-          ],
-        ),
+              if (isRequired)
+                Text(
+                  ' *',
+                  style: TextStyle(
+                    color: ColorRes.error,
+                    fontSize: AppFontSizes.medium,
+                    fontWeight: AppFontWeights.bold,
+                  ),
+                ),
+            ],
+          ),
         AppSpacing.verticalSmall,
         if (isMultiSelect) _buildMultiSelect() else _buildSingleSelect(),
       ],
@@ -104,7 +110,10 @@ class NesticoPeDropdownField<T> extends StatelessWidget {
       ),
       decoration: _getInputDecoration(),
       isExpanded: true,
-      icon: NesticoPeIc(iconPath: ICRes.down, color: Get.theme.colorScheme.primary),
+      icon: NesticoPeIc(
+        iconPath: ICRes.down,
+        color: Get.theme.colorScheme.primary,
+      ),
       dropdownColor: Get.theme.colorScheme.surface,
       menuMaxHeight: 300,
       itemHeight: 50,

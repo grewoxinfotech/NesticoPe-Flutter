@@ -33,69 +33,67 @@ class ContractorProfileController extends GetxController {
   final RxBool isDownloadingCertificate = false.obs;
   RxDouble downloadProgress = 0.0.obs;
 
- Future<void> downloadCertificate() async {
-  try {
-    isDownloadingCertificate.value = true;
-    downloadProgress.value = 0;
+  Future<void> downloadCertificate() async {
+    try {
+      isDownloadingCertificate.value = true;
+      downloadProgress.value = 0;
 
-    final response = await GetMyCertificateService.getMyCertificate();
+      final response = await GetMyCertificateService.getMyCertificate();
 
-    if (response['success'] == true && response['data'] != null) {
-      final certificateUrl = response['data']['certificateUrl'];
+      if (response['success'] == true && response['data'] != null) {
+        final certificateUrl = response['data']['certificateUrl'];
 
-      if (certificateUrl != null && certificateUrl.isNotEmpty) {
+        if (certificateUrl != null && certificateUrl.isNotEmpty) {
+          final dir = await getApplicationDocumentsDirectory();
+          final filePath =
+              "${dir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.pdf";
 
-        final dir = await getApplicationDocumentsDirectory();
-        final filePath =
-            "${dir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.pdf";
+          final dio = Dio();
 
-        final dio = Dio();
+          await dio.download(
+            certificateUrl,
+            filePath,
+            onReceiveProgress: (received, total) {
+              if (total != -1) {
+                downloadProgress.value = received / total;
+              }
+            },
+          );
 
-        await dio.download(
-          certificateUrl,
-          filePath,
-          onReceiveProgress: (received, total) {
-            if (total != -1) {
-              downloadProgress.value = received / total;
-            }
-          },
-        );
+          /// Open downloaded PDF
+          await OpenFilex.open(filePath);
 
-        /// Open downloaded PDF
-        await OpenFilex.open(filePath);
-
-        NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Success',
-          message: 'Certificate downloaded successfully',
-          contentType: ContentType.success,
-        );
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Success',
+            message: 'Certificate downloaded successfully',
+            contentType: ContentType.success,
+          );
+        } else {
+          NesticoPeSnackBar.showAwesomeSnackbar(
+            title: 'Info',
+            message: 'No certificate found',
+            contentType: ContentType.warning,
+          );
+        }
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
-          title: 'Info',
-          message: 'No certificate found',
-          contentType: ContentType.warning,
+          title: 'Error',
+          message: response['message'] ?? 'Failed to get certificate',
+          contentType: ContentType.failure,
         );
       }
-    } else {
+    } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
-        message: response['message'] ?? 'Failed to get certificate',
+        message: 'Something went wrong while downloading certificate',
         contentType: ContentType.failure,
       );
+    } finally {
+      isDownloadingCertificate.value = false;
+      downloadProgress.value = 0;
     }
-  } catch (e) {
-    print('Error downloading certificate: $e');
-
-    NesticoPeSnackBar.showAwesomeSnackbar(
-      title: 'Error',
-      message: 'Something went wrong while downloading certificate',
-      contentType: ContentType.failure,
-    );
-  } finally {
-    isDownloadingCertificate.value = false;
-    downloadProgress.value = 0;
   }
-}
+
   final RxBool isLoading = false.obs;
   final RxBool isEditing = false.obs;
   final RxBool isLoadingIMage = false.obs;
@@ -172,8 +170,6 @@ class ContractorProfileController extends GetxController {
         await getUserProfileData();
         _populateControllers();
       } catch (e, st) {
-        debugPrint('Error loading contractor profile: $e');
-        debugPrint('$st');
       } finally {
         if (!isClosed) {
           isLoading.value = false;
@@ -185,13 +181,12 @@ class ContractorProfileController extends GetxController {
   Future<User> getUserProfile() async {
     final data = await SecureStorage.getUserData();
     final userId = data?.user?.id;
-    debugPrint('Fetched User Seller: ${userId}');
+
     User? user = await _userService.getUserById(userId ?? '');
 
     if (user != null) {
       return user;
     } else {
-      print("Failed to fetch user profile");
       return User();
     }
   }
@@ -203,15 +198,12 @@ class ContractorProfileController extends GetxController {
     profileData.value = UserModel(user: user);
 
     if (profileData.value?.user?.userType == 'contractor') {
-      print("vkjbhfjgi ${profileData.value?.toJson()}");
       final data = await ContractorProfileUpdate.profileUpdate
           .getUserProfileData(profileData.value?.user?.id ?? '');
-      print("Contractor kgokjgij${data}");
+
       resellerProfile.value = ContractorProfileData.fromJson(data ?? {});
-      print("Contractor efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
     _populateControllers();
-    print("Lok ${resellerProfile.value?.id}");
   }
 
   Future<Map<String, dynamic>> updateResellerProfile(
@@ -219,12 +211,6 @@ class ContractorProfileController extends GetxController {
   ) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'contractor') {
-      print("jfhfhh ${profileData.value?.toJson()}");
-      print(
-        "🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}",
-      );
-      print("🟩 Payloadshfdufhdu: ${userProfile.toMap()}");
-
       final data = await ContractorProfileUpdate.profileUpdate
           .updateSellerProfileDetails(
             userProfile,
@@ -247,13 +233,11 @@ class ContractorProfileController extends GetxController {
     companyController.text = profileData.value?.user?.state ?? "";
 
     zipController.text = profileData.value?.user?.zipCode ?? "";
-    if((profileData.value?.user?.totalExperience!=null))
-    {
-      experienceController.text=profileData.value?.user?.totalExperience.toString()??'';
-    }
-    else{
-
-      experienceController.text="0";
+    if ((profileData.value?.user?.totalExperience != null)) {
+      experienceController.text =
+          profileData.value?.user?.totalExperience.toString() ?? '';
+    } else {
+      experienceController.text = "0";
     }
 
     //
@@ -280,10 +264,9 @@ class ContractorProfileController extends GetxController {
 
   // Image picker methods
   Future<void> pickImageFromGallery() async {
-  bool isGranted=await requestGalleryPermission();
+    bool isGranted = await requestGalleryPermission();
 
-  if(isGranted)
-    {
+    if (isGranted) {
       try {
         isLoadingIMage.value = true;
         final XFile? image = await _picker.pickImage(
@@ -315,38 +298,37 @@ class ContractorProfileController extends GetxController {
   }
 
   Future<void> pickImageFromCamera() async {
-    bool isGranted=await requestCameraPermission();
+    bool isGranted = await requestCameraPermission();
 
-    if(isGranted)
-      {
-        try {
-          isLoadingIMage.value = true;
-          final XFile? image = await _picker.pickImage(
-            source: ImageSource.camera,
-            maxWidth: 1024,
-            maxHeight: 1024,
-            imageQuality: 85,
-          );
+    if (isGranted) {
+      try {
+        isLoadingIMage.value = true;
+        final XFile? image = await _picker.pickImage(
+          source: ImageSource.camera,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
+        );
 
-          if (image != null) {
-            selectedImage.value = File(image.path);
+        if (image != null) {
+          selectedImage.value = File(image.path);
 
-            NesticoPeSnackBar.showAwesomeSnackbar(
-              title: 'Success',
-              message: 'Image captured successfully',
-              contentType: ContentType.success,
-            );
-          }
-        } catch (e) {
           NesticoPeSnackBar.showAwesomeSnackbar(
-            title: 'Error',
-            message: 'Failed to capture image: ${e.toString()}',
-            contentType: ContentType.failure,
+            title: 'Success',
+            message: 'Image captured successfully',
+            contentType: ContentType.success,
           );
-        } finally {
-          isLoadingIMage.value = false;
         }
+      } catch (e) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Error',
+          message: 'Failed to capture image: ${e.toString()}',
+          contentType: ContentType.failure,
+        );
+      } finally {
+        isLoadingIMage.value = false;
       }
+    }
   }
 
   void showImagePickerOptions(BuildContext context) {
@@ -492,13 +474,9 @@ class ContractorProfileController extends GetxController {
   }
 
   Future<void> saveProfile() async {
-    print('🔵 saveProfile() called');
-    print('🔵 formKey.currentState: ${formKey.currentState}');
-
     try {
       // Validate form if in editing mode
       if (formKey.currentState != null && !formKey.currentState!.validate()) {
-        print('⚠️ Form validation failed');
         return;
       }
 
@@ -518,7 +496,6 @@ class ContractorProfileController extends GetxController {
         }
       }
 
-      print(" fdjnfjudfhur $image");
       // Build user object from form data
       ContractorUserUpdateProfile user = ContractorUserUpdateProfile(
         city: positionController.text,
@@ -530,19 +507,11 @@ class ContractorProfileController extends GetxController {
         experinec: int.tryParse(experienceController.text) ?? 0,
       );
 
-      print("🟢 User data prepared: ${user.toMap()}");
-
       // Call API to update profile
-      print('🔵 Calling updateResellerProfile API...');
+
       final response = await updateResellerProfile(user);
-      print('🟢 API response received');
 
       // DEBUG: Print full response
-      print('🔍 FULL API RESPONSE: $response');
-      print('🔍 otpRequired value: ${response['otpRequired']}');
-      print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 success value: ${response['success']}');
-      print('🔍 message value: ${response['message']}');
 
       final isOtpRequired =
           response['otpRequired'] == true ||
@@ -552,8 +521,6 @@ class ContractorProfileController extends GetxController {
                   true);
 
       if (isOtpRequired) {
-        print('🔵 OTP Required detected!');
-
         pendingUserData = User(
           id: profileData.value?.user?.id,
           firstName: nameController.text,
@@ -571,14 +538,8 @@ class ContractorProfileController extends GetxController {
         );
 
         pendingPhone.value = response['phone'] ?? phoneController.text;
-        print('🔵 Pending phone: ${pendingPhone.value}');
 
         if (response['updatePhoneToken'] == null) {
-          print(
-            '⚠️ Warning: API did not send updatePhoneToken in initial response',
-          );
-          print('⚠️ Triggering resend OTP to obtain token...');
-
           isSaving.value = false;
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
@@ -626,9 +587,10 @@ class ContractorProfileController extends GetxController {
             token: profileData.value?.token,
           );
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
         }
@@ -654,8 +616,6 @@ class ContractorProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error saving profile: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'An error occurred while updating profile',
@@ -721,9 +681,10 @@ class ContractorProfileController extends GetxController {
           );
 
           await SecureStorage.saveUserData(profileData.value!);
-          BuyerProfileDataController b = Get.isRegistered<BuyerProfileDataController>()
-              ? Get.find<BuyerProfileDataController>()
-              : Get.put(BuyerProfileDataController());
+          BuyerProfileDataController b =
+              Get.isRegistered<BuyerProfileDataController>()
+                  ? Get.find<BuyerProfileDataController>()
+                  : Get.put(BuyerProfileDataController());
           b.userProfile.value = profileData.value?.user;
           b.userProfile.refresh();
 
@@ -754,8 +715,6 @@ class ContractorProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error verifying OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to verify OTP',
@@ -803,8 +762,6 @@ class ContractorProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error resending OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to resend OTP',

@@ -11,7 +11,9 @@ class ContractorSubscriptionService {
   static final ContractorSubscriptionService instance =
       ContractorSubscriptionService._();
 
-  Future<ContractorActiveSubscriptionData?> fetchActivePlan(String userId) async {
+  Future<ContractorActiveSubscriptionData?> fetchActivePlan(
+    String userId,
+  ) async {
     final response = await http.get(
       Uri.parse(ApiConstants.subscriptionActive(userId)),
       headers: await ApiConstants.getHeaders(),

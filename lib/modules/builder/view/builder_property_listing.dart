@@ -200,7 +200,7 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
   void initState() {
     super.initState();
     controller = Get.put(BuilderProjectListController());
-    
+
     // Force reload on entering this screen to ensure it fetches projects with active credentials
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.refreshProjects();
@@ -302,8 +302,6 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
               child: Obx(() {
                 final state = controller.loadingState.value;
 
-                debugPrint("🎨 [UI Obx] BuilderPropertyListing: state = $state, itemsCount = ${controller.items.length}, filters = ${controller.filters}");
-
                 /// Initial loading (shimmer)
                 if (state == BuilderProjectLoadingState.initialLoading &&
                     controller.items.isEmpty) {
@@ -348,7 +346,6 @@ class _BuilderPropertyListingState extends State<BuilderPropertyListing> {
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
                               onPressed: () {
-                                debugPrint("🔄 Manual refresh clicked");
                                 controller.refreshProjects();
                               },
                               icon: const Icon(Icons.refresh),
@@ -783,7 +780,6 @@ class BuilderProjectCard extends StatelessWidget {
                       elevation: 3,
                       child: InkWell(
                         onTap: () async {
-                          print("Project Edit");
                           AppLogger("Project Edit", project.toJson());
                           // AppLogger("Project Edit After Convert",project.toAddProjectModel());
                           final result = await Get.to(
@@ -795,10 +791,6 @@ class BuilderProjectCard extends StatelessWidget {
                               );
                               await wizardController.updateProjectData(
                                 project.toAddProjectModel(),
-                              );
-
-                              debugPrint(
-                                "Project For Edit: ${project.toAddProjectModel().configurations.map((e) => e.toJson())}",
                               );
                             }),
                           );

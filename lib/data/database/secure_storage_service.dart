@@ -36,88 +36,69 @@ class SecureStorage {
   static const String _keyPlatformServiceInquiry = 'platformServiceInquiry';
   static const String _keyGeneralInquiry = 'generalInquirySubmissions';
 
-
   //===================================================================================
   static const String _keySellerLeadCount = 'sellerLeadCount';
-static const String _keyResellerLeadCount = 'resellerLeadCount';
-static const String _keyContractorLeadCount = 'contractorLeadCount';
-static const String _keyBuilderLeadCount = 'builderLeadCount';
+  static const String _keyResellerLeadCount = 'resellerLeadCount';
+  static const String _keyContractorLeadCount = 'contractorLeadCount';
+  static const String _keyBuilderLeadCount = 'builderLeadCount';
 
+  static Future<void> saveSellerLeadCount(int count) async {
+    await _storage.write(key: _keySellerLeadCount, value: count.toString());
+  }
 
-static Future<void> saveSellerLeadCount(int count) async {
-  await _storage.write(
-    key: _keySellerLeadCount,
-    value: count.toString(),
-  );
-}
+  static Future<void> saveResellerLeadCount(int count) async {
+    await _storage.write(key: _keyResellerLeadCount, value: count.toString());
+  }
 
-static Future<void> saveResellerLeadCount(int count) async {
-  await _storage.write(
-    key: _keyResellerLeadCount,
-    value: count.toString(),
-  );
-}
+  static Future<void> saveContractorLeadCount(int count) async {
+    await _storage.write(key: _keyContractorLeadCount, value: count.toString());
+  }
 
-static Future<void> saveContractorLeadCount(int count) async {
-  print("Check the lead number store or not${count}");
-  await _storage.write(
-    key: _keyContractorLeadCount,
-    value: count.toString(),
-  );
-}
+  static Future<void> saveBuilderLeadCount(int count) async {
+    await _storage.write(key: _keyBuilderLeadCount, value: count.toString());
+  }
 
-static Future<void> saveBuilderLeadCount(int count) async {
-  await _storage.write(
-    key: _keyBuilderLeadCount,
-    value: count.toString(),
-  );
-}
+  static Future<int> getSellerLeadCount() async {
+    final value = await _storage.read(key: _keySellerLeadCount);
+    return int.tryParse(value ?? '0') ?? 0;
+  }
 
+  static Future<int> getResellerLeadCount() async {
+    final value = await _storage.read(key: _keyResellerLeadCount);
+    return int.tryParse(value ?? '0') ?? 0;
+  }
 
-static Future<int> getSellerLeadCount() async {
-  final value = await _storage.read(key: _keySellerLeadCount);
-  return int.tryParse(value ?? '0') ?? 0;
-}
+  static Future<int> getContractorLeadCount() async {
+    final value = await _storage.read(key: _keyContractorLeadCount);
+    return int.tryParse(value ?? '0') ?? 0;
+  }
 
-static Future<int> getResellerLeadCount() async {
-  final value = await _storage.read(key: _keyResellerLeadCount);
-  return int.tryParse(value ?? '0') ?? 0;
-}
+  static Future<int> getBuilderLeadCount() async {
+    final value = await _storage.read(key: _keyBuilderLeadCount);
+    return int.tryParse(value ?? '0') ?? 0;
+  }
 
-static Future<int> getContractorLeadCount() async {
-  final value = await _storage.read(key: _keyContractorLeadCount);
-  return int.tryParse(value ?? '0') ?? 0;
-}
+  static Future<bool> hasNewSellerLead(int currentLeadCount) async {
+    final storedCount = await getSellerLeadCount();
+    return currentLeadCount > storedCount;
+  }
 
-static Future<int> getBuilderLeadCount() async {
-  final value = await _storage.read(key: _keyBuilderLeadCount);
-  return int.tryParse(value ?? '0') ?? 0;
-}
+  static Future<bool> hasNewResellerLead(int currentLeadCount) async {
+    final storedCount = await getResellerLeadCount();
+    return currentLeadCount > storedCount;
+  }
 
+  static Future<bool> hasNewContractorLead(int currentLeadCount) async {
+    final storedCount = await getContractorLeadCount();
 
-static Future<bool> hasNewSellerLead(int currentLeadCount) async {
-  final storedCount = await getSellerLeadCount();
-  return currentLeadCount > storedCount;
-}
+    return currentLeadCount > storedCount;
+  }
 
-static Future<bool> hasNewResellerLead(int currentLeadCount) async {
-  final storedCount = await getResellerLeadCount();
-  return currentLeadCount > storedCount;
-}
-
-static Future<bool> hasNewContractorLead(int currentLeadCount) async {
-  final storedCount = await getContractorLeadCount();
-      print("Check the lead number store or not${currentLeadCount}");
-    print("Check the lead number store or not${storedCount}");
-      print("Check the lead number store or not${currentLeadCount > storedCount}");
-  return currentLeadCount > storedCount;
-}
-
-static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
-  final storedCount = await getBuilderLeadCount();
-  return currentLeadCount > storedCount;
-}
-//=======================================================================================
+  static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
+    final storedCount = await getBuilderLeadCount();
+    return currentLeadCount > storedCount;
+  }
+  //=======================================================================================
 
   static Future<void> savePlatformServiceInquiryData(String value) async {
     await _storage.write(key: _keyPlatformServiceInquiry, value: value);
@@ -147,7 +128,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
       }
       return false;
     } catch (e) {
-      print('❌ Error reading platform service inquiry data: $e');
       return false;
     }
   }
@@ -172,11 +152,8 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
       if (!exists) {
         inquiryList.add(newInquiry);
         await savePlatformServiceInquiryData(jsonEncode(inquiryList));
-        print('✅ New platform service inquiry saved');
       }
-    } catch (e) {
-      print('❌ Error saving platform service inquiry: $e');
-    }
+    } catch (e) {}
   }
 
   static Future<void> savePropertyInquiryData(String value) async {
@@ -214,7 +191,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
             (phone == null || item['phone'] == phone),
       );
     } catch (e) {
-      print('❌ Error reading offer inquiry data: $e');
       return false;
     }
   }
@@ -240,11 +216,8 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
       if (!exists) {
         inquiryList.add(newInquiry);
         await saveOfferInquiryData(jsonEncode(inquiryList));
-        print('✅ New offer inquiry saved');
       }
-    } catch (e) {
-      print('❌ Error saving offer inquiry: $e');
-    }
+    } catch (e) {}
   }
 
   static Future<String?> getPropertyInquiryData() async {
@@ -255,8 +228,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
     try {
       final data = await getPropertyInquiryData();
       if (data == null || data.isEmpty) return false;
-
-      log('Property Inquiry Data: $data');
 
       // Decode stored JSON (can be a single map or a list of inquiries)
       final decoded = jsonDecode(data);
@@ -271,7 +242,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
         return false;
       }
     } catch (e) {
-      print('❌ Error reading property inquiry data: $e');
       return false;
     }
   }
@@ -300,13 +270,8 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
       if (!exists) {
         inquiryList.add(newInquiry);
         await savePropertyInquiryData(jsonEncode(inquiryList));
-        print('✅ New property inquiry saved');
-      } else {
-        print('⚠️ Property already in inquiry list, skipping duplicate');
-      }
-    } catch (e) {
-      print('❌ Error saving property inquiry: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   static Future<void> saveSubscriptionInquiryData(String value) async {
@@ -340,9 +305,7 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
         inquiryList.add(newInquiry);
       }
       await saveSubscriptionInquiryData(jsonEncode(inquiryList));
-    } catch (e) {
-      print('❌ Error saving subscription inquiry: $e');
-    }
+    } catch (e) {}
   }
 
   /// ================= General Inquiry (by type) =================
@@ -383,7 +346,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
         return typeMatch && idMatch && contactMatch;
       });
     } catch (e) {
-      print('❌ Error reading general inquiry data: $e');
       return false;
     }
   }
@@ -412,9 +374,7 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
         list.add(newInquiry);
         await saveGeneralInquiryData(jsonEncode(list));
       }
-    } catch (e) {
-      print('❌ Error saving general inquiry: $e');
-    }
+    } catch (e) {}
   }
 
   static Future<bool> hasSubscriptionInquiryForUser(
@@ -423,10 +383,8 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
     required String role,
   }) async {
     try {
-      print("check any thing missing api calling ${role}");
-
       final data = await getSubscriptionInquiryData();
-      log('Subscription Inquiry Data: $data');
+
       if (data == null || data.isEmpty) return false;
       final decoded = jsonDecode(data);
       if (decoded is List) {
@@ -457,7 +415,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
         return false;
       }
     } catch (e) {
-      print('❌ Error reading subscription inquiry data: $e');
       return false;
     }
   }
@@ -502,14 +459,12 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
   }
 
   static Future<void> saveTermAndConditionValue(String? condition) async {
-    log("Terms and condition apply $condition");
-
     await _storage.write(key: _termsAndConditionApply, value: condition);
   }
 
   static Future<String?> getTermAndConditionValue() async {
     final value = await _storage.read(key: _termsAndConditionApply);
-    log("Terms and condition get apply $value");
+
     return value; // ✅ just return the stored value, don’t overwrite it
   }
 
@@ -565,13 +520,12 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
 
   // isLoggedIn
   static Future<void> saveLoggedIn(bool value) async {
-    print("Check user login or not ${value}");
     await _storage.write(key: _keyLoggedIn, value: value.toString());
   }
 
   static Future<bool> getLoggedIn() async {
     final value = await _storage.read(key: _keyLoggedIn);
-      print("Check user login or not fddf${value}");
+
     return value?.toLowerCase() == "true";
   }
 
@@ -594,7 +548,7 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
 
   static Future<void> saveSelectedCity(String city) async {
     final storage = FlutterSecureStorage();
-    log('Save city work or not $city');
+
     await storage.write(key: _selectedCityKey, value: city);
   }
 
@@ -625,7 +579,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
 
   // Update Phone Token (for OTP verification)
   static Future<void> saveUpdatePhoneToken(String token) async {
-    log("Check any field mission of updated token $token");
     await _storage.write(key: _keyUpdatePhoneToken, value: token);
   }
 
@@ -681,17 +634,15 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
     final isFirstTismeUser = await isFirstTimeUser();
     final platfromResellerfees = await getPlatformResellerFees();
 
-
     final sellerLeadCount = await getSellerLeadCount();
-  final resellerLeadCount = await getResellerLeadCount();
-  final contractorLeadCount = await getContractorLeadCount();
-  final builderLeadCount = await getBuilderLeadCount();
-    
+    final resellerLeadCount = await getResellerLeadCount();
+    final contractorLeadCount = await getContractorLeadCount();
+    final builderLeadCount = await getBuilderLeadCount();
+
     // Debug: show current auth/storage state before wiping
     final tokenBefore = await getToken();
     final userBefore = await getUserData();
     final isLoginBefore = await getLoggedIn();
-    log('SecureStorage.clearAll - BEFORE deleteAll -> token:${tokenBefore ?? "<null>"}, isLogin:$isLoginBefore, user:${userBefore != null ? jsonEncode(userBefore.toJson()) : "<null>"}');
 
     await _storage.deleteAll();
 
@@ -699,7 +650,6 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
     final tokenAfter = await getToken();
     final userAfter = await getUserData();
     final isLoginAfter = await getLoggedIn();
-    log('SecureStorage.clearAll - AFTER deleteAll -> token:${tokenAfter ?? "<null>"}, isLogin:$isLoginAfter, user:${userAfter != null ? jsonEncode(userAfter.toJson()) : "<null>"}');
 
     // Re-save preserved values that should survive a clearAll
     if (city != null && city.isNotEmpty) {
@@ -721,10 +671,10 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
       await saveSupportTicketId(storedTicketId);
     }
 
-  await saveSellerLeadCount(sellerLeadCount);
-  await saveResellerLeadCount(resellerLeadCount);
-  await saveContractorLeadCount(contractorLeadCount);
-  await saveBuilderLeadCount(builderLeadCount);
+    await saveSellerLeadCount(sellerLeadCount);
+    await saveResellerLeadCount(resellerLeadCount);
+    await saveContractorLeadCount(contractorLeadCount);
+    await saveBuilderLeadCount(builderLeadCount);
 
     await _storage.write(key: _keyHasLaunched, value: 'true');
     if (loginSkipped) {
@@ -735,12 +685,9 @@ static Future<bool> hasNewBuilderLead(int currentLeadCount) async {
     final tokenFinal = await getToken();
     final userFinal = await getUserData();
     final isLoginFinal = await getLoggedIn();
-    log('SecureStorage.clearAll - FINAL state -> token:${tokenFinal ?? "<null>"}, isLogin:$isLoginFinal, user:${userFinal != null ? jsonEncode(userFinal.toJson()) : "<null>"}');
   }
 
   static Future<void> updateAadharVerified({required bool value}) async {
-    log('Updating Aadhaar verified status: $value');
-
     // Update standalone flag (safe fallback)
     await _storage.write(key: _keyAadharVerified, value: value.toString());
 

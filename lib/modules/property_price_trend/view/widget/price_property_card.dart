@@ -24,7 +24,8 @@ class PricePropertyCard extends StatelessWidget {
     this.rating,
     this.pricePerSqft,
     this.showPercentage = true, // default true
-    this.onTap, this.price,
+    this.onTap,
+    this.price,
   });
 
   @override
@@ -165,12 +166,16 @@ class PricePropertyCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: ColorRes.leadGreyColor.withOpacity(0.3), width: 0.8),
+          border: Border.all(
+            color: ColorRes.leadGreyColor.withOpacity(0.3),
+            width: 0.8,
+          ),
         ),
         alignment: Alignment.centerLeft,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // ✅ space out trailing button
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // ✅ space out trailing button
           children: [
             /// Left section: Image + Info
             Expanded(
@@ -182,11 +187,16 @@ class PricePropertyCard extends StatelessWidget {
                     height: 80,
                     width: 80,
                     decoration: BoxDecoration(
-                      border: Border.all(color: ColorRes.leadGreyColor.shade300,width: 1),
+                      border: Border.all(
+                        color: ColorRes.leadGreyColor.shade300,
+                        width: 1,
+                      ),
                       image: DecorationImage(
-                        image: imagePath.isNotEmpty && imagePath.startsWith('http')
-                            ? NetworkImage(imagePath)
-                            : const AssetImage("assets/logo/Avant.jpg") as ImageProvider,
+                        image:
+                            imagePath.isNotEmpty && imagePath.startsWith('http')
+                                ? NetworkImage(imagePath)
+                                : const AssetImage("assets/logo/Avant.jpg")
+                                    as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -239,8 +249,13 @@ class PricePropertyCard extends StatelessWidget {
                           Row(
                             children: [
                               Icon(
-                                isPositive ? Icons.arrow_upward : Icons.arrow_downward,
-                                color: isPositive ? ColorRes.green : ColorRes.error,
+                                isPositive
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward,
+                                color:
+                                    isPositive
+                                        ? ColorRes.green
+                                        : ColorRes.error,
                                 size: 14,
                               ),
                               const SizedBox(width: 4),
@@ -289,36 +304,36 @@ class PricePropertyCard extends StatelessWidget {
             SizedBox(width: 8), // Space between left and right sections
 
             /// ✅ Trailing Price Button
-           
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.favorite_border_outlined,size: 16,),
-                    SizedBox(height: 20,),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: ColorRes.primary,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: ColorRes.primary, width: 1),
-                      ),
-                      child: Text(
-                        Formatter.formatPrice(price??0),
-                        style: const TextStyle(
-                          color: ColorRes.white,
-                          fontSize: AppFontSizes.small,
-                          fontWeight: AppFontWeights.semiBold,
-                        ),
-                      ),
-
-                                ),
-                  ],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.favorite_border_outlined, size: 16),
+                SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: ColorRes.primary,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: ColorRes.primary, width: 1),
+                  ),
+                  child: Text(
+                    Formatter.formatPrice(price ?? 0),
+                    style: const TextStyle(
+                      color: ColorRes.white,
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.semiBold,
+                    ),
+                  ),
                 ),
+              ],
+            ),
           ],
         ),
       ),
     );
-
   }
 }

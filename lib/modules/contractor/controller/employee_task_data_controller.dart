@@ -8,14 +8,11 @@ import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 class EmployeeTaskDataController extends PaginatedController<EmployeeTaskItem> {
   late String employeeId;
 
-
-
   Future<void> init(String id) async {
     employeeId = id;
     await loadInitial();
-
-    
   }
+
   Future<void> refreshTasks() async {
     try {
       await refreshList();
@@ -43,9 +40,6 @@ class EmployeeTaskDataController extends PaginatedController<EmployeeTaskItem> {
   //     isLoading.value = false;
   //   }
   // }
-  
-
-
 
   @override
   Future<PaginationResponse<EmployeeTaskItem>> fetchItems(int page) async {

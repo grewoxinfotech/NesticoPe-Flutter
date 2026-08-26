@@ -60,14 +60,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
       final userId = user.user?.id ?? '';
       projectController.isCompareProjectFirst.value = await _contactedService
           .fetchHasInquiries(userId, itemId: propertyId);
-    } catch (e, s) {
-      log(
-        '[PropertyDetail] ERROR in _loadData',
-        error: e,
-        stackTrace: s,
-        level: 1000,
-      );
-    }
+    } catch (e, s) {}
   }
 
   Future<void> loadDataSecond(String propertyId) async {
@@ -85,14 +78,7 @@ class _ProjectCompareScreenState extends State<ProjectCompareScreen> {
       projectController.isCompareProjectSecond.value = result;
       // await controller.getAllInQuireData(propertyId);
       // await controller.getHasInQuireData(propertyId);
-    } catch (e, s) {
-      log(
-        '[PropertyDetail] ERROR in _loadData',
-        error: e,
-        stackTrace: s,
-        level: 1000,
-      );
-    }
+    } catch (e, s) {}
   }
 
   void _syncTopWithBottom(int index) {
@@ -665,11 +651,6 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                                   "project",
                                                 );
                                               } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
-
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Error',
                                                   message:
@@ -914,8 +895,6 @@ class _ProjectCardForCompareState extends State<ProjectCardForCompare> {
                                   "type": "$type",
                                 },
                               };
-
-                              print('Submitting inquiry: ${inquiry}');
 
                               final success = await controller.addInquiry(
                                 inquiry,

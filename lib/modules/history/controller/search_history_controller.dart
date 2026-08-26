@@ -8,8 +8,10 @@ import 'package:nesticope_app/utils/logger/app_logger.dart';
 import '../../../data/network/history/model/success_story_model.dart';
 import '../../../data/network/history/service/success_story_service.dart';
 
-class SearchHistoryController extends PaginatedController<BuyerSideResellerSuccessStoryItem> {
-  final Rxn<SearchHistoryResponse> searchHistoryResponse = Rxn<SearchHistoryResponse>();
+class SearchHistoryController
+    extends PaginatedController<BuyerSideResellerSuccessStoryItem> {
+  final Rxn<SearchHistoryResponse> searchHistoryResponse =
+      Rxn<SearchHistoryResponse>();
 
   RxBool isLoading = false.obs;
   RxBool isLoadingMore = false.obs;
@@ -28,7 +30,6 @@ class SearchHistoryController extends PaginatedController<BuyerSideResellerSucce
       await fetchSearchHistory();
       return success;
     } catch (e) {
-      print("Error in controller while adding search history: $e");
       return false;
     }
   }
@@ -39,19 +40,9 @@ class SearchHistoryController extends PaginatedController<BuyerSideResellerSucce
       final historyData =
           await SearchHistoryService.service.fetchSearchHistory();
       searchHistoryResponse.value = SearchHistoryResponse.fromJson(historyData);
-
-      AppLogger.structured(
-        "Fetched search history data in controller:",
-        historyData,
-      );
-      AppLogger.structured(
-        "Fetched search history controller data in controller:", SearchHistoryResponse.fromJson(historyData),
-      );
     } catch (e) {
-      print("Error in controller while fetching search history: $e");
       // return {};
-    }
-    finally{
+    } finally {
       isLoading.value = false;
     }
   }
@@ -59,20 +50,24 @@ class SearchHistoryController extends PaginatedController<BuyerSideResellerSucce
   Future<void> deleteAllHistory() async {
     final success = await SearchHistoryService.service.deletedSearchHistory();
     if (success) {
-
-     searchHistoryResponse.value?.data.item.clear();
-    await fetchSearchHistory();
+      searchHistoryResponse.value?.data.item.clear();
+      await fetchSearchHistory();
     }
   }
 
   @override
-  Future<PaginationResponse<BuyerSideResellerSuccessStoryItem>> fetchItems(int page) {
-    try{
-      final response=SuccessStoryService.service.fetchResellerSuccessStories(status: 'published',limit: 10,module: 'reseller');
-      AppLogger.structured("Buyer Side Success Stories", response);
-      return response;
-    }catch(e){
+  Future<PaginationResponse<BuyerSideResellerSuccessStoryItem>> fetchItems(
+    int page,
+  ) {
+    try {
+      final response = SuccessStoryService.service.fetchResellerSuccessStories(
+        status: 'published',
+        limit: 10,
+        module: 'reseller',
+      );
 
+      return response;
+    } catch (e) {
       rethrow;
     }
   }

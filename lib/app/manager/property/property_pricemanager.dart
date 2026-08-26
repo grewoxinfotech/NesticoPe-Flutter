@@ -5,7 +5,6 @@ import '../../constants/enum.dart';
 import '../../utils/formater/formater.dart';
 
 class PropertyPriceManager {
-  
   final String listingType; // "rent" or "sale" or "PG"
   final FinancialInfo? financialInfo;
   final PgInfo? pgInfo; // Added for PG properties
@@ -63,7 +62,10 @@ class PropertyPriceManager {
   double get maxPgRent {
     if (isPG && pgInfo?.pgRoomInfo != null && pgInfo!.pgRoomInfo!.isNotEmpty) {
       final rents =
-          pgInfo!.pgRoomInfo!.map((r) => r.rent ?? 0).where((r) => r > 0).toList();
+          pgInfo!.pgRoomInfo!
+              .map((r) => r.rent ?? 0)
+              .where((r) => r > 0)
+              .toList();
       if (rents.isNotEmpty) {
         rents.sort();
         return rents.last.toDouble();
@@ -78,7 +80,7 @@ class PropertyPriceManager {
     final maxR = maxPgRent;
     if (maxR <= 0) return "Price not available";
     final maxFormatted = Formatter.formatPrice(maxR);
-    
+
     return "$maxFormatted /month";
   }
 
@@ -87,7 +89,6 @@ class PropertyPriceManager {
     // For PG properties, show price range with room details
     if (isPG) {
       if (pgInfo?.pgRoomInfo != null && pgInfo!.pgRoomInfo!.isNotEmpty) {
-        debugPrint("pgInfo?.pgRoomInfo: ${pgInfo?.pgRoomInfo?.map((r) => r.rent).toList().toString()}");
         final rooms = pgInfo!.pgRoomInfo!;
         final rents =
             rooms.map((r) => r.rent ?? 0).where((r) => r > 0).toList();

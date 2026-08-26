@@ -37,14 +37,14 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
               ? VideoPlayerController.networkUrl(Uri.parse(widget.url))
               : VideoPlayerController.file(File(widget.url));
       _videoController!
-        .initialize()
-            .then((_) {
-              setState(() => _isLoading = false);
-              _videoController?.play();
-            })
-            .catchError((e) {
-              setState(() => _isLoading = false);
-            });
+          .initialize()
+          .then((_) {
+            setState(() => _isLoading = false);
+            _videoController?.play();
+          })
+          .catchError((e) {
+            setState(() => _isLoading = false);
+          });
     } else {
       _isVideo = false;
       setState(() => _isLoading = false);
@@ -98,25 +98,26 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                       child: CircularProgressIndicator(color: Colors.white),
                     );
                   },
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.broken_image,
-                    color: Colors.white,
-                    size: 80,
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        color: Colors.white,
+                        size: 80,
+                      ),
                 )
                 : Image.file(
                   File(widget.url),
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.broken_image,
-                    color: Colors.white,
-                    size: 80,
-                  ),
+                  errorBuilder:
+                      (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        color: Colors.white,
+                        size: 80,
+                      ),
                 ),
       ),
     );
   }
-
 
   Widget _buildVideoPlayer() {
     if (_videoController == null || !_videoController!.value.isInitialized) {

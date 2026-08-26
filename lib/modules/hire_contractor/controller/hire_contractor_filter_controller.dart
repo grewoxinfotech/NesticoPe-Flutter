@@ -40,7 +40,6 @@ class HireContractorFilterProfileController
   }
 
   List<Map<String, dynamic>> getServiceNamesForCategory(String categoryId) {
-    log("getServiceNamesForCategory ${categoryId}");
     return kServiceCategoryData[categoryId] ?? [];
   }
 
@@ -280,7 +279,7 @@ class HireContractorFilterProfileController
       {
         'label': 'Turnkey Construction',
         'value': 'turnkey_construction',
-       'bestSelling': true,
+        'bestSelling': true,
         "trending": false,
         'items': [
           'Budget Home Construction',
@@ -742,25 +741,21 @@ class HireContractorFilterProfileController
     }
     filters.assignAll(filter);
     loadInitial();
-    log("🎛️ Apply Filter in Hire Contractor Section: $filters");
   }
 
   Future<Rxn<HireContractorUserProfile>> fetchUserDataById(
     String userId,
   ) async {
-    log("Fetch User Data by ID called $userId");
     userProfile.value = await HireContractorService.contractorMyService
         .fetchContractorProfileById(userId);
-    log("Fetched User Profile Data: ${userProfile.value?.toMap()}");
 
     return userProfile;
   }
 
   Future<Rxn<User>> fetchUserByID(String userId) async {
-    log("Fetch User by ID called $userId");
     userData.value = await HireContractorService.contractorMyService
         .fetchUserById(userId);
-    log("Fetched User Data: ${userData.value?.toJson()}");
+
     return userData;
   }
 
@@ -777,13 +772,11 @@ class HireContractorFilterProfileController
     try {
       selectedCategoryId.value = id;
       selectedCategoryName.value = name;
-      log('ckjnjvjn ${selectedCategoryName.value}');
+
       isLoading.value = true;
       fetchCityOfContractor();
       await loadInitial();
-      log("Fetched ${items.length} contractor categories");
     } catch (e) {
-      log("Error fetching contractor categories: $e");
     } finally {
       isLoading.value = false;
     }
@@ -845,21 +838,12 @@ class HireContractorFilterProfileController
           'works': selectedWorkItems.map((e) => e.trim()).join(', '),
       };
 
-      log(
-        "Fetching items for category ID: ${selectedCategoryId.value} with filters: $filters",
-      );
-
       final response = await HireContractorService.contractorMyService
           .fetchHireContractorByCategory(
             id: selectedCategoryId.value,
             filter: filters,
             limit: 24,
           );
-
-      AppLogger.structured(
-        'Fetched contractors',
-        response.items.map((element) => element.toMap()),
-      );
 
       items.assignAll(response.items); // ✅ use assignAll for RxList
       return response;
@@ -873,9 +857,7 @@ class HireContractorFilterProfileController
       final response =
           await HireContractorService.contractorMyService.fetchContractorCity();
       contractorCity.value = ContractorCityInsightsResponse.fromJson(response);
-    } catch (e) {
-      log("Error fetching contractor cities: $e");
-    }
+    } catch (e) {}
   }
 
   /// 🚫 Not used anymore since pagination removed

@@ -309,9 +309,7 @@ class MediaPreviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(
-        right: index < totalCount - 1 ? 12 : 0,
-      ),
+      margin: EdgeInsets.only(right: index < totalCount - 1 ? 12 : 0),
       child: Stack(
         children: [
           Container(
@@ -338,11 +336,7 @@ class MediaPreviewItem extends StatelessWidget {
                   color: Colors.black.withOpacity(0.6),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 16,
-                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 16),
               ),
             ),
           ),
@@ -376,9 +370,7 @@ class MediaPreviewItem extends StatelessWidget {
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         },
         errorBuilder: (context, error, stackTrace) {
           return _buildErrorWidget();
@@ -395,19 +387,9 @@ class MediaPreviewItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.play_circle_outline,
-              color: Colors.white,
-              size: 48,
-            ),
+            Icon(Icons.play_circle_outline, color: Colors.white, size: 48),
             const SizedBox(height: 4),
-            Text(
-              'Video',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
-            ),
+            Text('Video', style: TextStyle(color: Colors.white, fontSize: 12)),
           ],
         ),
       ),
@@ -434,18 +416,11 @@ class MediaPreviewItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.view_in_ar,
-              color: Colors.blue.shade700,
-              size: 40,
-            ),
+            Icon(Icons.view_in_ar, color: Colors.blue.shade700, size: 40),
             const SizedBox(height: 8),
             if (extension.isNotEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade700,
                   borderRadius: BorderRadius.circular(4),
@@ -464,10 +439,7 @@ class MediaPreviewItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 fileName,
-                style: TextStyle(
-                  color: Colors.blue.shade700,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: Colors.blue.shade700, fontSize: 10),
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -481,11 +453,7 @@ class MediaPreviewItem extends StatelessWidget {
 
   Widget _buildErrorWidget() {
     return Center(
-      child: Icon(
-        Icons.error_outline,
-        color: Colors.red[300],
-        size: 32,
-      ),
+      child: Icon(Icons.error_outline, color: Colors.red[300], size: 32),
     );
   }
 }

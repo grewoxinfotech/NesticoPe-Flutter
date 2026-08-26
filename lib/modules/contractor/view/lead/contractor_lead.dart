@@ -16,11 +16,14 @@ class ContractorLead extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title:  Text('Contractor Lead', style: TextStyle(
-          // fontSize: AppFontSizes.title,
-          fontWeight: AppFontWeights.semiBold,
-          color: ColorRes.textPrimary,
-        )),
+        title: Text(
+          'Contractor Lead',
+          style: TextStyle(
+            // fontSize: AppFontSizes.title,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textPrimary,
+          ),
+        ),
         // centerTitle: true,
       ),
       body: Padding(
@@ -34,14 +37,14 @@ class ContractorLead extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Navigator.pushNamed(context, '/screen1');
-                  Get.to(()=>MyServiceScreen());
+                  Get.to(() => MyServiceScreen());
                 },
                 child: const Text('My Service'),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () {
-                  Get.to(()=>ContractorInquiryScreen());
+                  Get.to(() => ContractorInquiryScreen());
 
                   // Navigator.pushNamed(context, '/screen2');
                 },
@@ -51,16 +54,15 @@ class ContractorLead extends StatelessWidget {
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () {
-                  Get.to(()=>ContractorLeadScreen());
+                  Get.to(() => ContractorLeadScreen());
                   // Navigator.pushNamed(context, '/screen3');
                 },
                 child: const Text('Contractor Lead'),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-
                 onPressed: () {
-                  Get.to(()=>ContractorProjectScreen());
+                  Get.to(() => ContractorProjectScreen());
                 },
                 child: const Text('Contractor Project'),
               ),

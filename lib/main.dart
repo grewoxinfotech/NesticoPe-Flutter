@@ -34,14 +34,13 @@ void main() async {
   debugProfileBuildsEnabled = true;
 
   try {
-   // await Firebase.initializeApp();
+    // await Firebase.initializeApp();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-    debugPrint('✅ Firebase initialized');
     // 3. Catch all Flutter-level crashes
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
@@ -59,7 +58,6 @@ void main() async {
 
     // 1. Initialize NotificationService FIRST
     // await NotificationService.instance.init();
-    debugPrint('✅ NotificationService initialized');
 
     // 2. Set system UI overlay style
     SystemChrome.setSystemUIOverlayStyle(
@@ -76,24 +74,18 @@ void main() async {
 
     // 4. Initialize network service
     await Get.putAsync(() => NetworkStatusService().init());
-    debugPrint('✅ NetworkStatusService initialized');
 
     // 5. Initialize user type
     await UserHelper.initUserType();
-    debugPrint('✅ UserHelper initialized');
 
     // 6. Load third-party settings (Google Maps API key, etc.)
     await ApiConfig.fetchThirdPartySettings();
-    debugPrint('✅ Third-party settings loaded');
 
     // 7. Initialize permanent controllers
     Get.put(CompareManager(), permanent: true);
     Get.put(ContractorCompareManager(), permanent: true);
     Get.put(ProjectCompareManager(), permanent: true);
-    debugPrint('✅ Managers initialized');
-  } catch (e) {
-    debugPrint('❌ Error during initialization: $e');
-  }
+  } catch (e) {}
   // Run the app
   runApp(
     // DevicePreview(

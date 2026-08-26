@@ -103,11 +103,8 @@ class RentAdvanceDetail extends StatelessWidget {
     ];
     final rent_Parking_Charges = ['Included in rent', 'Separate'];
     final isEdit = controller.isEdited.value;
-    log("Is Edit advanced detail $isEdit");
+
     return Obx(() {
-      print(
-        "Propwerty type${controller.rent_propertyType.value}  ${((controller.rent_propertyType.value != 'Independent House' && controller.rent_propertyType.value != 'Duplex') && controller.rent_propertyType.value != 'Farmhouse')}",
-      );
       if ((controller.lookingTo.value == "Rent" ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == "Residential") {
@@ -167,9 +164,6 @@ class RentAdvanceDetail extends StatelessWidget {
                 if (controller.lookingTo.value == 'Rent' &&
                     controller.propertyType.value == 'Residential') ...[
                   Obx(() {
-                    print(
-                      "Electricity Charges Type: ${controller.electricityChargesType.value}",
-                    );
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -258,7 +252,7 @@ class RentAdvanceDetail extends StatelessWidget {
                     );
                   }),
                 ],
-                 const SizedBox(height: 16),
+                const SizedBox(height: 16),
                 buildSectionTitle("Bathrooms"),
                 const SizedBox(height: 8),
 
@@ -325,9 +319,7 @@ class RentAdvanceDetail extends StatelessWidget {
 
                           onChanged: (value) {
                             final number = int.tryParse(value);
-                            print(
-                              'Auto- selecting chip for $number ===== $bhkCount',
-                            );
+
                             if (number == null || number <= 0) {
                               controller.rent_Bathroom.value = 0;
                               return;
@@ -338,10 +330,7 @@ class RentAdvanceDetail extends StatelessWidget {
                               // controller.isCustomBhathroom.value = false;
                               // controller.customBhathroomController.clear();
                               controller.rent_Bathroom.value = number;
-
-                              print('Auto- selecting chip for $number');
                             } else {
-                              print('Auto- sdfcsselecting chip for $number');
                               // Keep custom value
                               controller.rent_Bathroom.value = number;
                             }
@@ -871,8 +860,6 @@ class RentAdvanceDetail extends StatelessWidget {
 
                     controller.sell_rent_Address.text =
                         selectedCity.description ?? '';
-
-                    print("city ${controller.sell_rent_Address.text}");
                   },
                 ),
                 SizedBox(height: 16),

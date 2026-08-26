@@ -124,7 +124,6 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
 
   void _onUpdatePressed() {
     if (_formKey.currentState?.validate() ?? false) {
-      log("Updating lead...");
       controller.updateLeadDetails(widget.lead.id ?? '');
       Get.back();
     }
@@ -250,11 +249,6 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                         controller.selectedContractor.value = '';
                         controller.selectedContractorName.value = '';
                       }
-
-                      log(
-                        "Selected Contractor: ${controller.selectedContractorName.value} "
-                        "(${controller.selectedContractor.value})",
-                      );
                     },
                   );
                 }),
@@ -274,9 +268,6 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                   final updateServiceName =
                       controller.selectedServiceName.value;
 
-                  log(
-                    "Check data not update or done ${updateServiceId}=== = == = == = =  == ${controllerMyService.items.map((element) => element.toJson())}",
-                  );
                   return NesticoPeDropdownField<String>(
                     isRequired: false,
                     enabled: false,
@@ -298,9 +289,7 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                         // safely find matching service name
                         final selectedItem = controllerMyService.items
                             .firstWhereOrNull((element) => element.id == val);
-                        print(
-                          "Json Service Name not Chnage ${selectedItem?.toMap()}  $val",
-                        );
+
                         controller.selectedServiceName.value =
                             selectedItem?.serviceName ?? '';
                       } else {
@@ -309,10 +298,6 @@ class _ContractorLeadEditScreenState extends State<ContractorLeadEditScreen> {
                       }
 
                       // Optional: log or trigger any dependent updates
-                      log(
-                        "Selected Service: ${controller.selectedServiceName.value} "
-                        "(${controller.selectedServiceId.value})",
-                      );
                     },
                   );
                 }),

@@ -344,8 +344,6 @@ class _ProjectListingScreenState extends State<ProjectListingScreen> {
                   if (userId != null && userId.isNotEmpty) {
                     newFilter["assignedTo"] = userId;
 
-                    log("Applying filter → $newFilter");
-
                     selectedFilters
                       ..clear()
                       ..addAll(newFilter);

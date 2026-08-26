@@ -331,7 +331,6 @@ class CustomImage extends StatelessWidget {
           errorWidget:
               networkError ??
               (context, url, error) {
-                debugPrint("❌ Image failed: $url | Error: $error");
                 return fallback();
               },
         );

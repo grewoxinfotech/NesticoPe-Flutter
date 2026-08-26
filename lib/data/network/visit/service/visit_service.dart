@@ -32,11 +32,7 @@ class VisitService {
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      debugPrint("Fetch Visits URI: $uri");
-
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("Fetch Visits Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -46,15 +42,10 @@ class VisitService {
           (json) => VisitItem.fromJson(json),
         );
       } else {
-        debugPrint("Failed to load visits: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
         throw Exception("Failed to load visits");
       }
     } catch (e) {
-      debugPrint("Exception in fetchVisits: $e");
       rethrow; // Controller handles error
     }
   }
 }
-
-

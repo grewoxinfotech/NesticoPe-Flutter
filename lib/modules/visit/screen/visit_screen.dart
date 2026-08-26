@@ -16,8 +16,10 @@ class VisitScreen extends StatelessWidget {
     final VisitController controller = Get.put(VisitController());
 
     return Scaffold(
-
-      appBar: AppBar(title: const Text("My Visits"),backgroundColor: ColorRes.white,),
+      appBar: AppBar(
+        title: const Text("My Visits"),
+        backgroundColor: ColorRes.white,
+      ),
       body: Obx(() {
         if (controller.isLoading.value && controller.items.isEmpty) {
           return BuyerMyVisitListScreenShimmer();

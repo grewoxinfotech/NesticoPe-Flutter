@@ -17,8 +17,6 @@ final CalenderCategoryController _categoryController = Get.put(
   CalenderCategoryController(),
 );
 
-
-
 void showEventDialog({CalenderEventModel? event, bool isEdit = false}) {
   final eventController = Get.find<CalenderEventController>();
   final categoryController = Get.find<CalenderCategoryController>();

@@ -10,7 +10,7 @@ class MicController extends GetxController {
   var isListening = false.obs;
   var lastWords = ''.obs;
 
-    final StreamController<bool> _listeningStreamController =
+  final StreamController<bool> _listeningStreamController =
       StreamController<bool>.broadcast();
   final StreamController<String> _wordsStreamController =
       StreamController<String>.broadcast();
@@ -35,7 +35,7 @@ class MicController extends GetxController {
           isListening.value = status == 'listening';
           if (status == 'done') stopListening();
         },
-        onError: (error) => print("Speech error: $error"),
+        onError: (error) => null,
       );
 
       if (available) {

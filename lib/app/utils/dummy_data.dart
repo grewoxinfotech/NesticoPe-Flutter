@@ -439,8 +439,6 @@ List<Map<String, dynamic>> propertyList = [
   },
 ];
 
-
-
 final stats = [
   {
     "title": "Appreciation",
@@ -470,11 +468,6 @@ final stats = [
   },
 ];
 
-
-
-
-
-
 List<String> listedByList = [
   "All",
   "Agent",
@@ -483,17 +476,7 @@ List<String> listedByList = [
   "Expert Pro Agent",
 ];
 
-
-
-
 List<String> subCategory = ['Buy', 'Lease'];
-
-
-
-
-
-
-
 
 List<String> localityList = [
   'Andheri West',

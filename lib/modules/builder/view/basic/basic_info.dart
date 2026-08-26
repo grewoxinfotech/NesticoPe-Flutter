@@ -34,9 +34,6 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                   Icons.apartment_outlined,
                   size: 20,
                   color: ColorRes.primary,
-
-
-                  
                 ),
                 initialValue: p.projectName,
                 validator:
@@ -81,10 +78,7 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
 
               const SizedBox(height: 12),
 
-              Text(
-                'Property Type',
-                style: theme.textTheme.titleMedium,
-              ),
+              Text('Property Type', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               Obx(() {
                 final selectedType =
@@ -99,24 +93,39 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                 return Wrap(
                   spacing: 10,
                   runSpacing: 8,
-                  children: options.map((option) {
-                    final isSelected = selectedType == option.key;
-                    return ChoiceChip(
-                      label: Text(option.value,style: theme.textTheme.bodyMedium?.copyWith(color: isSelected ? ColorRes.white : ColorRes.textPrimary)),
-                      selected: isSelected,
-                      selectedColor: ColorRes.primary,
-                      backgroundColor: isSelected ? ColorRes.primary.withOpacity(0.1) : ColorRes.grey.withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: BorderSide(
-                          color: isSelected ? ColorRes.primary : ColorRes.grey.withOpacity(0.1),
-                        ),
-                      ),
-                      onSelected: (_) {
-                        controller.selectedBuilderPropertyType(option.key);
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      options.map((option) {
+                        final isSelected = selectedType == option.key;
+                        return ChoiceChip(
+                          label: Text(
+                            option.value,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color:
+                                  isSelected
+                                      ? ColorRes.white
+                                      : ColorRes.textPrimary,
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: ColorRes.primary,
+                          backgroundColor:
+                              isSelected
+                                  ? ColorRes.primary.withOpacity(0.1)
+                                  : ColorRes.grey.withOpacity(0.1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color:
+                                  isSelected
+                                      ? ColorRes.primary
+                                      : ColorRes.grey.withOpacity(0.1),
+                            ),
+                          ),
+                          onSelected: (_) {
+                            controller.selectedBuilderPropertyType(option.key);
+                          },
+                        );
+                      }).toList(),
                 );
               }),
 
@@ -237,7 +246,6 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                               Icons.home_work_outlined,
                               size: 18,
                               color: ColorRes.primary,
-
                             ),
                             borderType: 'outline',
                             onSaved: (v) {
@@ -261,7 +269,6 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                         label: 'Launch Date',
                         date: project.launchDate,
                         onSaved: (pickedDate) {
-                          print('Lunched Date: ${p.launchDate}');
                           controller.project.update(
                             (p) => p!.launchDate = pickedDate,
                           );
@@ -307,9 +314,9 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                   final reraId = value?.trim() ?? '';
                   if (reraId.isEmpty) return null;
 
-                  final isValid = RegExp(r'^RERA\d+$').hasMatch(
-                    reraId.toUpperCase(),
-                  );
+                  final isValid = RegExp(
+                    r'^RERA\d+$',
+                  ).hasMatch(reraId.toUpperCase());
                   if (!isValid) {
                     return "Enter valid RERA ID (e.g. RERA24563563)";
                   }

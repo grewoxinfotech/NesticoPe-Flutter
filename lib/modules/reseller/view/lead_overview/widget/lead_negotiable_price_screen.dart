@@ -46,12 +46,10 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
         title: Text(
           'Negotiable Prices',
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
@@ -68,21 +66,18 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
         if (items.isEmpty) {
           return const Center(child: Text('No negotiable prices found.'));
         }
-        final buyerIds = widget.controller.items
-            .map((item) => item.buyerId)
-            .whereType<String>() // removes null values safely
-            .toList();
+        final buyerIds =
+            widget.controller.items
+                .map((item) => item.buyerId)
+                .whereType<String>() // removes null values safely
+                .toList();
 
         // Log or debug
-        log("✅ Extracted Buyer IDs: $buyerIds");
 
         // Optionally: fetch profiles for each buyer
         for (final id in buyerIds) {
-
           widget.controller.getTheVisitersProfile(id);
         }
-
-
 
         return RefreshIndicator(
           onRefresh: widget.controller.refreshLead,
@@ -102,10 +97,10 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
   }
 
   Widget _buildNegotiableCard(
-      NegotiableItem item,
-      BuildContext context,
-      LeadPropertyNegotiablePriceController controller,
-      ) {
+    NegotiableItem item,
+    BuildContext context,
+    LeadPropertyNegotiablePriceController controller,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       padding: const EdgeInsets.all(15),
@@ -144,8 +139,10 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                     ),
                     const SizedBox(height: 6),
                     Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: ColorRes.leadGreyColor.shade200,
                         borderRadius: BorderRadius.circular(10),
@@ -153,15 +150,22 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.account_circle_outlined,
-                              size: 20, color: Colors.grey),
+                          const Icon(
+                            Icons.account_circle_outlined,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(width: 6),
 
                           Flexible(
                             child: Obx(() {
-                              final username = controller.buyerProfiles[item.buyerId]?.username ?? 'John D.';
+                              final username =
+                                  controller
+                                      .buyerProfiles[item.buyerId]
+                                      ?.username ??
+                                  'John D.';
                               return Text(
-                                username.capitalize?.replaceAll("_", " ")??'',
+                                username.capitalize?.replaceAll("_", " ") ?? '',
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
@@ -171,7 +175,6 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                               );
                             }),
                           ),
-
                         ],
                       ),
                     ),
@@ -187,7 +190,6 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-
                     Column(
                       children: [
                         Text(
@@ -202,11 +204,17 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                             Icon(Icons.circle, size: 10, color:getStatusColor(item.newStatus)),
+                            Icon(
+                              Icons.circle,
+                              size: 10,
+                              color: getStatusColor(item.newStatus),
+                            ),
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                (item.newStatus!=null)?capitalizeEachWord(item.newStatus):"N/A",
+                                (item.newStatus != null)
+                                    ? capitalizeEachWord(item.newStatus)
+                                    : "N/A",
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
@@ -234,11 +242,17 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                             Icon(Icons.circle, size: 10, color: getStatusColor(item.oldStatus)),
+                            Icon(
+                              Icons.circle,
+                              size: 10,
+                              color: getStatusColor(item.oldStatus),
+                            ),
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                  (item.oldStatus!=null)?capitalizeEachWord(item.oldStatus):"N/A",
+                                (item.oldStatus != null)
+                                    ? capitalizeEachWord(item.oldStatus)
+                                    : "N/A",
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                   fontWeight: AppFontWeights.semiBold,
@@ -260,7 +274,6 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
           const SizedBox(height: 12),
 
           // -------------------- PRICE SECTION --------------------
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -280,16 +293,16 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                   fontSize: AppFontSizes.caption,
                 ),
               ),
-
             ],
           ),
           Row(
-
             children: [
               Expanded(
                 child: Text(
-      Formatter.formatDecimalPrice(num.parse(item.negotiablePrice ?? '0')),
-                  style:  TextStyle(
+                  Formatter.formatDecimalPrice(
+                    num.parse(item.negotiablePrice ?? '0'),
+                  ),
+                  style: TextStyle(
                     fontSize: AppFontSizes.bodySmall,
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.textColor,
@@ -297,9 +310,10 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                 ),
               ),
 
-
               Text(
-                Formatter.formatDecimalPrice(num.parse(item.previousNegotiablePrice ?? '0')),
+                Formatter.formatDecimalPrice(
+                  num.parse(item.previousNegotiablePrice ?? '0'),
+                ),
                 style: TextStyle(
                   color: ColorRes.textColor,
                   fontWeight: AppFontWeights.medium,
@@ -309,10 +323,8 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
             ],
           ),
 
-
-
           // -------------------- BUTTONS --------------------
-          if(item.newStatus?.toLowerCase()=="pending")...[
+          if (item.newStatus?.toLowerCase() == "pending") ...[
             const SizedBox(height: 12),
             Row(
               children: [
@@ -336,7 +348,10 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 5,
+                      ),
                     ),
                   ),
                 ),
@@ -359,19 +374,20 @@ class _LeadNegotiablePriceScreenState extends State<LeadNegotiablePriceScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 5,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ]
+          ],
         ],
       ),
     );
   }
-
-
 
   Widget _buildLabelValue(String label, String value) {
     return Padding(

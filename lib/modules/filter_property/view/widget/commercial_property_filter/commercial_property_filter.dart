@@ -35,9 +35,6 @@ class CommercialPropertyFilter extends StatelessWidget {
                         controller.commercialSelectedSubCategory,
                         controller.commercialSubCategory[index],
                       );
-                      debugPrint(
-                        'category ${controller.commercialSelectedSubCategory.value}',
-                      );
                     },
                     child: buildFilterPropertyTypes(
                       title: controller.commercialSubCategory[index],
@@ -71,8 +68,12 @@ class CommercialPropertyFilter extends StatelessWidget {
     );
   }
 }
+
 class ResidentialPropertyFilter extends StatelessWidget {
-  const ResidentialPropertyFilter({super.key, required this.controllerForFilter});
+  const ResidentialPropertyFilter({
+    super.key,
+    required this.controllerForFilter,
+  });
   final PropertyFilterControllerForFilter controllerForFilter;
 
   @override
@@ -85,34 +86,31 @@ class ResidentialPropertyFilter extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Obx(
-                () => Row(
+            () => Row(
               children: List.generate(
                 controllerForFilter.residentialSubCategory.length,
-                    (index) {
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: GestureDetector(
                       onTap: () {
                         controllerForFilter.updateFilter(
-                          controllerForFilter
-                              .residentialSelectedSubCategory,
-                          controllerForFilter
-                              .residentialSubCategory[index],
-                        );
-                        debugPrint(
-                          'category ${controllerForFilter.residentialSelectedSubCategory.value}',
+                          controllerForFilter.residentialSelectedSubCategory,
+                          controllerForFilter.residentialSubCategory[index],
                         );
                       },
                       child: buildFilterPropertyTypes(
                         title:
-                        controllerForFilter
-                            .residentialSubCategory[index],
+                            controllerForFilter.residentialSubCategory[index],
                         isSelected:
-                        controllerForFilter
-                            .residentialSelectedSubCategory
-                            .value ==
                             controllerForFilter
-                                .residentialSubCategory[index] && controllerForFilter.hasUserSelectedPropertyType.value,
+                                    .residentialSelectedSubCategory
+                                    .value ==
+                                controllerForFilter
+                                    .residentialSubCategory[index] &&
+                            controllerForFilter
+                                .hasUserSelectedPropertyType
+                                .value,
                         isExpanded: true,
                       ),
                     ),
@@ -127,14 +125,12 @@ class ResidentialPropertyFilter extends StatelessWidget {
           child: Obx(
             () => Column(
               children: [
-                if (controllerForFilter
-                    .residentialSelectedSubCategory
-                    .value ==
+                if (controllerForFilter.residentialSelectedSubCategory.value ==
                     "Buy") ...[
                   BuyFilters(controllerForFilter: controllerForFilter),
                 ] else if (controllerForFilter
-                    .residentialSelectedSubCategory
-                    .value ==
+                        .residentialSelectedSubCategory
+                        .value ==
                     "Rent") ...[
                   RentFilter(controllerForFilter: controllerForFilter),
                 ],

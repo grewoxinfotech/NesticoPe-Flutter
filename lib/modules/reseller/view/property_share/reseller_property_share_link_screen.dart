@@ -332,7 +332,6 @@ class ResellerPropertyShareLinkScreen extends StatelessWidget {
         shareType: shareType,
       );
     } catch (e) {
-      debugPrint("⚠️ redirectToShare Error: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong while sharing: $e",

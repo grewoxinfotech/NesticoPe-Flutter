@@ -176,8 +176,7 @@ import '../../../../data/network/platform_review/service/platform_review_service
 class PlatformReviewController extends GetxController {
   final ReviewService _reviewService = ReviewService();
 
-
-  PlatformReviewController({required this.type,required this.filters});
+  PlatformReviewController({required this.type, required this.filters});
   // Observables
   final List<String> type;
   var isLoading = false.obs;
@@ -250,10 +249,6 @@ class PlatformReviewController extends GetxController {
         filters: filters,
       );
 
-      debugPrint(
-        "Review Controller Response: ${response?.data?.items?.length}",
-      );
-
       if (response != null && response.success == true) {
         if (refresh) {
           allReviews.value = response.data?.items ?? [];
@@ -266,13 +261,9 @@ class PlatformReviewController extends GetxController {
         totalPages.value = response.data?.totalPages ?? 1;
         hasMore.value = response.data?.hasMore ?? false;
 
-
-        
-
         // await filterSiteReviews();
       }
     } catch (e) {
-      debugPrint("❌ Error fetching all reviews: $e");
     } finally {
       isLoading.value = false;
     }
@@ -298,10 +289,6 @@ class PlatformReviewController extends GetxController {
     }
 
     siteReviewWithUsers.value = matched;
-
-    debugPrint("✅ Total reviews: ${allReviews.length}");
-    debugPrint("✅ Site reviews: ${siteReviews.length}");
-    debugPrint("✅ Matched siteReviewWithUsers: ${siteReviewWithUsers.length}");
   }
 
   /// 🔹 Fetch users data with pagination fields handled
@@ -345,7 +332,6 @@ class PlatformReviewController extends GetxController {
         // await filterSiteReviews();
       }
     } catch (e) {
-      debugPrint("❌ Error loading more reviews: $e");
       currentPage.value--;
     } finally {
       isLoadingMore.value = false;

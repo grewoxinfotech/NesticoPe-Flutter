@@ -26,27 +26,20 @@ class SellerPropertyService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("uri: $uri");
-      final response = await http.get(uri, headers: await headers());
 
-      print("response: ${response.body}");
+      final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        print("data: $data");
 
         return PaginationResponse<Items>.fromJson(
           data,
           (json) => Items.fromJson(json),
         );
       } else {
-        print("Failed to load properties: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load properties");
       }
     } catch (e) {
-      print("Exception in fetchProperties: $e");
       rethrow;
     }
   }

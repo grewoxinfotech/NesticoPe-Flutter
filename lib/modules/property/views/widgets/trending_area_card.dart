@@ -94,8 +94,11 @@ class TrendingAreaCard extends StatelessWidget {
                             width: 80,
                             height: 130,
                             color: ColorRes.leadGreyColor.shade300,
-                            child: const Icon(Icons.image_not_supported,
-                                color: Colors.grey, size: 30),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              color: Colors.grey,
+                              size: 30,
+                            ),
                           );
                         },
                       ),
@@ -126,7 +129,10 @@ class TrendingAreaCard extends StatelessWidget {
                                       ? Icons.arrow_upward
                                       : Icons.arrow_downward,
                                   size: 16,
-                                  color: isPositive ? ColorRes.green : ColorRes.error,
+                                  color:
+                                      isPositive
+                                          ? ColorRes.green
+                                          : ColorRes.error,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -135,7 +141,9 @@ class TrendingAreaCard extends StatelessWidget {
                                     fontSize: AppFontSizes.small,
                                     fontWeight: AppFontWeights.semiBold,
                                     color:
-                                    isPositive ? ColorRes.green : ColorRes.error,
+                                        isPositive
+                                            ? ColorRes.green
+                                            : ColorRes.error,
                                   ),
                                 ),
                               ],
@@ -167,11 +175,7 @@ class TrendingAreaCard extends StatelessWidget {
                             const SizedBox(height: 4),
 
                             GestureDetector(
-                              onTap: () {
-                                print(
-                                  "View price clicked for ${locality['name']}",
-                                );
-                              },
+                              onTap: () {},
                               child: const Text(
                                 "View price trend >",
                                 style: TextStyle(

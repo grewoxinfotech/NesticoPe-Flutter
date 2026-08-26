@@ -17,30 +17,28 @@ class SellerDashBoardService {
     return await ApiConstants.getHeaders();
   }
 
-  Future<Map<String, dynamic>?> getSellerDashBoard(String id,{   int? leadsYear,}) async {
+  Future<Map<String, dynamic>?> getSellerDashBoard(
+    String id, {
+    int? leadsYear,
+  }) async {
     try {
       final queryParams = <String, String>{};
       if (leadsYear != null) {
         queryParams['year'] = leadsYear.toString();
       }
-      final uri=Uri.parse('$_baseUrl/$id').replace(queryParameters: queryParams);
-      log("Seller Dss $uri");
-      final response = await http.get(
-        uri,
-        headers: await header(),
-      );
+      final uri = Uri.parse(
+        '$_baseUrl/$id',
+      ).replace(queryParameters: queryParams);
+
+      final response = await http.get(uri, headers: await header());
       final decoded = jsonDecode(response.body);
-      print('📦 Seller Dashboard Raw Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded;
       } else {
-        print('⚠️ Seller Dashboard Error Response: $decoded');
         return decoded;
       }
     } catch (e, stack) {
-      print('❌ Exception in SellerDashboard: $e');
-      print(stack);
       return null;
     }
   }

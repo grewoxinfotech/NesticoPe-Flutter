@@ -34,7 +34,7 @@ class UserActivityScreen extends StatelessWidget {
                     child: Lottie.asset(
                       'assets/lottie/sign_in.json',
                       width: double.infinity,
-            
+
                       fit: BoxFit.cover,
                     ),
                   ),

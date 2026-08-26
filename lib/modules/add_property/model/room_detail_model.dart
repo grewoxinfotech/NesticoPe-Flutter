@@ -3,7 +3,7 @@ class RoomModel {
   String monthlyRent;
   String deposit;
   List<String> amenities;
-  String other;// ✅ Added list of strings
+  String other; // ✅ Added list of strings
 
   RoomModel({
     required this.roomType,
@@ -19,7 +19,7 @@ class RoomModel {
       'roomType': roomType,
       'monthlyRent': monthlyRent,
       'deposit': deposit,
-      'other':other,
+      'other': other,
       'amenities': amenities, // ✅ Added to map
     };
   }
@@ -29,7 +29,7 @@ class RoomModel {
       roomType: json['roomType'] ?? '',
       monthlyRent: json['monthlyRent'] ?? '',
       deposit: json['deposit'] ?? '',
-      other: json['other']??'',
+      other: json['other'] ?? '',
       amenities: List<String>.from(json['amenities'] ?? []), // ✅ Safe parsing
     );
   }

@@ -169,7 +169,7 @@ class ChatMessage {
       senderName: json['senderName'] ?? sender?['name'],
     );
   }
-   Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap() {
     return {
       "id": id,
       "senderId": senderId,

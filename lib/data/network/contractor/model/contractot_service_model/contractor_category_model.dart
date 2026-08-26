@@ -18,11 +18,7 @@ class ContractorServiceCategoryResponse {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data.toMap()};
   }
 }
 
@@ -73,7 +69,7 @@ class ContractorServiceCategory {
   String createdBy;
   String? updatedBy;
   String name;
-List<String> description; // ✅ FIXED
+  List<String> description; // ✅ FIXED
   String? icon;
   bool isActive;
 
@@ -84,11 +80,11 @@ List<String> description; // ✅ FIXED
     required this.id,
     required this.createdBy,
     this.updatedBy,
-     this.icon,
+    this.icon,
     required this.name,
     required this.description,
     required this.isActive,
-    
+
     required this.createdAt,
     required this.updatedAt,
   });
@@ -98,13 +94,17 @@ List<String> description; // ✅ FIXED
       id: map['id'] ?? '',
       createdBy: map['created_by'] ?? '',
       updatedBy: map['updated_by'],
-      icon: map['icon']??'',
+      icon: map['icon'] ?? '',
       name: map['name'] ?? '',
-       description: List<String>.from(map['description'] ?? []),
+      description: List<String>.from(map['description'] ?? []),
       isActive: map['isActive'] ?? false,
-     
-      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(map['updatedAt'] ?? DateTime.now().toIso8601String()),
+
+      createdAt: DateTime.parse(
+        map['createdAt'] ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        map['updatedAt'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -114,10 +114,10 @@ List<String> description; // ✅ FIXED
       'created_by': createdBy,
       'updated_by': updatedBy,
       'name': name,
-      'icon':icon,
+      'icon': icon,
       'description': description,
       'isActive': isActive,
-      
+
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };

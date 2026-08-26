@@ -48,20 +48,20 @@ class MeetingItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'created_by': createdBy,
-        'updated_by': updatedBy,
-        'meetingTitle': meetingTitle,
-        'meetingLink': meetingLink,
-        'date': date,
-        'time': time,
-        'note': note,
-        'status': status,
-        'approvalStatus': approvalStatus,
-        'resellerId': resellerId,
-        'createdAt': createdAt,
-        'updatedAt': updatedAt,
-      };
+    'id': id,
+    'created_by': createdBy,
+    'updated_by': updatedBy,
+    'meetingTitle': meetingTitle,
+    'meetingLink': meetingLink,
+    'date': date,
+    'time': time,
+    'note': note,
+    'status': status,
+    'approvalStatus': approvalStatus,
+    'resellerId': resellerId,
+    'createdAt': createdAt,
+    'updatedAt': updatedAt,
+  };
 }
 
 class CreateMeetingPayload {
@@ -80,10 +80,10 @@ class CreateMeetingPayload {
   });
 
   Map<String, dynamic> toJson() => {
-        'meetingTitle': meetingTitle,
-        'date': date,
-        'time': time,
-        'resellerId': resellerId,
-        if (note != null && note!.isNotEmpty) 'note': note,
-      };
+    'meetingTitle': meetingTitle,
+    'date': date,
+    'time': time,
+    'resellerId': resellerId,
+    if (note != null && note!.isNotEmpty) 'note': note,
+  };
 }

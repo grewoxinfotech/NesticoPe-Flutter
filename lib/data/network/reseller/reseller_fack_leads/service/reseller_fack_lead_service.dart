@@ -23,12 +23,8 @@ class ResellerFakeLeadService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return ResellerFakeLeadStatsResponse.fromJson(data);
-      } else {
-        print("❌ Failed to fetch stats: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("⚠️ Error fetching fake lead stats: $e");
-    }
+      } else {}
+    } catch (e) {}
     return null;
   }
 }

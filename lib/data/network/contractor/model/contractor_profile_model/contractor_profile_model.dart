@@ -126,9 +126,10 @@ class Contractor {
       contractorType: json['contractorType'] ?? null,
       city: json['city']?.toString(),
       state: json['state']?.toString(),
-      services: (json['services'] as List? ?? [])
-          .map((e) => ServiceItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      services:
+          (json['services'] as List? ?? [])
+              .map((e) => ServiceItem.fromJson(e as Map<String, dynamic>))
+              .toList(),
     );
   }
 
@@ -205,9 +206,10 @@ class Subscription {
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
       hasPremiumPlan: json['hasPremiumPlan'] ?? false,
-      planAmount: (json['planAmount'] is int)
-          ? (json['planAmount'] as int).toDouble()
-          : (json['planAmount'] is String)
+      planAmount:
+          (json['planAmount'] is int)
+              ? (json['planAmount'] as int).toDouble()
+              : (json['planAmount'] is String)
               ? double.tryParse(json['planAmount']) ?? 0.0
               : (json['planAmount'] ?? 0).toDouble(),
       planName: json['planName'],
@@ -252,10 +254,6 @@ class ServiceItem {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'serviceName': serviceName,
-      'category': category,
-    };
+    return {'id': id, 'serviceName': serviceName, 'category': category};
   }
 }

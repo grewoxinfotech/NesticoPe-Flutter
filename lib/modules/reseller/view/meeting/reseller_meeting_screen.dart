@@ -12,9 +12,10 @@ class ResellerMeetingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.isRegistered<ResellerMeetingController>()
-        ? Get.find<ResellerMeetingController>()
-        : Get.put(ResellerMeetingController(), permanent: true);
+    final controller =
+        Get.isRegistered<ResellerMeetingController>()
+            ? Get.find<ResellerMeetingController>()
+            : Get.put(ResellerMeetingController(), permanent: true);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -72,18 +73,23 @@ class ResellerMeetingScreen extends StatelessWidget {
                 // Format date & time (null-safe)
                 String formattedDate;
                 try {
-                  formattedDate = m.date.isNotEmpty
-                      ? DateFormat('dd MMM yyyy').format(DateTime.parse(m.date))
-                      : '-';
+                  formattedDate =
+                      m.date.isNotEmpty
+                          ? DateFormat(
+                            'dd MMM yyyy',
+                          ).format(DateTime.parse(m.date))
+                          : '-';
                 } catch (_) {
                   formattedDate = '-';
                 }
                 String formattedTime;
                 try {
-                  formattedTime = m.time.isNotEmpty
-                      ? DateFormat('hh:mm a')
-                          .format(DateFormat('HH:mm').parse(m.time))
-                      : '-';
+                  formattedTime =
+                      m.time.isNotEmpty
+                          ? DateFormat(
+                            'hh:mm a',
+                          ).format(DateFormat('HH:mm').parse(m.time))
+                          : '-';
                 } catch (_) {
                   formattedTime = '-';
                 }
@@ -188,25 +194,29 @@ class ResellerMeetingScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _buildApprovalBadge(m.approvalStatus),
-                          Builder(builder: (context) {
-                            String createdText;
-                            try {
-                              createdText = m.createdAt.isNotEmpty
-                                  ? DateFormat('MMM dd, yyyy')
-                                      .format(DateTime.parse(m.createdAt))
-                                  : '-';
-                            } catch (_) {
-                              createdText = '-';
-                            }
-                            return Text(
-                              "Created on $createdText",
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: Colors.black45,
-                                fontWeight: AppFontWeights.medium,
-                              ),
-                            );
-                          }),
+                          Builder(
+                            builder: (context) {
+                              String createdText;
+                              try {
+                                createdText =
+                                    m.createdAt.isNotEmpty
+                                        ? DateFormat(
+                                          'MMM dd, yyyy',
+                                        ).format(DateTime.parse(m.createdAt))
+                                        : '-';
+                              } catch (_) {
+                                createdText = '-';
+                              }
+                              return Text(
+                                "Created on $createdText",
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black45,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ],
@@ -486,13 +496,13 @@ class ResellerMeetingScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: (){
+                          onPressed: () {
                             noteCtrl.clear();
                             dateCtrl.clear();
                             timeCtrl.clear();
                             selectedDate = null;
                             selectedTime = null;
-                            
+
                             Get.back();
                           },
                           style: OutlinedButton.styleFrom(

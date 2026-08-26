@@ -92,7 +92,9 @@ class BHKTypes extends StatelessWidget {
                             : ColorRes.white,
                     border: Border.all(
                       color:
-                          isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade300,
+                          isSelected
+                              ? ColorRes.primary
+                              : ColorRes.leadGreyColor.shade300,
                       width: isSelected ? 1.8 : 1.5,
                     ),
                     borderRadius: BorderRadius.circular(10),

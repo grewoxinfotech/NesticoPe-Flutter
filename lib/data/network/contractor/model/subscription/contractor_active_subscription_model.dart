@@ -54,7 +54,8 @@ class ContractorActiveSubscriptionData {
   int get maxLeads => _toInt(metadata?['maxLeads']);
   int get maxUsers => _toInt(metadata?['maxUsers']);
 
-  bool get isServiceLimitReached => maxServices > 0 && usedServices >= maxServices;
+  bool get isServiceLimitReached =>
+      maxServices > 0 && usedServices >= maxServices;
   bool get isLeadLimitReached => maxLeads > 0 && usedLeads >= maxLeads;
   bool get isUserLimitReached => maxUsers > 0 && usedUsers >= maxUsers;
 

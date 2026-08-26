@@ -37,7 +37,7 @@ class DashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title.capitalize?.replaceAll("_", " ")??'N/A',
+                  title.capitalize?.replaceAll("_", " ") ?? 'N/A',
                   style: TextStyle(
                     fontSize: AppFontSizes.large,
                     fontWeight: AppFontWeights.bold,
@@ -50,7 +50,10 @@ class DashboardHeader extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
 
-                  style: TextStyle(color: ColorRes.white.withOpacity(0.9),fontWeight: AppFontWeights.medium,),
+                  style: TextStyle(
+                    color: ColorRes.white.withOpacity(0.9),
+                    fontWeight: AppFontWeights.medium,
+                  ),
                 ),
               ],
             ),

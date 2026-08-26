@@ -27,7 +27,6 @@ class OverallRatingController extends GetxController {
         ratingData.value = null;
       }
     } catch (e) {
-      print("❌ Error fetching overall rating: $e");
       errorMessage.value = "Something went wrong while loading ratings.";
       ratingData.value = null;
     } finally {

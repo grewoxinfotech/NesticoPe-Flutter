@@ -53,7 +53,7 @@ class AddAppReviewDialog extends StatelessWidget {
                         style: TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.textColor
+                          color: ColorRes.textColor,
                         ),
                       ),
                     ),

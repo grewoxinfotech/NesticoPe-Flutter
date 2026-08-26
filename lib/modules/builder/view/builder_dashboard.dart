@@ -691,8 +691,6 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
       controller.applyFilter("created_by", userId);
     }
 
-    print("User Id for Signature: ${userId}");
-
     if (Get.isRegistered<DigitalSignatureController>(tag: 'signature')) {
       signatureController = Get.find<DigitalSignatureController>(
         tag: 'signature',
@@ -705,9 +703,7 @@ class _BuilderDashboardState extends State<BuilderDashboard> {
     }
 
     if (mounted) {
-      setState(() {
-        
-      });
+      setState(() {});
     }
   }
 
@@ -1093,7 +1089,6 @@ Widget _buildYearDropdown(SellerOverviewController overviewController) {
             }).toList(),
         onChanged: (value) {
           if (value != null) {
-            log('Dropdown changed to: $value');
             overviewController.updateLeadsYear(value);
           }
         },

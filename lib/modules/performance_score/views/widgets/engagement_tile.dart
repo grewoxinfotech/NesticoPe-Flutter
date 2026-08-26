@@ -94,6 +94,7 @@ import 'package:nesticope_app/app/constants/color_res.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 import '../../../../data/network/property/models/analytics_model.dart';
+
 class EngagementSubBreakDownPieChart extends StatefulWidget {
   final Map<String, SubBreakdown> breakdown;
   final Color? color;
@@ -105,10 +106,12 @@ class EngagementSubBreakDownPieChart extends StatefulWidget {
   });
 
   @override
-  State<EngagementSubBreakDownPieChart> createState() => _EngagementSubBreakDownPieChartState();
+  State<EngagementSubBreakDownPieChart> createState() =>
+      _EngagementSubBreakDownPieChartState();
 }
 
-class _EngagementSubBreakDownPieChartState extends State<EngagementSubBreakDownPieChart> {
+class _EngagementSubBreakDownPieChartState
+    extends State<EngagementSubBreakDownPieChart> {
   int touchedIndex = -1;
 
   @override
@@ -277,11 +280,7 @@ class EngagementPieChart extends StatefulWidget {
   final Map<String, int> breakdown;
   final Color? color;
 
-  const EngagementPieChart({
-    super.key,
-    required this.breakdown,
-    this.color,
-  });
+  const EngagementPieChart({super.key, required this.breakdown, this.color});
 
   @override
   State<EngagementPieChart> createState() => _EngagementPieChartState();
@@ -308,7 +307,6 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
       ColorRes.leadTealColor,
       ColorRes.purpleColor,
       ColorRes.orangeColor,
-
     ];
 
     List<PieChartSectionData> _sections() {
@@ -349,7 +347,7 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
 
     return Container(
       color: widget.color,
-      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -454,4 +452,3 @@ class _EngagementPieChartState extends State<EngagementPieChart> {
     );
   }
 }
-

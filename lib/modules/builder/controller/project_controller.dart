@@ -19,8 +19,8 @@ class ProjectController extends GetxController {
   // final Rx<ProjectItem?> project = Rx<ProjectItem>();
 
   final PropertyService _propertyService = PropertyService();
-  RxBool isCompareProjectFirst=false.obs;
-  RxBool isCompareProjectSecond=false.obs;
+  RxBool isCompareProjectFirst = false.obs;
+  RxBool isCompareProjectSecond = false.obs;
   // Per-variant selected media type. Key = variant index, Value = media type
   // media type: 0 = Images, 1 = Video, 2 = 3D
   RxMap<int, int> selectedMediaTypeMap = <int, int>{}.obs;
@@ -36,7 +36,6 @@ class ProjectController extends GetxController {
   RxMap<int, int> variantIndexMap = <int, int>{}.obs;
   late PageController configPageController;
   final showAllConfigurations = false.obs;
-
 
   // Add these methods
   void toggleShowAllConfigurations() {
@@ -126,14 +125,11 @@ class ProjectController extends GetxController {
   }
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
-    print("Inquiry Data Sent: $data ====$id");
-
     final success = await _propertyService.addInquiry(data, id);
     return success;
   }
-   Future<bool> addForNesticoPeInquiry(Map<String, dynamic> data) async {
-    print("Inquiry Data Sent: $data ====");
 
+  Future<bool> addForNesticoPeInquiry(Map<String, dynamic> data) async {
     final success = await _propertyService.addInquiryForNesticoPeService(data);
     return success;
   }
@@ -154,13 +150,7 @@ class ProjectController extends GetxController {
         final result = inquiryResponse.any((e) => e.propertyId == propertyId);
 
         hasSubmittedInquiry.value = result;
-        print(
-          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
-        );
-        print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
-      } catch (e) {
-        print("Error fetching inquiries: $e");
-      }
+      } catch (e) {}
     }
   }
 
@@ -178,13 +168,7 @@ class ProjectController extends GetxController {
         );
 
         hasSubmittedInquiry.value = inquiries;
-        print(
-          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
-        );
-        print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
-      } catch (e) {
-        print("Error fetching inquiries: $e");
-      }
+      } catch (e) {}
     }
   }
 }

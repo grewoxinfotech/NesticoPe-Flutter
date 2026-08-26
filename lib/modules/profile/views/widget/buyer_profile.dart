@@ -86,25 +86,26 @@ class BuyerProfileScreen extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile Header
-              _buildProfileHeader(profileController),
-              const SizedBox(height: 16),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Header
+                _buildProfileHeader(profileController),
+                const SizedBox(height: 16),
 
-              // ── Personal Information ──
-              _buildSectionTitle('Personal Information'),
-              const SizedBox(height: 10),
+                // ── Personal Information ──
+                _buildSectionTitle('Personal Information'),
+                const SizedBox(height: 10),
 
-              // Contact Info Section (Editable)
-              Obx(() => _buildContactInfoSection(profileController)),
-              const SizedBox(height: 16),
+                // Contact Info Section (Editable)
+                Obx(() => _buildContactInfoSection(profileController)),
+                const SizedBox(height: 16),
 
-              // Business Details Section (Editable)
-              // Profile Options
-            ],
+                // Business Details Section (Editable)
+                // Profile Options
+              ],
+            ),
           ),
-        ));
+        );
       }),
     );
   }
@@ -791,7 +792,8 @@ class BuyerProfileScreen extends StatelessWidget {
                     iconColor: const Color(0xFF6366F1),
                     iconBg: const Color(0xFFEEF2FF),
                     label: 'User Name',
-                    value: '${user?.username?.trim().replaceAll("_", " ").capitalize ?? ''}',
+                    value:
+                        '${user?.username?.trim().replaceAll("_", " ").capitalize ?? ''}',
                   ),
                   _divider(),
                   _infoRow(

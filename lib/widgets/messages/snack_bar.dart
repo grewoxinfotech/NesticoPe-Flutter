@@ -25,7 +25,7 @@ class NesticoPeSnackBar {
       content: AwesomeSnackbarContent(
         title: title,
         message: message,
-      
+
         contentType: contentType,
 
         color: color,
@@ -47,10 +47,7 @@ class NesticoPeSnackBar {
   }
 }
 
-
-
-
- void showTopAwesomeSnackbar({
+void showTopAwesomeSnackbar({
   required String title,
   required String message,
   required ContentType contentType,

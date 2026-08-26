@@ -26,7 +26,6 @@ class ContractorProjectService {
     required String key,
   }) async {
     try {
-      log('=================================================');
       final uri = Uri.parse('$_basePhotoUrl/upload');
       final request = http.MultipartRequest('POST', uri);
 
@@ -48,23 +47,18 @@ class ContractorProjectService {
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
 
-      log("📸 Upload Response: $responseBody");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(responseBody);
         return data['success'] == true;
       } else {
-        log("❌ Failed to upload photos: ${response.statusCode}");
-        log("Body: $responseBody");
         return false;
       }
     } catch (e, stack) {
-      log("🚨 Exception in uploadBeforePhotos: $e\n$stack");
       return false;
     }
   }
 
-/*  Future<bool> deletedProjectPhoto(Map<String, dynamic> status) async {
+  /*  Future<bool> deletedProjectPhoto(Map<String, dynamic> status) async {
     try {
       final uri = Uri.parse('${ApiConstants.contractorProjectPhotos}/delete');
       log("🗑️ Deleting project photo with data: $status");
@@ -93,10 +87,10 @@ class ContractorProjectService {
   Future<bool> deletedProjectPhoto(Map<String, dynamic> status) async {
     try {
       final uri = Uri.parse('${ApiConstants.contractorProjectPhotos}/delete');
-      log("🗑️ Deleting project photo with data: $status");
 
-      final headers = await header()
-        ..addAll({'Content-Type': 'application/json'});
+      final headers =
+          await header()
+            ..addAll({'Content-Type': 'application/json'});
 
       // 🚀 Direct delete request with body
       final response = await http.delete(
@@ -105,22 +99,16 @@ class ContractorProjectService {
         body: jsonEncode(status),
       );
 
-      log("📨 Delete photo response: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         return data['success'] == true;
       } else {
-        log("❌ Failed to delete photo: ${response.statusCode}");
         return false;
       }
     } catch (e, stack) {
-      log("🚨 Exception in deletedProjectPhoto: $e\n$stack");
       return false;
     }
   }
-
-
 
   Future<PaginationResponse<ContractorProjectItem>> getContractorProjectData({
     int page = 1,
@@ -134,79 +122,65 @@ class ContractorProjectService {
         'created_by': contractorId,
       };
       final uri = Uri.parse(_baseUrl).replace(queryParameters: query);
-      log('Contractor Project Url $uri');
+
       final response = await http.get(uri, headers: await header());
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("App Logger for Contractor Project", data);
+
         return PaginationResponse<ContractorProjectItem>.fromJson(
           data,
           (json) =>
               ContractorProjectItem.fromJson(json as Map<String, dynamic>),
         );
       } else {
-        print("Failed to load Project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load project");
       }
     } catch (e) {
-      print("Exception in project: $e");
       rethrow;
     }
   }
 
   Future<bool> updateStatus(Map<String, dynamic> status, String id) async {
     try {
-      log("shgdsgasdsidsdwddhjuwd $status");
       final response = await http.put(
         Uri.parse('${ApiConstants.contractorProject}/$id'),
         headers: await header(),
         body: jsonEncode(status),
       );
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        log("Data of Json ${data}");
+
         return data['success'];
       } else {
-        print("Failed to load Update Project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Update Project");
       }
 
       //2025-12-13T18:30:00.000Z
     } catch (e) {
-      print("Exception in Update Project: $e");
       return false;
     }
   }
 
   Future<bool> updateProject(Map<String, dynamic> status, String id) async {
     try {
-      log("shgdsgasdsidsdwddhjuwd $status");
       final response = await http.put(
         Uri.parse('${ApiConstants.contractorProject}/$id'),
         headers: await header(),
         body: jsonEncode(status),
       );
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        log("Data of Json ${data}");
+
         return data['success'];
       } else {
-        print("Failed to load Update Project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Update Project");
       }
 
       //2025-12-13T18:30:00.000Z
     } catch (e) {
-      print("Exception in Update Project: $e");
       return false;
     }
   }
@@ -217,19 +191,15 @@ class ContractorProjectService {
         Uri.parse('${ApiConstants.contractorProject}/$id'),
         headers: await header(),
       );
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        log("Data of Json ${data}");
+
         return data['success'];
       } else {
-        print("Failed to load Delete Project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Delete Project");
       }
     } catch (e) {
-      print("Exception in Delete Project: $e");
       return false;
     }
   }

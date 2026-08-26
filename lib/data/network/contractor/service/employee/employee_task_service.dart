@@ -71,7 +71,6 @@ class EmployeeTaskService {
     int limit = 10,
     required String projectId,
   }) async {
-   
     final uri = Uri.parse(ApiConstants.employeeTask).replace(
       queryParameters: {
         'page': page.toString(),
@@ -80,11 +79,10 @@ class EmployeeTaskService {
       },
     );
 
-    debugPrint("Employee task uri: $uri");
     final response = await http.get(uri, headers: await headers());
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      debugPrint("Employee task response: $jsonData");
+
       return PaginationResponse<EmployeeTaskItem>.fromJson(
         jsonData,
         (json) => EmployeeTaskItem.fromJson(json),

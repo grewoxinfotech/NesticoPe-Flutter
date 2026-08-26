@@ -427,8 +427,6 @@ class AddMilestoneScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("AddMilestoneScreen build called with milestone: $projectPrice");
-
     final controller = Get.find<ContractorProjectMilestoneController>(tag: tag);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -827,29 +825,19 @@ class AddMilestoneScreen extends StatelessWidget {
       m,
     ) {
       final val = _toAmount(m.milestoneAmount ?? '0');
-      log(
-        "Milestone ID: ${m.id} | Amount: ${m.milestoneAmount} | Current Sum: $sum | New Sum: ${sum + val}",
-      );
+
       return sum + val;
     });
 
     // final double totalPaid = milestones.where((element) => element.id==controller.,)
 
-    log("Allocated Total: ${controller.currentMilestoneAmount.value}");
-
     // Current milestone (typed in but not saved yet)
     final double currentAmount = controller.milestoneAmount.value;
-
-    log(
-      "Data From ${totalMilestones - (controller.currentMilestoneAmount.value + currentAmount)}       $currentAmount  ${controller.currentMilestoneAmount.value} ",
-    );
 
     // Remaining unallocated budget
     final double remainingBudget =
         totalMilestones -
         (controller.currentMilestoneAmount.value + currentAmount);
-
-    log("Remaining Budget: $remainingBudget");
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

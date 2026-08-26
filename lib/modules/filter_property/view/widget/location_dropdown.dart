@@ -54,7 +54,10 @@ class SearchableDropdownWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 border: Border.all(
-                  color: enabled ? ColorRes.leadGreyColor.shade300 : ColorRes.leadGreyColor.shade200,
+                  color:
+                      enabled
+                          ? ColorRes.leadGreyColor.shade300
+                          : ColorRes.leadGreyColor.shade200,
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -197,7 +200,7 @@ class SearchableDropdownWidget extends StatelessWidget {
                   hintText: 'Search ${label.toLowerCase()}...',
                   hintStyle: TextStyle(
                     color: ColorRes.leadGreyColor.shade400,
-                    fontSize:AppFontSizes.medium,
+                    fontSize: AppFontSizes.medium,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
@@ -222,11 +225,15 @@ class SearchableDropdownWidget extends StatelessWidget {
                   fillColor: ColorRes.leadGreyColor.shade50,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: ColorRes.leadGreyColor.shade200),
+                    borderSide: BorderSide(
+                      color: ColorRes.leadGreyColor.shade200,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: ColorRes.leadGreyColor.shade200),
+                    borderSide: BorderSide(
+                      color: ColorRes.leadGreyColor.shade200,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -342,7 +349,11 @@ class SearchableDropdownWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off, size: 64, color: ColorRes.leadGreyColor.shade300),
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: ColorRes.leadGreyColor.shade300,
+          ),
           const SizedBox(height: 16),
           buildCommonText(
             'No results found',

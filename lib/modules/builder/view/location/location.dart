@@ -35,7 +35,7 @@ class StepLocation extends GetView<ProjectWizardController> {
     final theme = Theme.of(context);
     return Obx(() {
       final p = controller.project.value;
-      print("Zip Debug: ${p.zipCode}");
+
       return Form(
         key: formKey,
         // autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -158,9 +158,6 @@ class StepLocation extends GetView<ProjectWizardController> {
                           x!.city = city;
                           x!.state = state;
                         });
-
-                        print("✅ City: $city");
-                        print("✅ State: $state");
                       },
                     ),
                   ),
@@ -218,8 +215,6 @@ class StepLocation extends GetView<ProjectWizardController> {
                   });
 
                   // controller.cityController.text = selectedCity.split(',')[0];
-
-                  print("city ${controller.locationController.text}");
                 },
               ),
               const SizedBox(height: 12),

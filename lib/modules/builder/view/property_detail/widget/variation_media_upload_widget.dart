@@ -1231,6 +1231,7 @@ import 'package:get/get.dart';
 class VariantMediaUploadWidget extends StatefulWidget {
   final String projectId;
   final String variantId;
+
   /// Row identity within the form so each variant gets its own [VariantMediaController].
   final int configurationIndex;
   final int variantIndex;
@@ -1274,8 +1275,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
       configurationIndex: widget.configurationIndex,
       variantIndex: widget.variantIndex,
     );
-    final alreadyRegistered =
-        Get.isRegistered<VariantMediaController>(tag: _controllerTag);
+    final alreadyRegistered = Get.isRegistered<VariantMediaController>(
+      tag: _controllerTag,
+    );
     _controller = Get.put(VariantMediaController(), tag: _controllerTag);
     // Only hydrate from [widget.variant] the first time this tag is used.
     // Re-running on every visit replaces lists with server URLs only and
@@ -1297,7 +1299,6 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
     super.dispose();
   }
 
-
   void _showMessage(String message, {bool isError = false}) {
     if (mounted) {
       // ScaffoldMessenger.of(context).showSnackBar(
@@ -1306,7 +1307,11 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
       //     backgroundColor: isError ? Colors.red : Colors.green,
       //   ),
       // );
-      NesticoPeSnackBar.showAwesomeSnackbar(title: isError ? 'Error' : 'Success', message: message, contentType: isError ? ContentType.failure : ContentType.success);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: isError ? 'Error' : 'Success',
+        message: message,
+        contentType: isError ? ContentType.failure : ContentType.success,
+      );
     }
   }
 
@@ -1492,9 +1497,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
   }
 
   Widget _buildActionButtons(
-      ThemeData theme,
-      VariantMediaController controller,
-      ) {
+    ThemeData theme,
+    VariantMediaController controller,
+  ) {
     return Column(
       children: [
         Row(
@@ -1502,9 +1507,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed:
-                controller.imagesCount >= 5
-                    ? null
-                    : () => controller.pickImages(),
+                    controller.imagesCount >= 5
+                        ? null
+                        : () => controller.pickImages(),
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('Images'),
                 style: ElevatedButton.styleFrom(
@@ -1521,9 +1526,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                     borderRadius: BorderRadius.circular(8),
                     side: BorderSide(
                       color:
-                      controller.imagesCount >= 5
-                          ? Colors.grey[300]!
-                          : theme.primaryColor,
+                          controller.imagesCount >= 5
+                              ? Colors.grey[300]!
+                              : theme.primaryColor,
                     ),
                   ),
                 ),
@@ -1533,9 +1538,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
             Expanded(
               child: ElevatedButton.icon(
                 onPressed:
-                controller.videosCount >= 3
-                    ? null
-                    : () => controller.pickVideo(),
+                    controller.videosCount >= 3
+                        ? null
+                        : () => controller.pickVideo(),
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('Video'),
                 style: ElevatedButton.styleFrom(
@@ -1552,9 +1557,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                     borderRadius: BorderRadius.circular(8),
                     side: BorderSide(
                       color:
-                      controller.videosCount >= 3
-                          ? Colors.grey[300]!
-                          : theme.primaryColor,
+                          controller.videosCount >= 3
+                              ? Colors.grey[300]!
+                              : theme.primaryColor,
                     ),
                   ),
                 ),
@@ -1567,9 +1572,9 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed:
-            controller.model != null
-                ? null
-                : () => controller.pick3DModel(),
+                controller.model != null
+                    ? null
+                    : () => controller.pick3DModel(),
             icon: const Icon(Icons.add_rounded),
             label: const Text('3D Model'),
             style: ElevatedButton.styleFrom(
@@ -1578,17 +1583,14 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
               disabledBackgroundColor: Colors.grey[100],
               disabledForegroundColor: Colors.grey[400],
               elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(
                   color:
-                  controller.model != null
-                      ? Colors.grey[300]!
-                      : theme.primaryColor,
+                      controller.model != null
+                          ? Colors.grey[300]!
+                          : theme.primaryColor,
                 ),
               ),
             ),
@@ -1611,37 +1613,37 @@ class _VariantMediaUploadWidgetState extends State<VariantMediaUploadWidget> {
                 ),
               ),
               child:
-              controller.isUploading
-                  ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.white,
+                  controller.isUploading
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text(
+                            'Uploading...',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      )
+                      : const Text(
+                        'Upload New Media',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Uploading...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              )
-                  : const Text(
-                'Upload New Media',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
             ),
           ),
         ],
@@ -1743,11 +1745,7 @@ class MediaPreviewList extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            emptyIcon,
-            size: 32,
-            color: Colors.grey[400],
-          ),
+          Icon(emptyIcon, size: 32, color: Colors.grey[400]),
           const SizedBox(height: 8),
           Text(
             emptyText,

@@ -44,11 +44,10 @@ class _ReviewAllScreenDataState extends State<ReviewAllScreenData> {
         leading: IconButton(
           onPressed: () {
             Get.back(canPop: true);
-            
           },
           icon: Icon(Icons.arrow_back),
         ),
-        
+
         title: Text(
           'Review Screen',
           style: TextStyle(fontWeight: FontWeight.w500),
@@ -181,7 +180,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
               Row(
                 children: [
                   /// Avatar (placeholder since we don't have reviewer details)
-                 Container(
+                  Container(
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
@@ -200,41 +199,45 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                       ),
                     ),
                     alignment: Alignment.center,
-                    child: (() {
-                      final user = review.reviewer;
-                      final profilePic = user?.profilePic?.trim() ?? '';
-                      final username = user?.username?.trim() ?? '';
-                      final initial =
-                          username.isNotEmpty ? username[0].toUpperCase() : '?';
+                    child:
+                        (() {
+                          final user = review.reviewer;
+                          final profilePic = user?.profilePic?.trim() ?? '';
+                          final username = user?.username?.trim() ?? '';
+                          final initial =
+                              username.isNotEmpty
+                                  ? username[0].toUpperCase()
+                                  : '?';
 
-                      if (profilePic.isNotEmpty) {
-                        return ClipOval(
-                          child: Image.network(
-                            profilePic,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Text(
-                              initial,
-                              style: TextStyle(
-                                fontSize: AppFontSizes.large,
-                                fontWeight: AppFontWeights.semiBold,
-                                color: ColorRes.homeGreenDarkFade,
+                          if (profilePic.isNotEmpty) {
+                            return ClipOval(
+                              child: Image.network(
+                                profilePic,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Text(
+                                      initial,
+                                      style: TextStyle(
+                                        fontSize: AppFontSizes.large,
+                                        fontWeight: AppFontWeights.semiBold,
+                                        color: ColorRes.homeGreenDarkFade,
+                                      ),
+                                    ),
                               ),
-                            ),
-                          ),
-                        );
-                      }
+                            );
+                          }
 
-                      return Text(
-                        initial,
-                        style: TextStyle(
-                          fontSize: AppFontSizes.large,
-                          fontWeight: AppFontWeights.semiBold,
-                          color: ColorRes.homeGreenDarkFade,
-                        ),
-                      );
-                    })(),
+                          return Text(
+                            initial,
+                            style: TextStyle(
+                              fontSize: AppFontSizes.large,
+                              fontWeight: AppFontWeights.semiBold,
+                              color: ColorRes.homeGreenDarkFade,
+                            ),
+                          );
+                        })(),
                   ),
 
                   const SizedBox(width: 12),
@@ -264,7 +267,9 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    _formatDate(review.createdAt?.toIso8601String()),
+                                    _formatDate(
+                                      review.createdAt?.toIso8601String(),
+                                    ),
                                     style: TextStyle(
                                       fontSize: AppFontSizes.extraSmall,
                                       fontWeight: AppFontWeights.medium,
@@ -293,7 +298,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '${review.reviewer?.userType?.replaceAll("_", " ").capitalize??''}',
+                          '${review.reviewer?.userType?.replaceAll("_", " ").capitalize ?? ''}',
                           maxLines: 1,
 
                           style: TextStyle(
@@ -356,7 +361,6 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
                     fontWeight: AppFontWeights.semiBold,
                     color: ColorRes.homeBlackFade,
                   ),
-                
                 ),
               ],
               const SizedBox(height: 8),
@@ -390,7 +394,7 @@ class ReviewsVerticalAndTestimonials extends StatelessWidget {
 
   /// Helper method to get status color
 
-  /// Helper method to get status icon 
+  /// Helper method to get status icon
 
   /// Helper method to format date
   String _formatDate(String? dateString) {

@@ -24,7 +24,6 @@ class ApprovalHistoryController extends GetxController {
 
       approvalHistory.assignAll(result);
     } catch (e) {
-      print("Error loading approval history: $e");
     } finally {
       isLoading.value = false;
     }

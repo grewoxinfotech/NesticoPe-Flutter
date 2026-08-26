@@ -18,11 +18,7 @@ class ContractorInquiry {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data.toMap()};
   }
 }
 
@@ -150,7 +146,7 @@ class ContractorInquiryItem {
       'name': name,
       'email': email,
       'phone': phone,
-      'isLocked':isLocked,
+      'isLocked': isLocked,
       'services': services.map((x) => x.toMap()).toList(),
       'inquiredAt': inquiredAt,
       'status': status,
@@ -170,10 +166,7 @@ class InquiryService {
   final String serviceId;
   final String serviceName;
 
-  InquiryService({
-    required this.serviceId,
-    required this.serviceName,
-  });
+  InquiryService({required this.serviceId, required this.serviceName});
 
   factory InquiryService.fromMap(Map<String, dynamic> map) {
     return InquiryService(
@@ -183,10 +176,7 @@ class InquiryService {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'serviceId': serviceId,
-      'serviceName': serviceName,
-    };
+    return {'serviceId': serviceId, 'serviceName': serviceName};
   }
 }
 

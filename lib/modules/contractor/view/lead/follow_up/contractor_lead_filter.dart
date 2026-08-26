@@ -276,9 +276,6 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                   .toList(),
                           onChanged: (val) {
                             controller.setValue(controller.leadStatus, val);
-                            log(
-                              "Contractor_status ${controller.leadStatus.value}",
-                            );
                           },
                           darkText: true,
                         );
@@ -309,9 +306,6 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                   .toList(),
                           onChanged: (val) {
                             controller.setValue(controller.leadStage, val);
-                            log(
-                              "Contractor_status ${controller.leadStage.value}",
-                            );
                           },
                           darkText: true,
                         );
@@ -336,9 +330,6 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                                   .toList(),
                           onChanged: (val) {
                             controller.setValue(controller.leadSource, val);
-                            log(
-                              "Contractor_status ${controller.leadSource.value}",
-                            );
                           },
                           darkText: true,
                         );
@@ -395,7 +386,6 @@ class _ContractorLeadFilterState extends State<ContractorLeadFilter> {
                         onPressed: () {
                           final filters = _buildFilterResult();
 
-                          log("Applied Filters: $filters");
                           Get.back(result: filters);
                           // controller.resetFilters();   // controller.resetFilters();
                         },

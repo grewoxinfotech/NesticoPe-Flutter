@@ -2861,7 +2861,6 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
               isRequiredTitle: false,
               iconColor: ColorRes.leadGreyColor.shade600,
               onCitySelected: (selectedCity) {
-                print("✅ Selected city: ${selectedCity.description}");
                 controller.positionController.text =
                     selectedCity.description ?? '';
                 controller.companyController.text =
@@ -2884,7 +2883,6 @@ class _ResellerProfileScreenState extends State<ResellerProfileScreen> {
               iconColor: ColorRes.leadGreyColor.shade600,
               controller: controller.companyController,
               onCitySelected: (selectedCity) {
-                print("✅ Selected city: ${selectedCity.description}");
                 controller.companyController.text =
                     selectedCity.description ?? '';
                 // You can also store city details in your controller here

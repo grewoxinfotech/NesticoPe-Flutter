@@ -537,7 +537,6 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
       await applyBuilderFilter();
       await loadInitial();
     } catch (e) {
-      log("❌ Initial load error: $e");
       loadingState.value = BuilderProjectLoadingState.error;
     } finally {
       loadingState.value = BuilderProjectLoadingState.normal;
@@ -547,7 +546,7 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   /// Ensure builder-only projects
   Future<void> applyBuilderFilter() async {
     final userData = await SecureStorage.getUserData();
-    print("User data for builder filter: ${userData?.user?.toJson()}");
+
     final userId = userData?.user?.id;
     if (userId != null) {
       filters['created_by'] = userId;
@@ -561,11 +560,8 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   @override
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
-      log("📦 Fetch Builder Projects | page=$page | filters=$filters");
-
       return await _builderService.fetchProjects(page: page, filters: filters);
     } catch (e) {
-      log("❌ Fetch error: $e");
       loadingState.value = BuilderProjectLoadingState.error;
       rethrow;
     }
@@ -576,7 +572,6 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
   /// ==============================
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
-      print("Applying filters: $newFilters");
       loadingState.value = BuilderProjectLoadingState.filterLoading;
 
       final createdBy = filters['created_by'];
@@ -666,7 +661,6 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
       items.add(project);
       return project;
     } catch (e) {
-      log("❌ Get project error: $e");
       return null;
     }
   }
@@ -692,7 +686,6 @@ class BuilderProjectListController extends PaginatedController<ProjectItem> {
         );
       }
     } catch (e) {
-      log('❌ Delete project error: $e');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Delete Failed',
         message: 'Unable to delete project',

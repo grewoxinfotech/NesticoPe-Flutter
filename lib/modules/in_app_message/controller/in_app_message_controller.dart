@@ -13,8 +13,8 @@ class NotificationController extends PaginatedController<NotificationItem> {
   RxBool isExpanded = false.obs;
   RxBool isUnreadOnly = false.obs;
   RxString selectedType = ''.obs;
-  RxInt unReadNumber=0
-.obs;
+  RxInt unReadNumber = 0.obs;
+
   /// Optional filters
   Map<String, String>? filters = {};
 
@@ -34,12 +34,10 @@ class NotificationController extends PaginatedController<NotificationItem> {
         filters: filters,
       );
 
-      debugPrint("Fetched notifications: ${response.items.length}");
       getUnReadNotificationCount();
 
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -82,14 +80,12 @@ class NotificationController extends PaginatedController<NotificationItem> {
       getUnReadNotificationCount();
       refreshList();
       items.refresh();
-
     }
   }
 
-  Future<void> getUnReadNotificationCount()
-  async {
+  Future<void> getUnReadNotificationCount() async {
     final data = await _service.fetchCountOfUnReadNotification();
-    unReadNumber.value=data;
+    unReadNumber.value = data;
   }
 
   ///==================== Get Single Notification ====================
@@ -106,9 +102,7 @@ class NotificationController extends PaginatedController<NotificationItem> {
         items.refresh();
         return notification;
       }
-    } catch (e) {
-      debugPrint("Get notification error: $e");
-    }
+    } catch (e) {}
 
     return null;
   }

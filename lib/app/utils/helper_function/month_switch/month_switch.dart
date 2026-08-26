@@ -1,11 +1,8 @@
-
-class MonthDate{
+class MonthDate {
   MonthDate._();
-  static MonthDate monthDate=MonthDate._();
+  static MonthDate monthDate = MonthDate._();
 
   String monthChange(String month) {
-
-
     switch (month) {
       case '01':
         return 'Jan';
@@ -35,5 +32,4 @@ class MonthDate{
         return 'Invalid Month';
     }
   }
-
 }

@@ -72,12 +72,14 @@ class ResellerProfileData {
       successRate: json['successRate']?.toString() ?? '0.00',
       responseTime: json['responseTime'] ?? 0,
       currentAssignments: json['currentAssignments'] ?? 0,
-      assignmentHistory: (json['assignmentHistory'] as List? ?? [])
-          .map((e) => AssignmentHistoryItem.fromJson(e))
-          .toList(),
+      assignmentHistory:
+          (json['assignmentHistory'] as List? ?? [])
+              .map((e) => AssignmentHistoryItem.fromJson(e))
+              .toList(),
       performanceLevel: json['performanceLevel'] ?? '',
       specializations: _parseSpecializations(json['specializations']),
-      totalPlatformFeesGenerated: json['totalPlatformFeesGenerated']?.toString() ?? '0.00',
+      totalPlatformFeesGenerated:
+          json['totalPlatformFeesGenerated']?.toString() ?? '0.00',
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',
     );
@@ -134,16 +136,18 @@ class Specializations {
     return Specializations(
       cities: (json['cities'] as List? ?? []).map((e) => e.toString()).toList(),
       propertyTypes:
-          (json['propertyTypes'] as List? ?? []).map((e) => e.toString()).toList(),
+          (json['propertyTypes'] as List? ?? [])
+              .map((e) => e.toString())
+              .toList(),
       priceRanges: PriceRanges.fromJson(json['priceRanges'] ?? const {}),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'cities': cities,
-        'propertyTypes': propertyTypes,
-        'priceRanges': priceRanges.toJson(),
-      };
+    'cities': cities,
+    'propertyTypes': propertyTypes,
+    'priceRanges': priceRanges.toJson(),
+  };
 }
 
 class PriceRanges {
@@ -161,11 +165,7 @@ class PriceRanges {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'min': min,
-        'max': max,
-        'avg': avg,
-      };
+  Map<String, dynamic> toJson() => {'min': min, 'max': max, 'avg': avg};
 }
 
 num? _toNum(dynamic v) {

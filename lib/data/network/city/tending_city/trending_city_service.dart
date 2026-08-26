@@ -36,7 +36,6 @@ class TrendingCityService extends GetxService {
         );
       }
     } catch (e) {
-      print('Error fetching trending cities: $e');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'Something went wrong: $e',

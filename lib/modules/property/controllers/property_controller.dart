@@ -71,8 +71,6 @@ class PropertyController extends PaginatedController<Items> {
     controller.addListener(() {
       final shouldShow = controller.offset >= threshold;
       showPinnedSearch = shouldShow;
-
-      print("Scroll offset: ${showPinnedSearch}");
     });
   }
 
@@ -93,24 +91,18 @@ class PropertyController extends PaginatedController<Items> {
   /// Fetch trending areas for the selected city
   Future<void> fetchTradingArea(String city) async {
     if (city.isEmpty) {
-      print("City is empty, skipping trending areas fetch");
       return;
     }
     try {
-      print("Fetching trending areas for city: $city");
       final data = await CityInsightsService.cityInsightsService
           .getTrendingAreas(city);
 
       if (data != null && data.data != null && data.data.isNotEmpty) {
         trendingAreaList.value = data;
-        print("Trending areas loaded: ${data.data.length} areas");
-        print("Data: ${data.data.map((e) => e.toJson()).toList()}");
       } else {
-        print("No trending areas found for city: $city");
         trendingAreaList.value = null;
       }
     } catch (e) {
-      print("Error fetching trending areas: $e");
       trendingAreaList.value = null;
     }
   }
@@ -127,10 +119,7 @@ class PropertyController extends PaginatedController<Items> {
 
       final response = await fetchTopProperty(page);
       topProperties.assignAll(response.items);
-
-      print("Loaded ${topProperties.length} top properties");
     } catch (e) {
-      print("Error loading top properties:fdvbfdbgbg $e");
     } finally {
       apiLoading.value = false;
     }
@@ -139,8 +128,6 @@ class PropertyController extends PaginatedController<Items> {
   Future<void> checkTermsAndConditionApplyOrNot() async {
     final statusString = await SecureStorage.getTermAndConditionValue();
     final isAccepted = statusString?.toLowerCase() == 'true';
-
-    log("Check Terms: $statusString -> $isAccepted");
 
     if (!isAccepted) {
       showDisclaimerDialog();
@@ -238,14 +225,11 @@ class PropertyController extends PaginatedController<Items> {
     try {
       final city = await SecureStorage.getSelectedCity();
       if (city != null && city.isNotEmpty) {
-        print("City retrieved: $city");
         selectedCity.value = city;
 
         // Fetch trending areas with the city
         await fetchTradingArea(selectedCity.value);
-      } else {
-        print("⚠️ No city selected");
-      }
+      } else {}
 
       // Apply city filter and load properties
       final filter = {
@@ -255,9 +239,7 @@ class PropertyController extends PaginatedController<Items> {
       await applyFilters(filter);
       await loadInitial();
       await loadTopProperties();
-    } catch (e) {
-      print("Error getting city: $e");
-    }
+    } catch (e) {}
   }
 
   // void applyFilter(String key, String val) {
@@ -324,9 +306,6 @@ class PropertyController extends PaginatedController<Items> {
     if (homefilter) {
       filters ??= {};
 
-      print('ApplyFilter called: key=$key, val=$val');
-      log("Change the data of For Filter ${filters}");
-
       // Start from existing filters and merge changes so we don't drop
       // system-added keys like approval_status/isVerified.
       final next = Map<String, String>.from(filters!);
@@ -364,8 +343,6 @@ class PropertyController extends PaginatedController<Items> {
 
       filters = next;
 
-      print("Current filters: $filters");
-
       // Reset pagination state and clear items so UI updates immediately
       currentPage.value = 1;
       totalPages.value = 1;
@@ -384,10 +361,6 @@ class PropertyController extends PaginatedController<Items> {
       }
     } else {
       filters ??= {};
-
-      print('ApplyFilter called: key=$key, val=$val');
-
-      log("Change the data of For Filter ${filters}");
 
       if (key == 'propertyType') {
         final cityValue = includeCity ? filters!['city'] : null;
@@ -416,8 +389,6 @@ class PropertyController extends PaginatedController<Items> {
         }
       }
 
-      print("Current filters: $filters");
-
       currentPage.value = 1;
       totalPages.value = 1;
       hasMore.value = true;
@@ -437,7 +408,7 @@ class PropertyController extends PaginatedController<Items> {
       if (youWantWithoutCity.value) {
         current.remove('city');
       }
-      print("FetchItems with filters: $current   ${youWantWithoutCity.value}");
+
       filters = current;
       filters!['approval_status'] = 'approved';
       filters!['isVerified'] = true.toString();
@@ -448,17 +419,15 @@ class PropertyController extends PaginatedController<Items> {
         limit: propertyLimit.value > 0 ? propertyLimit.value : 10,
       );
 
-      print("Fetched items: ${response.items.length}");
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
 
   void setPropertyLimit(int limit) {
     propertyLimit.value = limit;
-    log("Property Limit: ${propertyLimit.value}");
+
     refreshList();
   }
 
@@ -475,7 +444,7 @@ class PropertyController extends PaginatedController<Items> {
           page: page,
           filters: filters,
         );
-        print("Fetched Top Properties: ${response.items.length}");
+
         return response; // contains items + meta (page/total)
       } else {
         filters!['approval_status'] = 'approved';
@@ -486,18 +455,15 @@ class PropertyController extends PaginatedController<Items> {
           filters: filters,
           limit: propertyLimit.value > 0 ? propertyLimit.value : 10,
         );
-        print("Fetched Topdfgdgdf Properties: ${response.items.length}");
+
         return response; // contains items + meta (page/total)
       }
     } catch (e) {
-      print("Exception in fetchItemsdsfsgdvfdv: $e");
       rethrow;
     }
   }
 
   void fetchCreatedBy({bool withoutCity = false}) {
-    log('Without City $withoutCity');
-
     // Temporarily apply "without city" for this fetch only to avoid
     // changing global UI filter state which can cause other screens to
     // unexpectedly lose the city filter.
@@ -518,14 +484,11 @@ class PropertyController extends PaginatedController<Items> {
 
       final property = await _service.getPropertyById(id);
       if (property != null) {
-        AppLogger.structured("Property By Id For Graph", property.toJson());
         items.add(property);
         items.refresh();
         return property;
       }
-    } catch (e) {
-      print("Get property error: $e");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -550,16 +513,10 @@ class PropertyController extends PaginatedController<Items> {
       if (uniqueProperties.isEmpty) return;
 
       recommendedProperties.addAll(uniqueProperties);
-    } catch (e, stackTrace) {
-      debugPrint(
-        'getRecommendedPropertyByUserId controller error: $e\n$stackTrace',
-      );
-    }
+    } catch (e, stackTrace) {}
   }
 
   Future<void> getAllInQuireData(String propertyId) async {
-    log('Property Id For Inquiry $propertyId');
-
     if (UserHelper.isGuest) {
       final exists = await SecureStorage.hasPropertyInquiry(propertyId);
       hasSubmittedInquiry.value = exists;
@@ -575,19 +532,11 @@ class PropertyController extends PaginatedController<Items> {
         final result = inquiryResponse.any((e) => e.propertyId == propertyId);
 
         hasSubmittedInquiry.value = result;
-        print(
-          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${result} ${hasSubmittedInquiry.value}",
-        );
-        print("Inquiry Response ** ${result} ${hasSubmittedInquiry.value}");
-      } catch (e) {
-        print("Error fetching inquiries: $e");
-      }
+      } catch (e) {}
     }
   }
 
   Future<void> getHasInQuireData(String propertyId) async {
-    log('Property Id For Inquiry $propertyId');
-
     if (UserHelper.isGuest) {
       final exists = await SecureStorage.hasPropertyInquiry(propertyId);
       hasSubmittedInquiry.value = exists;
@@ -600,13 +549,7 @@ class PropertyController extends PaginatedController<Items> {
           itemId: propertyId,
         );
         hasSubmittedInquiry.value = inquiries;
-        print(
-          "Inquiry Data ** ${inquiryResponse.map((e) => e.toJson()).toList()}    ${inquiries} ${hasSubmittedInquiry.value}",
-        );
-        print("Inquiry Response ** ${inquiries} ${hasSubmittedInquiry.value}");
-      } catch (e) {
-        print("Error fetching inquiries: $e");
-      }
+      } catch (e) {}
     }
   }
 
@@ -621,7 +564,6 @@ class PropertyController extends PaginatedController<Items> {
 
       return success;
     } catch (e) {
-      print("Delete property error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -631,7 +573,6 @@ class PropertyController extends PaginatedController<Items> {
   /// Apply filters and refresh (expects a plain Map)
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
-      log("djfhyu $newFilters");
       isLoading.value = true;
       final incoming = Map<String, String>.from(newFilters);
       // Normalize priceRange -> minPrice/maxPrice (do NOT send priceRange to API)
@@ -682,7 +623,7 @@ class PropertyController extends PaginatedController<Items> {
         }
       }
       filters = incoming;
-      log("djfhyu dfhjd $filters");
+
       currentPage.value = 1;
       items.clear();
       await refreshList();
@@ -695,9 +636,6 @@ class PropertyController extends PaginatedController<Items> {
   void clearFilter(String key) {
     filters ??= {};
     filters!.remove(key);
-
-    print("🗑️ Cleared filter - $key");
-    print("📊 Current filters: $filters");
 
     // reset pagination state
     currentPage.value = 1;
@@ -722,7 +660,6 @@ class PropertyController extends PaginatedController<Items> {
   }
 
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
-    log("Add Inquiry Payload $data  ==== $id");
     final success = await _service.addInquiry(data, id);
     return success;
   }
@@ -791,12 +728,10 @@ class PropertyController extends PaginatedController<Items> {
       filters['maxPrice'] = maxBudget.text;
     }
 
-
     // Close dialog
     Get.back();
     Get.to(() => PropertyDetail(filters: [filters]));
 
-    print('🔍 Finding properties with filters: $filters');
     selectedPropertyType.value = null;
     selectedBhk.value = null;
     selectedListingType.value = null;

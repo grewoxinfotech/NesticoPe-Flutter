@@ -10,29 +10,30 @@ class CalenderScreenShimmer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          SizedBox(height: 16,),
+          SizedBox(height: 16),
           // Event List Section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _shimmerText(width: 140, height: 18), // Date header e.g. "February 5, 2026"
+                _shimmerText(
+                  width: 140,
+                  height: 18,
+                ), // Date header e.g. "February 5, 2026"
                 const SizedBox(height: 12),
                 _eventCardShimmer(),
                 const SizedBox(height: 24),
-                _shimmerText(width: 140, height: 18), // Date header e.g. "February 6, 2026"
+                _shimmerText(
+                  width: 140,
+                  height: 18,
+                ), // Date header e.g. "February 6, 2026"
                 const SizedBox(height: 12),
                 ...List.generate(5, (index) {
                   return Column(
-                    children: [
-                      _eventCardShimmer(),
-                      const SizedBox(height: 8),
-
-                    ],
+                    children: [_eventCardShimmer(), const SizedBox(height: 8)],
                   );
-                },),
+                }),
               ],
             ),
           ),
@@ -75,19 +76,28 @@ class CalenderScreenShimmer extends StatelessWidget {
             // Days of week header (S M T W T F S)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(7, (index) => _shimmerText(width: 15, height: 12)),
+              children: List.generate(
+                7,
+                (index) => _shimmerText(width: 15, height: 12),
+              ),
             ),
             const SizedBox(height: 16),
 
             // Calendar Grid (5 rows)
             Column(
-              children: List.generate(5, (index) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(7, (index) => _shimmerCircle(size: 24)),
+              children: List.generate(
+                5,
+                (index) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(
+                      7,
+                      (index) => _shimmerCircle(size: 24),
+                    ),
+                  ),
                 ),
-              )),
+              ),
             ),
           ],
         ),

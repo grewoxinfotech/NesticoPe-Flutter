@@ -87,9 +87,9 @@ class PostProperty extends StatelessWidget {
       'Living Room',
       'Kitchen',
       'Dining Hall',
-     
+
       'Study Room',
-      
+
       'Breakout Room',
     ];
     final List<String> propertyManagedBy = [
@@ -112,12 +112,6 @@ class PostProperty extends StatelessWidget {
     ];
 
     return Obx(() {
-      print(
-        "Chrvloefjeri ${controller.lookingTo.value == 'Sell'} ${controller.propertyType.value == "Commercial"} ${(controller.lookingTo.value == 'Rent' && controller.propertyType.value == "Commercial")}",
-      );
-      print(
-        "Chrvloefjeri ${controller.isCustomBhk.value} ${controller.customBhkController.text} ${controller.bhkType.value}",
-      );
       if (controller.lookingTo.value == 'PG/Co-Living') {
         return Form(
           key: formKey,
@@ -241,8 +235,6 @@ class PostProperty extends StatelessWidget {
                         ',',
                       )[0] ??
                       '';
-
-                  print("city ${controller.cityController.text}");
                 },
               ),
               const SizedBox(height: 16),
@@ -299,10 +291,6 @@ class PostProperty extends StatelessWidget {
 
                           controller.localityController.text =
                               selectedCity.description ?? '';
-
-                          print(
-                            "city ${controller.localityController.text}  $selectedCity",
-                          );
                         },
                         isEnable: false,
                       ),
@@ -519,9 +507,6 @@ class PostProperty extends StatelessWidget {
                       }),
 
                       Obx(() {
-                        print(
-                          "Electricity Charges Type: ${controller.electricityChargesType.value}",
-                        );
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -988,9 +973,6 @@ class PostProperty extends StatelessWidget {
       } else if ((controller.lookingTo.value == 'Rent' ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == 'Residential') {
-        print(
-          "Chrvloefxcvxcvxjeri ${controller.isCustomBhk.value} ${controller.customBhkController.text} ${controller.bhkType.value}",
-        );
         return Form(
           // autovalidateMode: AutovalidateMode.onUserInteraction,
           key: formKey,
@@ -1199,7 +1181,6 @@ class PostProperty extends StatelessWidget {
                         selectedCity.description ?? '';
                     controller.sell_rent_Address.text =
                         selectedCity.description ?? '';
-                    print("city ${controller.localityController.text}");
                   },
                   isEnable: false,
                 ),
@@ -1445,7 +1426,6 @@ class PostProperty extends StatelessWidget {
                         selectedCity.description ?? '';
                     controller.sell_rent_Address.text =
                         selectedCity.description ?? '';
-                    print("city ${controller.localityController.text}");
                   },
                   isEnable: false,
                 ),
@@ -1558,15 +1538,9 @@ class PostProperty extends StatelessWidget {
                               // controller.isCustomBhk.value = false;
                               // controller.customBhkController.clear();
                               controller.bhkType.value = "$number BHK";
-                              print(
-                                "Auto selected BHK: ${controller.bhkType.value}",
-                              );
                             } else {
                               // Keep custom value
                               controller.bhkType.value = "$number BHK";
-                              print(
-                                "amnu selected BHK: ${controller.bhkType.value}",
-                              );
                             }
                           },
                           inputType: TextInputType.number,
@@ -1927,9 +1901,6 @@ class PostProperty extends StatelessWidget {
                     controller.sell_rent_Address.text =
                         selectedCity.structuredFormatting?.secondaryText ?? '';
                   }
-                  print(
-                    "city ${controller.commercial_rent_Loaclity_Name.text}",
-                  );
                 },
                 isEnable: false,
               ),
@@ -1977,10 +1948,6 @@ class PostProperty extends StatelessWidget {
                               selectedCity.description ?? '';
                           controller.sell_rent_Address.text =
                               selectedCity.description ?? '';
-
-                          print(
-                            "city ${controller.commercial_rent_Loaclity_Name.text}",
-                          );
                         }
                         : null,
                 isEnable: false,
@@ -2841,10 +2808,6 @@ class PostProperty extends StatelessWidget {
                     controller.sell_rent_Address.text =
                         selectedCity.structuredFormatting?.secondaryText ?? '';
                   }
-
-                  print(
-                    "city ${controller.commercial_rent_building_Name.text}",
-                  );
                 },
                 isEnable: false,
               ),
@@ -2892,9 +2855,6 @@ class PostProperty extends StatelessWidget {
                               selectedCity.description ?? '';
                           controller.sell_rent_Address.text =
                               selectedCity.description ?? '';
-                          print(
-                            "city ${controller.commercial_rent_Loaclity_Name.text}",
-                          );
                         }
                         : null,
                 isEnable: false,

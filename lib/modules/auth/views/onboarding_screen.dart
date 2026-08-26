@@ -311,13 +311,8 @@ class OnboardingController extends GetxController {
   Future<void> _handleTruecallerLogin() async {
     final response = await truecallerService.login();
     if (response != null) {
-      log(
-        "Truecaller Login Success: ${response.firstName} ${response.lastName}, Phone: ${response.phoneNumber}",
-      );
       // Proceed with authentication using Truecaller data
-    } else {
-      log("Truecaller Login Cancelled or Failed");
-    }
+    } else {}
   }
 
   void selectOption(String option) async {
@@ -325,8 +320,6 @@ class OnboardingController extends GetxController {
 
     selectedOption.value = option;
     isProcessing.value = true;
-
-    log("Options of the dashboard $option");
 
     try {
       // Ask notification permission from onboarding (once per app run).
@@ -386,13 +379,11 @@ class OnboardingController extends GetxController {
     }
 
     final trimmed = city.toString().trim();
-    log('Onboarding city selected: $trimmed');
+
     await OnboardingCityCompletionHelper.completeAndOpenDashboard(trimmed);
   }
 
   Future<void> handleBuyHome() async {
-    print('Navigating to Buy Home screen');
-
     final loggedIn = await truecallerService.loginWithTrueCaller();
     if (!loggedIn) {
       final proceed = await _showLoginBottomSheet(
@@ -412,8 +403,6 @@ class OnboardingController extends GetxController {
   }
 
   Future<void> handleRentHome() async {
-    print('Navigating to Rent Home screen');
-
     final loggedIn = await truecallerService.loginWithTrueCaller();
     if (!loggedIn) {
       final proceed = await _showLoginBottomSheet(
@@ -433,8 +422,6 @@ class OnboardingController extends GetxController {
   }
 
   void handleSellerRegistration() async {
-    print('Navigating to Seller Registration screen');
-
     // ✅ Mark onboarding complete before registration
     await SecureStorage.setAppLaunched();
 
@@ -443,8 +430,6 @@ class OnboardingController extends GetxController {
   }
 
   void handleResellerRegistration() async {
-    print('Navigating to Reseller Registration screen');
-
     // ✅ Mark onboarding complete before registration
     await SecureStorage.setAppLaunched();
 
@@ -453,8 +438,6 @@ class OnboardingController extends GetxController {
   }
 
   void handleContractorRegistration() async {
-    print('Navigating to Contractor Registration screen');
-
     // ✅ Mark onboarding complete before registration
     await SecureStorage.setAppLaunched();
 

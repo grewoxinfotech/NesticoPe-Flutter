@@ -415,8 +415,6 @@ class _HomeScreenState extends State<HomeScreen>
         _cachedTopProperties = [];
       });
 
-      debugPrint("🔄 City synced to HomeScreen: $city");
-
       //=================================For ===================================
 
       if (widget.propertyTypes.isNotEmpty) {
@@ -706,7 +704,6 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _loadInitialData() async {
     try {
       final user = await SecureStorage.getUserData();
-      debugPrint("User Data: ${user?.toJson()}");
 
       if (user?.user?.id != null) {
         await Future.wait([
@@ -718,7 +715,6 @@ class _HomeScreenState extends State<HomeScreen>
         ]);
       }
 
-      log("home city ${propertyController.selectedCity.value}");
       propertyController.fetchTradingArea(
         propertyController.selectedCity.value,
       );
@@ -736,9 +732,7 @@ class _HomeScreenState extends State<HomeScreen>
 
       // ✅ Cache the unfiltered data when first loaded
       _cacheOriginalData();
-    } catch (e) {
-      debugPrint("Error loading initial data: $e");
-    }
+    } catch (e) {}
   }
 
   // ✅ Cache original unfiltered data
@@ -835,7 +829,7 @@ class _HomeScreenState extends State<HomeScreen>
                 listingType,
                 homefilter: true,
               );
-              log("Applied listingType filter: ${propertyController.filters}");
+
               // propertyController.loadTopProperties();
               if (fromUser) {
                 propertyController.loadTopProperties();
@@ -1414,10 +1408,7 @@ class _HomeScreenState extends State<HomeScreen>
         filterValue,
         homefilter: true,
       );
-      log("Applied listingType filter: ${propertyController.filters}");
     } catch (_) {}
-
-    debugPrint("Selected: ${type['title']} (Home filter only)");
   }
 
   // Widget _buildNewlyAddedProperties() {
@@ -1801,25 +1792,27 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 10),
 
         /// 🔵 Indicator
-       (bannerController.items.length > 1)? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            bannerController.items.length,
-            (index) => AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: _currentBannerIndex == index ? 16 : 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color:
-                    _currentBannerIndex == index
-                        ? const Color(0xFF4A6CF7)
-                        : Colors.grey.shade400,
-                borderRadius: BorderRadius.circular(10),
+        (bannerController.items.length > 1)
+            ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                bannerController.items.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentBannerIndex == index ? 16 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color:
+                        _currentBannerIndex == index
+                            ? const Color(0xFF4A6CF7)
+                            : Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ):SizedBox.shrink()
+            )
+            : SizedBox.shrink(),
       ],
     );
   }
@@ -1839,7 +1832,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildHorizontalPropertyList(List<dynamic> properties) {
     return SizedBox(
       height: 310,
-    
+
       child: NotificationListener<ScrollNotification>(
         onNotification: (scrollEnd) {
           final metrics = scrollEnd.metrics;
@@ -1852,8 +1845,8 @@ class _HomeScreenState extends State<HomeScreen>
           scrollDirection: Axis.horizontal,
           itemCount: properties.length,
           padding: EdgeInsets.symmetric(horizontal: 12),
+
           // padding: const EdgeInsets.,
-          
           separatorBuilder: (_, __) => const SizedBox(width: 12),
           itemBuilder: (context, index) {
             final data = properties[index];
@@ -1963,9 +1956,9 @@ class _HomeScreenState extends State<HomeScreen>
               onViewAll: () {
                 if (projectController.selectedCity == null) {
                   Get.to(
-                    () => AllProjectListScreen(isbuilder: false,),
+                    () => AllProjectListScreen(isbuilder: false),
                     transition: Transition.fadeIn,
-                  
+
                     duration: Duration(milliseconds: 250),
                   );
                 } else {
@@ -2007,7 +2000,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: BuilderProjectCard(
               forHome: true,
               project: data,
-            
+
               width: MediaQuery.of(context).size.width * 0.85,
 
               height: 150,
@@ -2309,9 +2302,7 @@ class _HomeScreenState extends State<HomeScreen>
       if (topSellerController.items.isEmpty) {
         return const SizedBox.shrink();
       }
-      print(
-        "[TopSeller] topSeller : ${topSellerController.items.map((e) => e.toJson())}",
-      );
+
       return Column(
         children: [
           const SizedBox(height: 15),
@@ -2471,9 +2462,6 @@ class _HomeScreenState extends State<HomeScreen>
                 itemBuilder: (context, index) {
                   final data = contractorServiceController.items[index];
 
-                  debugPrint(
-                    "[HomeScreen] Contractor Data: ${data.toJson()}",
-                  );
                   return SizedBox(
                     width: MediaQuery.of(context).size.width * 0.85,
                     child: ContractorCard(contractor: data),
@@ -3107,7 +3095,7 @@ class _HomeScreenState extends State<HomeScreen>
         color: Color.fromARGB(255, 252, 253, 241),
 
         child: Column(
-          crossAxisAlignment:CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 5),
             TitleWithViewAll(
@@ -3532,7 +3520,6 @@ Widget _buildDialogContent(
             color: ColorRes.primary,
             fillColor: ColorRes.white,
             onCitySelected: (selectedCity) {
-              debugPrint("✅ Selected city: ${selectedCity.description}");
               controller.selectedCityZ.text = selectedCity.description ?? '';
             },
           ),
@@ -3837,7 +3824,7 @@ class NewsAndArticles extends StatelessWidget {
         itemBuilder: (context, index) {
           final article = articles[index];
           final isNew = isNewArticle(article.publishDate);
-          print("Image ------------------> ${article.coverImage}");
+
           return GestureDetector(
             onTap: () {
               Get.to(() => NewsDetailScreen(newsItem: article));
@@ -5340,7 +5327,6 @@ class StateSelectionWidget extends StatelessWidget {
             onChanged: (value) async {
               if (value.isNotEmpty) {
                 await googleMapController.fetchGooglePlaces(value);
-                log("State input: $value");
               } else {
                 googleMapController.predictions.clear();
                 googleMapController.cityStateList.clear();
@@ -5403,8 +5389,6 @@ class StateSelectionWidget extends StatelessWidget {
                   if (hasParsed) {
                     // ✅ Cast item to Map<String, String?>
                     final cityData = items[index] as Map<String, String?>;
-
-                    log("djhfudfhg ${cityData}");
 
                     return ListTile(
                       leading: const Icon(
@@ -6795,7 +6779,6 @@ class BannerContainer extends StatelessWidget {
 
 class SocialBanner extends StatelessWidget {
   const SocialBanner({super.key});
-  
 
   @override
   Widget build(BuildContext context) {

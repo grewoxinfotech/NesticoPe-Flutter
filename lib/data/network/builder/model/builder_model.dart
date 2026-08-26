@@ -794,7 +794,9 @@ class ProjectVariant {
           json['brokerCommission'] != null
               ? (json['brokerCommission']).toDouble()
               : null,
-      bookingAmount: (json['bookingAmount'] ?? json['booking_amount'] ?? json['booking'])?.toDouble(),
+      bookingAmount:
+          (json['bookingAmount'] ?? json['booking_amount'] ?? json['booking'])
+              ?.toDouble(),
       // specifications: List<String>.from(json['specifications'] ?? []),
       specifications:
           (json['specifications'] as List<dynamic>? ?? []).map((e) {

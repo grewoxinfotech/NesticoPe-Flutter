@@ -647,11 +647,8 @@ class LeadController extends PaginatedController<LeadItem> {
         if (!leadPropertiesList.any((p) => p.id == property.id)) {
           leadPropertiesList.add(property);
         }
-        log("Property fetched: ${property.toJson()}");
       }
-    } catch (e) {
-      log("Error fetching property: $e");
-    }
+    } catch (e) {}
   }
 
   Future<void> fetchResellerAssignProperty() async {
@@ -675,18 +672,10 @@ class LeadController extends PaginatedController<LeadItem> {
   }
 
   Future<void> exportToPdf(List<LeadItem> item) async {
-    AppLogger.structured(
-      "Lead Data Export in excel form : ",
-      item.map((e) => e.toJson()),
-    );
     await exportLeadsToExcel(items);
   }
 
   Future<void> exportProjectToPdf(List<LeadItem> item) async {
-    AppLogger.structured(
-      "Lead Data Export in excel form : ",
-      item.map((e) => e.toJson()),
-    );
     await exportProjectLeadsToExcel(items);
   }
 
@@ -702,23 +691,17 @@ class LeadController extends PaginatedController<LeadItem> {
     );
 
     if (result == null) {
-      print("❌ No file selected");
       return;
     }
 
     final pickedFile = result.files.single;
 
-    print("📄 File name: ${pickedFile.name}");
-    print("📦 Bytes length: ${pickedFile.bytes?.length}");
-
     // Extra safety check
     if (!pickedFile.name.toLowerCase().endsWith('.csv')) {
-      print("❌ Invalid file type. Only CSV allowed.");
       return;
     }
 
     if (pickedFile.bytes == null || pickedFile.bytes!.isEmpty) {
-      print("❌ CSV file is empty");
       return;
     }
 
@@ -772,10 +755,6 @@ class LeadController extends PaginatedController<LeadItem> {
       // 1. Check if we have a specific Property ID set
       if (currentPropertyFilterId.value != null &&
           currentPropertyFilterId.value!.isNotEmpty) {
-        print(
-          "Fetching leads for Property ID: ${currentPropertyFilterId.value} with filters: ${filters.value}",
-        );
-
         // Fetch using the specific property service method
 
         response = await _service.getLeadsByProperty(
@@ -783,13 +762,12 @@ class LeadController extends PaginatedController<LeadItem> {
           propertyId: currentPropertyFilterId.value!,
           filters: filters.value,
         );
-      
       }
       // 2. Fallback to Original Logic (Global Leads)
       else if (fromReseller) {
         final user = await SecureStorage.getUserData();
         final userId = user?.user?.id;
-        log("Check it all ok or not ${currentModule.value}");
+
         response = await _service.fetchLeads(
           page: page,
           userId: userId,
@@ -804,11 +782,6 @@ class LeadController extends PaginatedController<LeadItem> {
           fromReseller: fromReseller,
         );
       }
-
-      AppLogger.structured(
-        "Data fetched from API:",
-        response.items.map((e) => e.toJson()),
-      );
 
       // ✅ CRITICAL FIX: Fetch properties AFTER getting response
       // but BEFORE returning, so loading states stay consistent
@@ -828,7 +801,6 @@ class LeadController extends PaginatedController<LeadItem> {
 
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -859,7 +831,6 @@ class LeadController extends PaginatedController<LeadItem> {
       }
       return success;
     } catch (e) {
-      print("Create lead error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -869,7 +840,6 @@ class LeadController extends PaginatedController<LeadItem> {
   Future<void> getLeadDetailByID(String id) async {
     newUpdatedLeadModel.value = await _service.getLeadDataByID(id);
     newUpdatedLeadModel.refresh();
-    log('Lead Details From data : ${newUpdatedLeadModel.value?.toJson()}');
   }
 
   Future<bool> updateLead(String id, LeadItem updatedLead) async {
@@ -895,7 +865,6 @@ class LeadController extends PaginatedController<LeadItem> {
       }
       return success;
     } catch (e) {
-      print("Update lead error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -908,7 +877,6 @@ class LeadController extends PaginatedController<LeadItem> {
       if (success) items.removeWhere((item) => item.id == id);
       return success;
     } catch (e) {
-      print("Delete lead error: $e");
       return false;
     }
   }
@@ -1107,7 +1075,6 @@ class LeadController extends PaginatedController<LeadItem> {
       propertyLeadsTotalPages.value = response.meta.totalPages;
       propertyLeadsHasMore.value = response.meta.hasMore;
     } catch (e) {
-      print("Error loading property leads: $e");
     } finally {
       isLoadingPropertyLeads.value = false;
     }

@@ -529,7 +529,8 @@ class _FeedBackAndReportScreenState extends State<FeedBackAndReportScreen>
     }
     final fav = Get.find<PropertyFavoriteController>();
     final inquiry = fav.inquiryResponse.firstWhereOrNull(
-      (e) => e.propertyId == widget.propertyId && e.meta?.negotiablePrice != null,
+      (e) =>
+          e.propertyId == widget.propertyId && e.meta?.negotiablePrice != null,
     );
     if (inquiry == null) return const SizedBox.shrink();
     final price = inquiry.meta?.negotiablePrice;
@@ -566,20 +567,14 @@ class _FeedBackAndReportScreenState extends State<FeedBackAndReportScreen>
             const SizedBox(height: 4),
             Text(
               'Visit: $visitLine',
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.black87, fontSize: 12),
             ),
           ],
           if (timePeriod != null && timePeriod.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
               'Timeline: ${timePeriod.toLowerCase()}',
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.black87, fontSize: 12),
             ),
           ],
         ],

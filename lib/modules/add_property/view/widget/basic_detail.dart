@@ -185,8 +185,6 @@ class BasicDetail extends StatelessWidget {
                 controller.cityController.text =
                     selectedCity.description?.split(',')[0] ?? '';
                 // controller.cityController.text = selectedCity.split(',')[0];
-
-                print("city ${controller.cityController.text}");
               },
             ),
             if (controller.propertyType.value == "Commercial") ...[

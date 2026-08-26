@@ -81,7 +81,6 @@ class MouController extends PaginatedController<MouItem> {
 
       Get.back();
     } catch (e) {
-      print("Signature Error : ${e}");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to upload signature',
@@ -107,8 +106,7 @@ class MouController extends PaginatedController<MouItem> {
   Future<PaginationResponse<MouItem>> fetchItems(int page) {
     // TODO: implement fetchItems
     // throw UnimplementedError();
-    print("Check Mou come perfect ${_service.getMouVerification(page: page, limit: 10)}=======${items.map((element) => element.toJson(),)}");
-    
+
     return _service.getMouVerification(page: page, limit: 10);
   }
 }

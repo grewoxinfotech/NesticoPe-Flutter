@@ -9,11 +9,12 @@ class SearchFilterModel {
 
   factory SearchFilterModel.fromJson(Map<String, dynamic> json) {
     return SearchFilterModel(
-      predictions: json['predictions'] != null
-          ? (json['predictions'] as List)
-          .map((v) => Prediction.fromJson(v))
-          .toList()
-          : [],
+      predictions:
+          json['predictions'] != null
+              ? (json['predictions'] as List)
+                  .map((v) => Prediction.fromJson(v))
+                  .toList()
+              : [],
       status: json['status'],
     );
   }
@@ -28,7 +29,8 @@ class SearchFilterModel {
 
 class Prediction {
   final Items? items;
-  final ProjectItem? projectItem;  final String? description;
+  final ProjectItem? projectItem;
+  final String? description;
   final List<MatchedSubstring>? matchedSubstrings;
   final String? placeId;
   final String? reference;
@@ -36,7 +38,7 @@ class Prediction {
   final List<Term>? terms;
   final List<String>? types;
 
-  Prediction( {
+  Prediction({
     this.projectItem,
     this.description,
     this.matchedSubstrings,
@@ -51,21 +53,25 @@ class Prediction {
   factory Prediction.fromJson(Map<String, dynamic> json) {
     return Prediction(
       description: json['description'],
-      matchedSubstrings: json['matched_substrings'] != null
-          ? (json['matched_substrings'] as List)
-          .map((v) => MatchedSubstring.fromJson(v))
-          .toList()
-          : [],
+      matchedSubstrings:
+          json['matched_substrings'] != null
+              ? (json['matched_substrings'] as List)
+                  .map((v) => MatchedSubstring.fromJson(v))
+                  .toList()
+              : [],
       placeId: json['place_id'],
       items: json['items'] != null ? Items.fromJson(json['items']) : null,
-      projectItem: json['items'] != null ? ProjectItem.fromJson(json['items']) : null,
+      projectItem:
+          json['items'] != null ? ProjectItem.fromJson(json['items']) : null,
       reference: json['reference'],
-      structuredFormatting: json['structured_formatting'] != null
-          ? StructuredFormatting.fromJson(json['structured_formatting'])
-          : null,
-      terms: json['terms'] != null
-          ? (json['terms'] as List).map((v) => Term.fromJson(v)).toList()
-          : [],
+      structuredFormatting:
+          json['structured_formatting'] != null
+              ? StructuredFormatting.fromJson(json['structured_formatting'])
+              : null,
+      terms:
+          json['terms'] != null
+              ? (json['terms'] as List).map((v) => Term.fromJson(v)).toList()
+              : [],
       types: json['types'] != null ? List<String>.from(json['types']) : [],
     );
   }
@@ -73,8 +79,7 @@ class Prediction {
   Map<String, dynamic> toJson() {
     return {
       'description': description,
-      'matched_substrings':
-      matchedSubstrings?.map((v) => v.toJson()).toList(),
+      'matched_substrings': matchedSubstrings?.map((v) => v.toJson()).toList(),
       'items': items?.toJson(),
       'place_id': placeId,
       'reference': reference,
@@ -92,17 +97,11 @@ class MatchedSubstring {
   MatchedSubstring({this.length, this.offset});
 
   factory MatchedSubstring.fromJson(Map<String, dynamic> json) {
-    return MatchedSubstring(
-      length: json['length'],
-      offset: json['offset'],
-    );
+    return MatchedSubstring(length: json['length'], offset: json['offset']);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'length': length,
-      'offset': offset,
-    };
+    return {'length': length, 'offset': offset};
   }
 }
 
@@ -120,11 +119,12 @@ class StructuredFormatting {
   factory StructuredFormatting.fromJson(Map<String, dynamic> json) {
     return StructuredFormatting(
       mainText: json['main_text'],
-      mainTextMatchedSubstrings: json['main_text_matched_substrings'] != null
-          ? (json['main_text_matched_substrings'] as List)
-          .map((v) => MatchedSubstring.fromJson(v))
-          .toList()
-          : [],
+      mainTextMatchedSubstrings:
+          json['main_text_matched_substrings'] != null
+              ? (json['main_text_matched_substrings'] as List)
+                  .map((v) => MatchedSubstring.fromJson(v))
+                  .toList()
+              : [],
       secondaryText: json['secondary_text'],
     );
   }
@@ -133,7 +133,7 @@ class StructuredFormatting {
     return {
       'main_text': mainText,
       'main_text_matched_substrings':
-      mainTextMatchedSubstrings?.map((v) => v.toJson()).toList(),
+          mainTextMatchedSubstrings?.map((v) => v.toJson()).toList(),
       'secondary_text': secondaryText,
     };
   }
@@ -146,19 +146,14 @@ class Term {
   Term({this.offset, this.value});
 
   factory Term.fromJson(Map<String, dynamic> json) {
-    return Term(
-      offset: json['offset'],
-      value: json['value'],
-    );
+    return Term(offset: json['offset'], value: json['value']);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'offset': offset,
-      'value': value,
-    };
+    return {'offset': offset, 'value': value};
   }
 }
+
 extension PredictionParser on Prediction {
   Map<String, String?> get toLocationMap {
     if (terms == null || terms!.isEmpty) return {};
@@ -171,10 +166,6 @@ extension PredictionParser on Prediction {
     if (terms!.length > 1) state = terms![1].value;
     if (terms!.length > 2) country = terms![2].value;
 
-    return {
-      'city': city,
-      'state': state,
-      'country': country,
-    };
+    return {'city': city, 'state': state, 'country': country};
   }
 }

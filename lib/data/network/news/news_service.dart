@@ -32,11 +32,8 @@ class NewsService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      debugPrint("Fetching News from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("News API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -46,9 +43,6 @@ class NewsService {
           (json) => NewsItem.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch news: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
         CustomSnackBar.show(
           Get.overlayContext!,
           message: "Failed to load news articles",
@@ -58,7 +52,6 @@ class NewsService {
         throw Exception("Failed to load news articles");
       }
     } catch (e) {
-      debugPrint("Exception in fetchNews: $e");
       rethrow;
     }
   }
@@ -71,17 +64,11 @@ class NewsService {
         headers: await headers(),
       );
 
-      debugPrint("Get news by ID response: ${response.body}");
-
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         return NewsModel.fromJson(jsonData).data?.items?.first;
-      } else {
-        debugPrint("Failed to get news by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get news by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
     return null;
   }
 }

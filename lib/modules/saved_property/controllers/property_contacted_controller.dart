@@ -46,17 +46,24 @@ class PropertyContactedController extends GetxController {
 
       // Extract only property IDs
       final ids = inquiryList.map((e) => e.propertyId).toList();
-      final uniqueIds = inquiryList.where((e) => e.details != null && e.details!.id != null && e.details!.id!.isNotEmpty).toList(); // Remove duplicates
-      contactedPropertyIds.assignAll(uniqueIds.map((e) => e.propertyId).toSet().toList());
+      final uniqueIds =
+          inquiryList
+              .where(
+                (e) =>
+                    e.details != null &&
+                    e.details!.id != null &&
+                    e.details!.id!.isNotEmpty,
+              )
+              .toList(); // Remove duplicates
+      contactedPropertyIds.assignAll(
+        uniqueIds.map((e) => e.propertyId).toSet().toList(),
+      );
 
       // Reset and load first batch of property details
       // properties.clear();
       currentIndex = 0;
       // await loadNextBatch();
     } catch (e) {
-      print(
-        'Error in Property Contacted Controller fetch Contacted Properties: $e',
-      );
     } finally {
       isLoading.value = false;
     }
@@ -78,11 +85,10 @@ class PropertyContactedController extends GetxController {
   Future<bool> addInquiry(Map<String, dynamic> data, String id) async {
     final success = await _service.addInquiry(data, id);
     if (success) {
-
       contactedPropertyIds.add(id);
       inquiries.refresh();
       fetchContactedProperties();
-    
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Success',
         message: 'Inquiry submitted successfully',

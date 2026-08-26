@@ -5,28 +5,19 @@ class PropertyInquirePanelModel {
   final String? message;
   final PropertyInquireData? data;
 
-  PropertyInquirePanelModel({
-    this.success,
-    this.message,
-    this.data,
-  });
+  PropertyInquirePanelModel({this.success, this.message, this.data});
 
   factory PropertyInquirePanelModel.fromMap(Map<String, dynamic> map) {
     return PropertyInquirePanelModel(
       success: map['success'],
       message: map['message'],
-      data: map['data'] != null
-          ? PropertyInquireData.fromMap(map['data'])
-          : null,
+      data:
+          map['data'] != null ? PropertyInquireData.fromMap(map['data']) : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 
   factory PropertyInquirePanelModel.fromJson(String source) =>
@@ -54,10 +45,12 @@ class PropertyInquireData {
 
   factory PropertyInquireData.fromMap(Map<String, dynamic> map) {
     return PropertyInquireData(
-      items: map['items'] != null
-          ? List<PropertyInquireItem>.from(
-          map['items'].map((x) => PropertyInquireItem.fromMap(x)))
-          : null,
+      items:
+          map['items'] != null
+              ? List<PropertyInquireItem>.from(
+                map['items'].map((x) => PropertyInquireItem.fromMap(x)),
+              )
+              : null,
       total: map['total'],
       currentPage: map['currentPage'],
       totalPages: map['totalPages'],
@@ -130,11 +123,15 @@ class PropertyInquireItem {
       submittedAt: map['submittedAt'],
       isConvertedToLead: map['isConvertedToLead'],
       convertedToLeadAt: map['convertedToLeadAt'],
-      meta: map['meta'] != null ? PropertyInquireMeta.fromMap(map['meta']) : null,
+      meta:
+          map['meta'] != null ? PropertyInquireMeta.fromMap(map['meta']) : null,
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
       entityType: map['entityType'],
-      property: map['property'] != null ? PropertyDetails.fromMap(map['property']) : null,
+      property:
+          map['property'] != null
+              ? PropertyDetails.fromMap(map['property'])
+              : null,
       user: map['user'] != null ? PropertyUser.fromMap(map['user']) : null,
     );
   }
@@ -173,7 +170,6 @@ class PropertyInquireMeta {
   final String? offerTitle;
   final String? offerDiscount;
 
-
   PropertyInquireMeta({
     this.negotiablePrice,
     this.isNegotiable,
@@ -189,11 +185,12 @@ class PropertyInquireMeta {
   factory PropertyInquireMeta.fromMap(Map<String, dynamic> map) {
     final dynamic price = map['negotiablePrice'];
     return PropertyInquireMeta(
-      negotiablePrice: price == null
-          ? null
-          : price is int
-          ? price
-          : int.tryParse(price.toString()),
+      negotiablePrice:
+          price == null
+              ? null
+              : price is int
+              ? price
+              : int.tryParse(price.toString()),
       isNegotiable: map['isNegotiable'],
       timePeriod: map['timePeriod'],
       visitDate: map['visitDate'],
@@ -285,13 +282,7 @@ class PropertyUser {
   final String? phone;
   final String? userType;
 
-  PropertyUser({
-    this.id,
-    this.username,
-    this.email,
-    this.phone,
-    this.userType,
-  });
+  PropertyUser({this.id, this.username, this.email, this.phone, this.userType});
 
   factory PropertyUser.fromMap(Map<String, dynamic> map) {
     return PropertyUser(

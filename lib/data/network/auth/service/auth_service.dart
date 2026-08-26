@@ -34,18 +34,14 @@ class AuthService {
         headers: {i: j},
         body: jsonEncode(data),
       );
-      debugPrint("Login With Truecaller Done ${response.statusCode}");
-      debugPrint("Response of api : ${response.body}");
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("✅ Login With Truecaller Done ${response.statusCode}");
-        debugPrint("Response : ${response.body}");
         final data = jsonDecode(response.body);
 
         final user = UserModel.fromJson(data['data']);
 
         final token = data['data']['token'] ?? user.token;
-        print("Token :sdfhghfgsdhufgsd $token    ");
-        print("User :fdjgd ${user.toJson()}");
+
         await SecureStorage.saveUserData(user);
         await SecureStorage.saveToken(token);
         await SecureStorage.saveLoggedIn(true);
@@ -78,7 +74,6 @@ class AuthService {
         // );
       }
     } catch (e) {
-      debugPrint("Error in Login With Truecaller : $e");
       rethrow;
     }
     return null;
@@ -106,14 +101,8 @@ class AuthService {
         headers: await ApiConstants.getHeadersWithoutToken(),
         body: jsonEncode(user),
       );
-      debugPrint("Generate Reseller Certificate Done ${response.statusCode}");
-      debugPrint("Response of api : ${response.body}");
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint(
-          "✅ Generate Reseller Certificate Done ${response.statusCode}",
-        );
-        debugPrint("Response : ${response.body}");
 
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         final url = data['data']['certificateUrl'];
 
@@ -146,9 +135,6 @@ class AuthService {
 
         return success;
       } else {
-        debugPrint(
-          "Generate Reseller Certificate Failed ${response.statusCode}",
-        );
         Fluttertoast.showToast(
           msg: "❌ Server Error: ${response.statusCode}",
           toastLength: Toast.LENGTH_SHORT,
@@ -159,7 +145,6 @@ class AuthService {
         return false;
       }
     } catch (e) {
-      debugPrint("Generate Reseller Certificate Failed $e");
       Fluttertoast.showToast(
         msg: "🚫 Error: $e",
         toastLength: Toast.LENGTH_LONG,
@@ -191,7 +176,6 @@ class AuthService {
 
       return filePath;
     } catch (e) {
-      debugPrint("PDF download failed: $e");
       return null;
     }
   }
@@ -220,21 +204,16 @@ class AuthService {
       await Share.shareXFiles([
         XFile(filePath),
       ], text: "Here is your certificate");
-    } catch (e) {
-      debugPrint("PDF flow failed: $e");
-    }
+    } catch (e) {}
   }
 
   // Login
   Future<UserModel> login(String email, String password) async {
-    print("[DEBUG]=> $email $password");
     final response = await http.post(
       Uri.parse(ApiConstants.loginEndpoint),
       headers: {i: j},
       body: jsonEncode({'id': email, 'password': password}),
     );
-    print("[DEBUG]=> ${response.headers}");
-    print("[DEBUG]=> ${response.body}");
 
     final data = jsonDecode(response.body);
 
@@ -287,7 +266,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    print("[DEBUG]=> ${response.body}");
+
     if (response.statusCode == 200) {
       return data;
     } else {
@@ -317,10 +296,8 @@ class AuthService {
       }),
     );
 
-    print("API URL${ApiConstants.sellerRegister}");
-
     final data = jsonDecode(response.body);
-    print("Seller [DEBUG]=> ${response.body}");
+
     if (response.statusCode == 200) {
       return data;
     } else {
@@ -338,16 +315,11 @@ class AuthService {
 
       final payload = {'userType': userType, ...data};
 
-      debugPrint('[DEBUG] => Registration Payload: $payload');
-      debugPrint('[DEBUG] => API URL: $uri');
-
       final response = await http.post(
         uri,
         headers: await ApiConstants.getHeadersWithoutToken(),
         body: jsonEncode(payload),
       );
-
-      debugPrint('[DEBUG] => Contractor Response: ${response.body}');
 
       final responseData = jsonDecode(response.body);
 
@@ -359,7 +331,6 @@ class AuthService {
         );
       }
     } catch (e) {
-      debugPrint('[ERROR] => Contractor registration exception: $e');
       rethrow;
     }
   }
@@ -376,16 +347,11 @@ class AuthService {
         ...data,
       };
 
-      debugPrint('[DEBUG] => Reseller Registration Payload: $payload');
-      debugPrint('[DEBUG] => API URL: $uri');
-
       final response = await http.post(
         uri,
         headers: await ApiConstants.getHeadersWithoutToken(),
         body: jsonEncode(payload),
       );
-
-      debugPrint('[DEBUG] => Reseller Response: ${response.body}');
 
       final responseData = jsonDecode(response.body);
 
@@ -397,12 +363,13 @@ class AuthService {
         );
       }
     } catch (e) {
-      debugPrint('[ERROR] => Partner registration exception: $e');
       rethrow;
     }
   }
 
-  Future<UserModel?> sellerRegistrationComplete(Map<String, dynamic> data) async {
+  Future<UserModel?> sellerRegistrationComplete(
+    Map<String, dynamic> data,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse("$url/complete-seller-registration"),
@@ -410,11 +377,8 @@ class AuthService {
         body: jsonEncode(data),
       );
 
-      print("response : -----------------> ${response.body}");
-
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
-        print("Seller Complete [DEBUG]=> ${response.body}");
 
         if (body['success'] == true) {
           final responseData = body['data'] as Map<String, dynamic>? ?? {};
@@ -422,15 +386,11 @@ class AuthService {
           final token = responseData['token']?.toString();
           if (token == null || token.isEmpty) return null;
 
-          return UserModel(
-            token: token,
-            user: User.fromJson(userJson),
-          );
+          return UserModel(token: token, user: User.fromJson(userJson));
         }
       }
       return null;
     } catch (e) {
-      print("Error in sellerRegistrationComplete: $e");
       return null;
     }
   }
@@ -455,13 +415,6 @@ class AuthService {
       body: jsonEncode({'otp': otp}),
     );
 
-    debugPrint("response : -----------------> ${response.body}");
-    debugPrint("response : -----------------> ${response.statusCode}");
-    debugPrint("response : -----------------> ${response.headers}");
-    debugPrint("response : -----------------> ${ApiConstants.auth}/verify-otp}");
-    debugPrint("response : -----------------> ${response.isRedirect}");
-    debugPrint("response : -----------------> ${response.statusCode}");
-    debugPrint("response : -----------------> ${response.statusCode}");
     final data = jsonDecode(response.body);
     if (response.statusCode == 200 && data['success'] == true) {
       final responseData = data['data'] as Map<String, dynamic>? ?? {};
@@ -473,10 +426,7 @@ class AuthService {
         generateResellerCertificate(responseData['certificateData']);
       }
 
-      return UserModel(
-        token: resolvedToken,
-        user: User.fromJson(userJson),
-      );
+      return UserModel(token: resolvedToken, user: User.fromJson(userJson));
     }
     throw Exception(data['message'] ?? 'OTP verification failed');
   }
@@ -504,7 +454,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    print("OTP [DEBUG]=> ${response.body}");
+
     // debugPrint("[DEBUG]=> ${response.body}");
     if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['token'];
@@ -535,7 +485,7 @@ class AuthService {
   }) async {
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? '';
-    print("djsfhdsfhdsdsjfjdsjfds ${city} ${zipCode}  ${userId}");
+
     final response = await http.post(
       Uri.parse('${ApiConstants.convertToReseller}/$userId'),
       headers: await headers(),
@@ -559,11 +509,9 @@ class AuthService {
       headers: await headers(),
       body: jsonEncode({'city': city, "contractorType": type}),
     );
-    print(
-      "Convert to Url Contractor ${Uri.parse('${ApiConstants.convertToContractor}/$userId')}",
-    );
+
     final data = jsonDecode(response.body);
-    print("Convert to Api Contractor ${response.body}");
+
     if (response.statusCode == 200 && data['success'] == true) {
       return true;
     } else {
@@ -579,7 +527,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    print("[DEBUG]=> ${response.body}");
+
     if (response.statusCode == 200 && data['success'] == true) {
       return data['data']['resetToken'];
     } else {
@@ -607,18 +555,12 @@ class AuthService {
   }
 
   Future<bool> requestOtpLogin(String id, {String? module}) async {
-    print("Request OTP Login $id ${module != null ? '(module: $module)' : ''}");
     final response = await http.post(
       Uri.parse('${ApiConstants.auth}/otp-login'),
       headers: {i: j},
       body: jsonEncode({'id': id, if (module != null) 'module': module}),
     );
     final data = jsonDecode(response.body);
-    print(
-      "Request OTP Login Check payload $id ${response.statusCode} ${data} ",
-    );
-    print("OTP [DEBUG]=> ${response.body}");
-    print("OTP [DEBUG]=> ${data}");
 
     if (response.statusCode == 200 && data['success'] == true) {
       final token = (data['data']?['token'] ?? '').toString();
@@ -647,7 +589,6 @@ class AuthService {
           message.contains('Builder') ||
           message.contains('Partner') ||
           message.contains('Contractor')) {
-        print("OTP Login Errordsvsdvd: $message");
         showTopAwesomeSnackbar(
           title: 'Click on Login as Partner ',
           color: ColorRes.white,
@@ -656,7 +597,6 @@ class AuthService {
         );
         return false;
       } else {
-        print("OTP Login Error: $message");
         showTopAwesomeSnackbar(
           title: 'Error',
           message: 'Failed to resend OTP',
@@ -683,12 +623,6 @@ class AuthService {
     );
     final data = jsonDecode(response.body);
 
-    print(
-      "Verify OTP [DEBUG]=> ${response.body}==============${response.statusCode}",
-    );
-    print("Verify OTP [DEBUG]=> ${data}");
-
-    print("Signujdfhjsd dfjsd $data");
     if (response.statusCode == 200 && data['success'] == true) {
       final user = UserModel.fromJson(data['data']);
 
@@ -765,7 +699,7 @@ class AuthService {
     );
 
     final data = jsonDecode(response.body);
-    print("[DEBUG]=> Delete Account ${response.body}");
+
     if (data['success'] == true) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Success',

@@ -18,7 +18,6 @@ class DigitalSignatureService {
   }) async {
     try {
       final uri = Uri.parse(baseUrl);
-      print("URI of Digital Signature: $uri");
 
       var request = http.MultipartRequest('POST', uri);
 
@@ -70,16 +69,9 @@ class DigitalSignatureService {
         },
       );
 
-      print("URI of Digital Signature: $uri");
-      print("Headers for Digital Signature: ${await headers()}");
-     
-
       final response = await http.get(uri, headers: await headers());
-       print("Query Parameters: ${response.statusCode} ${response.body}");
 
       final data = jsonDecode(response.body);
-      
-
 
       if (response.statusCode == 200) {
         return data;
@@ -89,7 +81,6 @@ class DigitalSignatureService {
         );
       }
     } catch (e) {
-      print("Error in fetchDigitalSignatures: $e");
       rethrow;
     }
   }

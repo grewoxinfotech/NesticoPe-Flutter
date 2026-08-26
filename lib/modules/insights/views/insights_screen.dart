@@ -2122,9 +2122,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                         '',
                                     role: Roles.sellerOwner.name,
                                   );
-                              debugPrint(
-                                "Has Subscription Inquiry For : $data",
-                              );
+
                               Get.to(
                                 () => SubscriptionPlansScreen(
                                   role: Roles.sellerOwner.name,
@@ -2329,9 +2327,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                         '',
                                     role: Roles.sellerBuilder.name,
                                   );
-                              debugPrint(
-                                "Has Subscription Inquiry For : $data",
-                              );
+
                               Get.to(
                                 () => SubscriptionPlansScreen(
                                   role: Roles.sellerBuilder.name,
@@ -2533,9 +2529,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                         '',
                                     role: Roles.reseller.name,
                                   );
-                              debugPrint(
-                                "Has Subscription Inquiry For : $data",
-                              );
+
                               Get.to(
                                 () => SubscriptionPlansScreen(
                                   isNotFromBuyerSide: false,
@@ -2812,9 +2806,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                         '',
                                     role: Roles.contractor.name,
                                   );
-                              debugPrint(
-                                "Has Subscription Inquiry For : $data",
-                              );
+
                               Get.to(
                                 () => SubscriptionPlansScreen(
                                   role: Roles.contractor.name,

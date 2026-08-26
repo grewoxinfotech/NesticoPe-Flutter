@@ -30,9 +30,7 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         ListedBy(
           listedByList: widget.controllerForFilter.buyCommercialPropertyType,
-          onTap: (items) {
-            debugPrint('Property Type Commercial $items');
-          },
+          onTap: (items) {},
           controllerForFilter: widget.controllerForFilter,
           selectedString:
               widget.controllerForFilter.buySelectedCommercialPropertyTyp,
@@ -47,8 +45,6 @@ class _BuyCommercialState extends State<BuyCommercial> {
           filterControllerForFilter: widget.controllerForFilter,
           selectedItem: widget.controllerForFilter.selectedSalesType,
           onSelected: (type) {
-            debugPrint('Sale Type Commercial $type');
-
             setState(() {
               possessionType = type;
             });
@@ -58,21 +54,19 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         buildPropertyFilterHeadingPadding('Budget'),
         Obx(
-              () => BudgetFilterChange(
+          () => BudgetFilterChange(
             minSelected: widget.controllerForFilter.commercialMin.value,
             maxSelected: widget.controllerForFilter.commercialMax.value,
-            budgetList: widget.controllerForFilter.commercialBuyBudgetValues.value,
+            budgetList:
+                widget.controllerForFilter.commercialBuyBudgetValues.value,
             onMinChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.commercialMin.value = val;
-                print("Main ${widget.controllerForFilter.commercialMin.value}");
               }
             },
             onMaxChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.commercialMax.value = val;
-
-                print("mxa ${widget.controllerForFilter.commercialMax.value}");
               }
             },
             minLabel: "Min Budget",
@@ -95,16 +89,13 @@ class _BuyCommercialState extends State<BuyCommercial> {
         //     maxQuantityLabel: 'sqft+',
         //   ),
         // ),
-
         buildPropertyFilterHeadingPadding("Possession"),
         const SizedBox(height: 7),
         SelectableWrap(
           items: widget.controllerForFilter.possessionCommercialList,
           selectedItem: widget.controllerForFilter.selectedCommercialPossession,
           filterControllerForFilter: widget.controllerForFilter,
-          onSelected: (type) {
-            debugPrint('possession type $type');
-          },
+          onSelected: (type) {},
         ),
         const SizedBox(height: 7),
         // buildFilterHeadingPadding("Listed By"),
@@ -130,20 +121,16 @@ class _BuyCommercialState extends State<BuyCommercial> {
         const SizedBox(height: 7),
         ListedBy(
           listedByList: widget.controllerForFilter.furnishingType,
-          onTap: (items) {
-            debugPrint('Furnishing $items');
-          },
-          controllerForFilter:widget. controllerForFilter,
-          selectedString:widget. controllerForFilter.rentFurnishing,
+          onTap: (items) {},
+          controllerForFilter: widget.controllerForFilter,
+          selectedString: widget.controllerForFilter.rentFurnishing,
         ),
         buildPropertyFilterHeadingPadding("Leased"),
         SelectableWrap(
           items: widget.controllerForFilter.leaseTypeCommercialProperty,
           filterControllerForFilter: widget.controllerForFilter,
           selectedItem: widget.controllerForFilter.selectedCommercialLeased,
-          onSelected: (value) {
-            debugPrint('lease type $value');
-          },
+          onSelected: (value) {},
         ),
       ],
     );

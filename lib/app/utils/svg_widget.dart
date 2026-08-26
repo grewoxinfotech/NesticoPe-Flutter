@@ -12,8 +12,7 @@ class AppSvgIcon extends StatelessWidget {
     required this.assetName,
     this.size = 24,
     this.color,
-    this.folder='svg'
-
+    this.folder = 'svg',
   }) : super(key: key);
 
   @override

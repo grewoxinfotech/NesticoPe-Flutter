@@ -95,13 +95,13 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
             //   width: 1,
             // ),
             boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 2,
-             
-              offset: const Offset(0, 3),
-            ),
-          ],
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 2,
+
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
                           Icons.movie_outlined,
                           'movie_theater',
                         ),
-                            SizedBox(width: 12),
+                        SizedBox(width: 12),
                       ],
                     ),
                   ),
@@ -392,8 +392,7 @@ class _NearbyLocationMapSectionState extends State<NearbyLocationMapSection> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color:
-                isSelected ? ColorRes.primary : ColorRes.white,
+            color: isSelected ? ColorRes.primary : ColorRes.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color:

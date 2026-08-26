@@ -63,7 +63,6 @@ class ContractorLeadFollowupController
 
   void changeTheStatus(bool value) {
     isEditModel.value = value;
-    log(" is EditModel ${isEditModel.value}");
   }
 
   void populatedFollowUpData(ContractorLeadFollowUpItem item) {
@@ -93,7 +92,6 @@ class ContractorLeadFollowupController
       if (selectedType.value.toLowerCase() == 'meeting')
         "location": txtLocation.text.trim(),
     };
-    print("Follow Up Data ${payload}");
 
     final response = await ContractorLeadFollowUpService
         .contractorInquiryService
@@ -132,8 +130,6 @@ class ContractorLeadFollowupController
         // payload["location"] = null;
       }
 
-      print("Follow Up Data Edit: $payload");
-
       final response = await ContractorLeadFollowUpService
           .contractorInquiryService
           .updateFollowUp(payload, followUpId.value);
@@ -153,7 +149,6 @@ class ContractorLeadFollowupController
         );
       }
     } catch (e) {
-      print("Error in payloadEditMethod: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Something went wrong. Please try again.',
@@ -332,7 +327,6 @@ class ContractorLeadFollowupController
                                   .toList(),
                           onChanged: (val) {
                             selectedType.value = val;
-                            log("Message ${selectedType.value}");
                           },
                           darkText: true,
                         );
@@ -420,7 +414,6 @@ class ContractorLeadFollowupController
                                   );
 
                                   txtTime.text = formattedTime;
-                                  log("Picked time: $formattedTime");
                                 }
                               },
                             ),
@@ -450,7 +443,6 @@ class ContractorLeadFollowupController
                                           .toList(),
                                   onChanged: (val) {
                                     statusFollow.value = val;
-                                    log("Message Status ${statusFollow.value}");
                                   },
                                   darkText: true,
                                 );
@@ -579,7 +571,6 @@ class ContractorLeadFollowupController
 
   void initFollowups(String id) {
     leadId.value = id;
-    log("Initialise for leader ${leadId.value}==============${id}");
 
     loadInitial(); // this will call fetchItems internally
   }
@@ -659,9 +650,7 @@ class ContractorLeadFollowupController
     final response = await ContractorLeadFollowUpService
         .contractorInquiryService
         .fetchContractorLeadFollowUp(id: leadId.value, filters: filters.value);
-    log(
-      "Follow up section response from api ${response.items.map((e) => e.toMap())}",
-    );
+
     return response;
   }
 }

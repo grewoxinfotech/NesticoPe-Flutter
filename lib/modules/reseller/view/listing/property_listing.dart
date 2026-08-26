@@ -877,15 +877,9 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       if (userId != null && userId.isNotEmpty) {
         final filter = {"assignedTo": userId};
 
-        log("Applying reseller assigned filter → $filter");
-
         await propertyController?.applyFilters(filter);
-      } else {
-        print("⚠️ User ID is null or empty");
-      }
-    } catch (e) {
-      print("❌ Error fetching reseller properties: $e");
-    }
+      } else {}
+    } catch (e) {}
   }
 
   void toggleSelectionMode() {
@@ -929,7 +923,7 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
       );
       return;
     }
-    print("Selected Property IDs: $selectedPropertyIds");
+
     await Get.to(
       () => ReSellerPropertyShare(
         propertyId: selectedPropertyIds,
@@ -1020,8 +1014,6 @@ class _ProductListingScreenState extends State<ProductListingScreen> {
 
                     if (userId != null && userId.isNotEmpty) {
                       newFilter["assignedTo"] = userId;
-
-                      log("Applying filter → $newFilter");
 
                       selectedFilters
                         ..clear()
@@ -1602,15 +1594,15 @@ class ProductsGrid extends StatelessWidget {
                 isSelectionMode: isSelectionMode.value,
                 isSelected: selectedPropertyIds.contains(property.id ?? ''),
                 onTap: () {
-                //   if (isSelectionMode.value) {
-                //     _togglePropertySelection(property.id ?? '');
-                //   }
-                // },
-                // onLongPress: () {
-                //   if (!isSelectionMode.value) {
-                //     isSelectionMode.value = true;
-                //     _togglePropertySelection(property.id ?? '');
-                //   }
+                  //   if (isSelectionMode.value) {
+                  //     _togglePropertySelection(property.id ?? '');
+                  //   }
+                  // },
+                  // onLongPress: () {
+                  //   if (!isSelectionMode.value) {
+                  //     isSelectionMode.value = true;
+                  //     _togglePropertySelection(property.id ?? '');
+                  //   }
                 },
               ),
             );
@@ -1660,7 +1652,7 @@ class ProductCard extends StatelessWidget {
     final priceManager = PropertyPriceManager(
       listingType: product.listingType ?? 'sale',
       financialInfo: product.propertyDetails?.financialInfo,
-      pgInfo: product.propertyDetails?.pgInfo
+      pgInfo: product.propertyDetails?.pgInfo,
     );
 
     return Material(
@@ -2202,8 +2194,6 @@ Map<String, String> convertFiltersToString(Map<String, dynamic> filters) {
 
   filters.forEach((key, value) {
     if (value == null) return;
-
-    print('Key: $key, Value: $value');
 
     // 🔁 Backend key mapping
     final String mappedKey = key == 'rentRangeValues' ? 'priceRange' : key;

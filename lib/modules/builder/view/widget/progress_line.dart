@@ -27,7 +27,6 @@ class _StepProgressState extends State<StepProgress> {
   void didUpdateWidget(covariant StepProgress oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-
     if (widget.currentStep != oldWidget.currentStep) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToCurrentStep();
@@ -41,13 +40,11 @@ class _StepProgressState extends State<StepProgress> {
     const double itemWidth = 100;
     double targetScrollOffset =
         (widget.currentStep * (itemWidth + 10)) - 50; // center the item
-    print('Before $targetScrollOffset');
 
     targetScrollOffset = targetScrollOffset.clamp(
       0.0,
       _scrollController.position.maxScrollExtent,
     );
-    print('after $targetScrollOffset');
 
     _scrollController.animateTo(
       targetScrollOffset,
@@ -76,15 +73,18 @@ class _StepProgressState extends State<StepProgress> {
                   final isCompleted = i < widget.currentStep;
 
                   return Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: isCompleted
-                          ? Colors.green
-                          : isCurrent
-                          ? ColorRes.primary
-                          : Colors.grey.shade300,
+                      color:
+                          isCompleted
+                              ? Colors.green
+                              : isCurrent
+                              ? ColorRes.primary
+                              : Colors.grey.shade300,
                     ),
                     alignment: Alignment.center,
                     child: AnimatedDefaultTextStyle(
@@ -92,9 +92,10 @@ class _StepProgressState extends State<StepProgress> {
                       style: TextStyle(
                         fontSize: AppFontSizes.small,
                         color: ColorRes.white,
-                        fontWeight: isCurrent || isCompleted
-                            ? AppFontWeights.extraBold
-                            : AppFontWeights.regular,
+                        fontWeight:
+                            isCurrent || isCompleted
+                                ? AppFontWeights.extraBold
+                                : AppFontWeights.regular,
                       ),
                       child: Text(
                         widget.labels![i],

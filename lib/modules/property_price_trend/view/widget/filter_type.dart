@@ -7,7 +7,6 @@ import 'package:nesticope_app/modules/search_property/view/search_screen.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 
-
 SizedBox buildFilter(BuildContext context) {
   final controller = Get.find<PriceTrendController>();
 
@@ -127,7 +126,7 @@ SizedBox buildFilter(BuildContext context) {
                 "Selected: ${controller.currentDiscreteSliderValue.value.round()} years",
                 AppFontSizes.body,
                 AppFontWeights.medium,
-                  ColorRes.primary,
+                ColorRes.primary,
                 1,
               ),
             ),
@@ -173,7 +172,13 @@ SizedBox buildFilter(BuildContext context) {
 }
 
 Widget buildHeading(String title) {
-  return buildCommonText(title, AppFontSizes.bodyMedium, AppFontWeights.semiBold, ColorRes.textColor, 1);
+  return buildCommonText(
+    title,
+    AppFontSizes.bodyMedium,
+    AppFontWeights.semiBold,
+    ColorRes.textColor,
+    1,
+  );
 }
 
 Widget buildFilterPropertyTypes({
@@ -197,8 +202,12 @@ Widget buildFilterPropertyTypes({
           border:
               isSelected
                   ? null
-                  : Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-          color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
+                  : Border.all(
+                    color: ColorRes.leadGreyColor.shade300,
+                    width: 1,
+                  ),
+          color:
+              isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.center,
@@ -219,8 +228,12 @@ Widget buildFilterPropertyTypes({
           border:
               isSelected
                   ? null
-                  : Border.all(color: ColorRes.leadGreyColor.shade300, width: 1),
-          color: isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
+                  : Border.all(
+                    color: ColorRes.leadGreyColor.shade300,
+                    width: 1,
+                  ),
+          color:
+              isSelected ? ColorRes.primary : ColorRes.leadGreyColor.shade100,
           borderRadius: BorderRadius.circular(10),
         ),
         child: buildCommonText(

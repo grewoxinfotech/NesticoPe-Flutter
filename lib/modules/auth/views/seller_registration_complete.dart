@@ -67,9 +67,9 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_)async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final user = await SecureStorage.getUserData();
-      if(user!=null && user.user != null ){
+      if (user != null && user.user != null) {
         _usernameController.text = user.user!.username!;
         _passwordController.text = user.user!.password!;
         _emailController.text = user.user!.firstName!;
@@ -84,11 +84,11 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text('Seller Registration')),
+        automaticallyImplyLeading: false,
+        title: const Text('Seller Registration'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -112,12 +112,13 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
                   hintText: "Enter Password",
                   obscureText: isObSecure,
                   suffixIcon: IconButton(
-                      icon: _togglePassword(),
-                      onPressed: () {
-                        setState(() {
-                          isObSecure = !isObSecure;
-                        });
-                      }),
+                    icon: _togglePassword(),
+                    onPressed: () {
+                      setState(() {
+                        isObSecure = !isObSecure;
+                      });
+                    },
+                  ),
                   validator:
                       (value) => value!.isEmpty ? 'Enter password' : null,
                 ),
@@ -141,9 +142,7 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
                         hintText: "Enter First Name",
                         validator:
                             (value) =>
-                        value!.isEmpty
-                            ? 'Enter first name'
-                            : null,
+                                value!.isEmpty ? 'Enter first name' : null,
                       ),
                     ),
                     SizedBox(width: 12),
@@ -155,9 +154,7 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
                         hintText: "Enter Last Name",
                         validator:
                             (value) =>
-                        value!.isEmpty
-                            ? 'Enter last name'
-                            : null,
+                                value!.isEmpty ? 'Enter last name' : null,
                       ),
                     ),
                   ],
@@ -187,10 +184,8 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
                         isRequired: true,
                         title: "State",
                         hintText: "Enter State",
-                        validator: (value) =>
-                        value!.isEmpty
-                            ? 'Enter state'
-                            : null,
+                        validator:
+                            (value) => value!.isEmpty ? 'Enter state' : null,
                       ),
                     ),
                     SizedBox(width: 12),
@@ -231,5 +226,4 @@ class _SellerRegistrationComplete extends State<SellerRegistrationComplete> {
       size: 18,
     );
   }
-
 }

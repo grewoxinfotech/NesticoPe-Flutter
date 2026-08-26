@@ -689,7 +689,6 @@ class _AgentProfilePageState extends State<AgentProfilePage> {
       }
     } catch (e) {
       // Handle error if needed
-      debugPrint('Error loading data: $e');
     }
   }
 

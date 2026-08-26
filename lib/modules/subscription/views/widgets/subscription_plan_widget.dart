@@ -711,7 +711,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    log("planStatusByPlanId: ${planStatusByPlanId}");
     return Obx(() {
       if (controller.isLoading.value && controller.items.isEmpty) {
         return PlanListScreenShimmer();
@@ -1184,7 +1183,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
   // Select Button - UPDATED WITH RAZORPAY INTEGRATION
   // ------------------------------------------------------
   Widget _buildSelectButton(SubscriptionPlan plan) {
-    debugPrint("Check plan data ${planStatusByPlanId}");
     return Padding(
       padding: const EdgeInsets.all(16),
       child: SizedBox(
@@ -1224,7 +1222,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
                         );
                         return;
                       } else {
-                        log("Handling plan inquiry for plan: ${plan.id}");
                         try {
                           final user = await SecureStorage.getUserData();
 
@@ -1245,15 +1242,16 @@ class SubscriptionPlansWidget extends StatelessWidget {
                               phone.isNotEmpty) {
                             // All user details are present -> Submit API call directly
                             controller.isProcessingPayment.value = true;
-                            final success = await controller.subscriptionPlanInquiry({
-                              "planId": plan.id,
-                              "name": displayName,
-                              "phone": phone,
-                              "email": email,
-                              "userId": userId,
-                              "status": "pending",
-                              "pageSource": "mobile-app",
-                            });
+                            final success = await controller
+                                .subscriptionPlanInquiry({
+                                  "planId": plan.id,
+                                  "name": displayName,
+                                  "phone": phone,
+                                  "email": email,
+                                  "userId": userId,
+                                  "status": "pending",
+                                  "pageSource": "mobile-app",
+                                });
                             controller.isProcessingPayment.value = false;
 
                             if (success) {
@@ -1266,7 +1264,8 @@ class SubscriptionPlansWidget extends StatelessWidget {
                             } else {
                               NesticoPeSnackBar.showAwesomeSnackbar(
                                 title: 'Error',
-                                message: 'Failed to submit enquiry. Please try again.',
+                                message:
+                                    'Failed to submit enquiry. Please try again.',
                                 contentType: ContentType.failure,
                               );
                             }
@@ -1285,8 +1284,6 @@ class SubscriptionPlansWidget extends StatelessWidget {
                           }
                         } catch (e, s) {
                           controller.isProcessingPayment.value = false;
-                          debugPrint('❌ Error in handling enquiry: $e');
-                          debugPrint('$s');
 
                           NesticoPeSnackBar.showAwesomeSnackbar(
                             title: "Error",
@@ -2057,10 +2054,7 @@ void showEnquirySuccessDialog() {
             const Text(
               'Your enquiry has been successfully submitted. Our team will contact you soon.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: ColorRes.leadGreyColor,
-              ),
+              style: TextStyle(fontSize: 14, color: ColorRes.leadGreyColor),
             ),
             const SizedBox(height: 24),
             SizedBox(

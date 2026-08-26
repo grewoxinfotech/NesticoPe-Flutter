@@ -27,10 +27,8 @@ class RecommendedPropertyController extends PaginatedController<Items> {
         filters: filters,
       );
 
-      print("Fetched recommended properties: ${response.items.length}");
       return response; // PaginationResponse with items + meta
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }

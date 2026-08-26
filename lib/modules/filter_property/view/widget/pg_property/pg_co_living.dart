@@ -189,9 +189,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
           items: widget.controllerForFilter.genderList,
           selectedItem: widget.controllerForFilter.genderSelected,
           filterControllerForFilter: widget.controllerForFilter,
-          onSelected: (value) {
-            print('gender $value');
-          },
+          onSelected: (value) {},
           isExpanded: false,
         ),
         const SizedBox(height: 7),
@@ -200,9 +198,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         FilterPropertyTypesList(
           items: widget.controllerForFilter.roomTypeList,
           selectedItems: widget.controllerForFilter.roomSelectedType,
-          onSelectionChanged: (index) {
-            debugPrint('RppmList $index');
-          },
+          onSelectionChanged: (index) {},
           controllerForFilter: widget.controllerForFilter,
         ),
         const SizedBox(height: 7),
@@ -222,21 +218,18 @@ class _PgCoLivingState extends State<PgCoLiving> {
         //   ),
         // ),
         Obx(
-              () => BudgetFilterChange(
+          () => BudgetFilterChange(
             minSelected: widget.controllerForFilter.pgMin.value,
             maxSelected: widget.controllerForFilter.pgMax.value,
             budgetList: widget.controllerForFilter.rentBudgetValues.value,
             onMinChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.pgMin.value = val;
-                print("Main ${widget.controllerForFilter.pgMin.value}");
               }
             },
             onMaxChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.pgMax.value = val;
-
-                print("mxa ${widget.controllerForFilter.pgMax.value}");
               }
             },
 
@@ -249,9 +242,7 @@ class _PgCoLivingState extends State<PgCoLiving> {
         SelectableWrap(
           items: widget.controllerForFilter.foodAvailable,
           selectedItem: widget.controllerForFilter.foodSelected,
-          onSelected: (value) {
-            debugPrint('Food Available $value');
-          },
+          onSelected: (value) {},
           isExpanded: false,
           filterControllerForFilter: widget.controllerForFilter,
         ),

@@ -68,21 +68,18 @@ class ReviewService {
       });
 
       final uri = Uri.parse(baseUrl).replace(query: queryParts.join('&'));
-      debugPrint("Fetching Reviews from: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
       // debugPrint("Reviews API Response: ${response.body}");
-      AppLogger.structured("Reviews API Response:", response.body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        debugPrint(" to fetch reviews: ${response.body}");
+
         return ReviewResponse.fromJson(data);
       }
       return null;
     } catch (e) {
-      debugPrint("Exception in fetchReviews: $e");
       rethrow;
     }
   }

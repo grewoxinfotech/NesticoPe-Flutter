@@ -87,10 +87,8 @@ class VisitController extends PaginatedController<VisitItem> {
         filters: filters,
       );
 
-      debugPrint("Fetched visits: ${response.items.length}");
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }

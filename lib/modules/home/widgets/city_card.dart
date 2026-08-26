@@ -120,9 +120,6 @@
 // }
 ///MARK:New City Card Widget Change in 15-09-2025
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
 
@@ -191,7 +188,7 @@ class CityCard extends StatelessWidget {
                     children: [
                       Text(
                         cityName,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: AppFontWeights.bold,
                           fontSize: AppFontSizes.large,
                           color: ColorRes.white,

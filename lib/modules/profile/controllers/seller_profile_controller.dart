@@ -102,8 +102,6 @@ class SellerProfileController extends GetxController {
         if (isClosed) return;
         _populateControllers();
       } catch (e, st) {
-        debugPrint('Error loading seller profile: $e');
-        debugPrint('$st');
       } finally {
         if (!isClosed) {
           isLoading.value = false;
@@ -115,13 +113,12 @@ class SellerProfileController extends GetxController {
   Future<User> getUserProfile() async {
     final data = await SecureStorage.getUserData();
     final userId = data?.user?.id;
-    debugPrint('Fetched User Seller: ${userId}');
+
     User? user = await _userService.getUserById(userId ?? '');
 
     if (user != null) {
       return user;
     } else {
-      print("Failed to fetch user profile");
       return User();
     }
   }
@@ -134,17 +131,14 @@ class SellerProfileController extends GetxController {
     profileData.value = UserModel(user: user);
 
     if (profileData.value?.user?.userType == 'seller') {
-      print("vkjbhfjgi ${profileData.value?.toJson()}");
       final data = await SellerProfileUpdate.profileUpdate.getUserProfileData(
         profileData.value?.user?.id ?? '',
       );
-      print("Seller kgokjgij${data}");
+
       resellerProfile.value = ProfileSellerModel.fromJson(data ?? {});
-      print("Seller efgryfgrfyy${resellerProfile.value?.toJson()}");
     }
     if (isClosed) return;
     _populateControllers();
-    print("Lok ${resellerProfile.value?.id}");
   }
 
   Future<void> refreshProfile() async {
@@ -167,12 +161,6 @@ class SellerProfileController extends GetxController {
   ) async {
     profileData.value?.user = await getUserProfile();
     if (profileData.value?.user?.userType == 'seller') {
-      print("jfhfhh ${profileData.value?.toJson()}");
-      print(
-        "🟫 Sending Update Request for User ID: ${profileData.value?.user?.id}",
-      );
-      print("🟩 Payloadshfdufhdu: ${userProfile.toMap()}");
-
       final data = await SellerProfileUpdate.profileUpdate
           .updateSellerProfileDetails(
             userProfile,
@@ -420,13 +408,9 @@ class SellerProfileController extends GetxController {
   }
 
   Future<void> saveProfile() async {
-    print('🔵 saveProfile() called');
-    print('🔵 formKey.currentState: ${formKey.currentState}');
-
     try {
       // Validate form if in editing mode
       if (formKey.currentState != null && !formKey.currentState!.validate()) {
-        print('⚠️ Form validation failed');
         return;
       }
 
@@ -447,7 +431,6 @@ class SellerProfileController extends GetxController {
         }
       }
 
-      print(" fdjnfjudfhur $image");
       // Build user object from form data
       UserUpdateProfile user = UserUpdateProfile(
         city: positionController.text,
@@ -468,19 +451,11 @@ class SellerProfileController extends GetxController {
         ),
       );
 
-      print("🟢 User data prepared: ${user.toMap()}");
-
       // Call API to update profile
-      print('🔵 Calling updateResellerProfile API...');
+
       final response = await updateResellerProfile(user);
-      print('🟢 API response received');
 
       // DEBUG: Print full response
-      print('🔍 FULL API RESPONSE: $response');
-      print('🔍 otpRequired value: ${response['otpRequired']}');
-      print('🔍 otpRequired type: ${response['otpRequired'].runtimeType}');
-      print('🔍 success value: ${response['success']}');
-      print('🔍 message value: ${response['message']}');
 
       final isOtpRequired =
           response['otpRequired'] == true ||
@@ -490,8 +465,6 @@ class SellerProfileController extends GetxController {
                   true);
 
       if (isOtpRequired) {
-        print('🔵 OTP Required detected!');
-
         pendingUserData = User(
           id: profileData.value?.user?.id,
           firstName: nameController.text,
@@ -510,14 +483,8 @@ class SellerProfileController extends GetxController {
         );
 
         pendingPhone.value = response['phone'] ?? phoneController.text;
-        print('🔵 Pending phone: ${pendingPhone.value}');
 
         if (response['updatePhoneToken'] == null) {
-          print(
-            '⚠️ Warning: API did not send updatePhoneToken in initial response',
-          );
-          print('⚠️ Triggering resend OTP to obtain token...');
-
           isSaving.value = false;
           _showOtpVerificationDialog(
             phone: pendingPhone.value,
@@ -595,8 +562,6 @@ class SellerProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error saving profile: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'An error occurred while updating profile',
@@ -705,8 +670,6 @@ class SellerProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error verifying OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to verify OTP',
@@ -754,8 +717,6 @@ class SellerProfileController extends GetxController {
         );
       }
     } catch (e) {
-      print('Error resending OTP: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to resend OTP',

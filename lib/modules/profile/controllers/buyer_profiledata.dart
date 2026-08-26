@@ -71,22 +71,15 @@ class BuyerProfileDataController extends GetxController {
 
       final user = await _userService
           .getUserById(userId)
-          .timeout(
-            const Duration(seconds: 15),
-            onTimeout: () => null,
-          );
+          .timeout(const Duration(seconds: 15), onTimeout: () => null);
       if (isClosed) return;
       if (user != null) {
         userProfile.value = user;
         _populateControllers();
-        log("Buyer profile loaded ${userProfile.value?.toJson()}");
       } else {
         userProfile.value = null;
-        debugPrint("Failed to fetch user profile (null user)");
       }
     } catch (e, st) {
-      debugPrint("getUserProfile() failed: $e");
-      debugPrint("stack: $st");
       // Avoid leaving shimmer stuck forever on errors.
       userProfile.value = null;
     } finally {
@@ -187,7 +180,8 @@ class BuyerProfileDataController extends GetxController {
       } else {
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Failed',
-          message: response['message']?.toString() ?? 'Failed to update profile',
+          message:
+              response['message']?.toString() ?? 'Failed to update profile',
           contentType: ContentType.failure,
         );
       }
@@ -332,7 +326,7 @@ class BuyerProfileDataController extends GetxController {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                    const SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Container(
                   width: 40,
                   height: 4,
@@ -365,7 +359,7 @@ class BuyerProfileDataController extends GetxController {
                     pickImageFromGallery();
                   },
                 ),
-                 ListTile(
+                ListTile(
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -384,7 +378,7 @@ class BuyerProfileDataController extends GetxController {
                   },
                 ),
                 if (selectedImage.value != null)
-                   ListTile(
+                  ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -410,7 +404,8 @@ class BuyerProfileDataController extends GetxController {
       },
     );
   }
-void removeProfileImage() {
+
+  void removeProfileImage() {
     selectedImage.value = null;
     // profile.value = profile.value.copyWith(avatarUrl: '');
 
@@ -420,6 +415,7 @@ void removeProfileImage() {
       contentType: ContentType.success,
     );
   }
+
   Future<void> verifyPhoneUpdateOtp(String otp) async {
     if (pendingUserData == null) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -445,11 +441,8 @@ void removeProfileImage() {
     };
 
     try {
-      final response = await ProfileUpdate.profileUpdate.verifyOtpForResellerNumber(
-        otp,
-        updateData,
-        userId,
-      );
+      final response = await ProfileUpdate.profileUpdate
+          .verifyOtpForResellerNumber(otp, updateData, userId);
 
       if (response['success'] == true) {
         _resendTimer?.cancel();
@@ -517,7 +510,6 @@ void removeProfileImage() {
     final otpController = TextEditingController();
 
     Get.dialog(
-    
       AlertDialog(
         backgroundColor: Colors.white,
         title: const Text('Verify Phone Number'),
@@ -549,7 +541,9 @@ void removeProfileImage() {
                     else
                       TextButton(
                         onPressed:
-                            isResendingOtp.value ? null : resendOtpForPhoneUpdate,
+                            isResendingOtp.value
+                                ? null
+                                : resendOtpForPhoneUpdate,
                         child: const Text('Resend OTP'),
                       ),
                   ],

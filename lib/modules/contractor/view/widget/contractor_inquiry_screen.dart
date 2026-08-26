@@ -420,7 +420,6 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
               );
 
               if (result != null) {
-                log("Selected Filters → $result");
                 if (result != null) {
                   selectedFilters.value = result;
                   controller.applyFilters(result);
@@ -670,9 +669,6 @@ class _ContractorInquiryScreenState extends State<ContractorInquiryScreen> {
                           controller.inquiryStatus,
                           val,
                         ); // reactive update
-                        log(
-                          "Contractor_status ${controller.inquiryStatus.value}",
-                        );
                       }
                     },
                     darkText: true,

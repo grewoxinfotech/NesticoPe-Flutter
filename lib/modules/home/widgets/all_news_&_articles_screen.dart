@@ -29,7 +29,7 @@ class _AllNewsArticleScreenState extends State<AllNewsArticleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: ColorRes.white,
+        backgroundColor: ColorRes.white,
         title: Text(
           "News & Articles",
           style: TextStyle(fontWeight: AppFontWeights.semiBold),
@@ -44,7 +44,7 @@ class _AllNewsArticleScreenState extends State<AllNewsArticleScreen> {
           itemBuilder: (context, index) {
             final article = widget.articles[index];
             final isNew = isNewArticle(article.publishDate);
-            print("Image ------------------> ${article.coverImage}");
+
             return GestureDetector(
               onTap: () {
                 Get.to(() => NewsDetailScreen(newsItem: article));

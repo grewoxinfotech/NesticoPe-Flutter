@@ -818,7 +818,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       final tokenToUse = _getToken();
       if (tokenToUse == null) return;
 
-      print("[DEBUG]=> ${widget.verifyOTPFor.toString()}");
       switch (widget.verifyOTPFor) {
         case VerifyOTPFor.passwordReset:
           await _handlePasswordResetFlow(tokenToUse);

@@ -92,10 +92,7 @@ class AppLogger {
   }
 
   static dynamic _safeJsonEncodable(dynamic value) {
-    if (value == null ||
-        value is num ||
-        value is bool ||
-        value is String) {
+    if (value == null || value is num || value is bool || value is String) {
       return value;
     }
 
@@ -134,7 +131,6 @@ class AppLogger {
     const int chunkSize = 800;
     for (int i = 0; i < text.length; i += chunkSize) {
       final end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
-      print(text.substring(i, end));
     }
   }
 }

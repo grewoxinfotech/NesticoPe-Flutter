@@ -42,7 +42,9 @@ class MultiSelectChip extends StatelessWidget {
                             : ColorRes.white,
                     border: Border.all(
                       color:
-                          selected ? ColorRes.transparentColor : ColorRes.leadGreyColor.shade300,
+                          selected
+                              ? ColorRes.transparentColor
+                              : ColorRes.leadGreyColor.shade300,
                     ),
                     borderRadius: BorderRadius.circular(borderRadius),
                   ),

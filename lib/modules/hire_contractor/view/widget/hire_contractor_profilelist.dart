@@ -35,11 +35,11 @@ import '../../controller/hire_contractor_list_of_profile_controller.dart';
 import '../../controller/hire_contractor_new_controller.dart';
 
 class HireContractorProfileList extends StatefulWidget {
-
   const HireContractorProfileList({super.key});
 
   @override
-  State<HireContractorProfileList> createState() => _HireContractorProfileListState();
+  State<HireContractorProfileList> createState() =>
+      _HireContractorProfileListState();
 }
 
 class _HireContractorProfileListState extends State<HireContractorProfileList> {
@@ -136,10 +136,7 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                     ),
                   );
                 }
-                AppLogger.structured(
-                  'Check any thing missing ',
-                  controllerNew.items.map((e) => e.toMap()),
-                );
+
                 return Column(
                   children: [
                     Expanded(
@@ -253,14 +250,12 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                           controllerFilter.applyFilters(<String, String>{});
                         },
                         onRemoveFilter: (key) {
-                          debugPrint('Check anu defds ${key}');
                           setState(() {
-                               selectedFilters.value.remove(key);
+                            selectedFilters.value.remove(key);
 
-                          controllerFilter.applyFilters(
-                            Map<String, String>.from(selectedFilters),
-                          );
-                           debugPrint('Check anu defds ${selectedFilters}');
+                            controllerFilter.applyFilters(
+                              Map<String, String>.from(selectedFilters),
+                            );
                           });
                           // selectedFilters.value.remove(key);
 
@@ -271,7 +266,7 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                         },
                       );
                     }),
-                    
+
                     Expanded(
                       child: Obx(() {
                         final contractors = controllerFilter.items;
@@ -323,11 +318,6 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                           );
                         }
 
-                        AppLogger.structured(
-                          'Check any thing missing form selected category ',
-
-                          contractors.map((e) => e.toMap()),
-                        );
                         return RefreshIndicator(
                           onRefresh:
                               ()
@@ -352,7 +342,6 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                                 data: item,
                                 contractor: contractor,
                               );
-                              
                             },
                           ),
                         );
@@ -381,7 +370,6 @@ class _HireContractorProfileListState extends State<HireContractorProfileList> {
                         height: showUnifiedComparisonFloatingButton ? 84 : 0,
                       );
                     }),
-                     
                   ],
                 ),
               );
@@ -1660,7 +1648,7 @@ class AllContractorCard extends StatefulWidget {
 
 class _AllContractorCardState extends State<AllContractorCard> {
   Contractor? contractorProfile;
- final compare = Get.put(ContractorCompareManager(), permanent: true);
+  final compare = Get.put(ContractorCompareManager(), permanent: true);
   @override
   void initState() {
     // TODO: implement initState
@@ -1671,22 +1659,15 @@ class _AllContractorCardState extends State<AllContractorCard> {
   void _fetchUserByID() async {
     final userId = widget.data.userId;
 
-    log('userId jdjkcdj dkjcsdkj : $userId');
-
     contractorProfile = await widget.contractor.getContractorById(userId);
   }
 
   @override
   Widget build(BuildContext context) {
-   
-
     final user = widget.data;
 
     return GestureDetector(
       onTap: () async {
-        log('userId jdjkcdj dkjcsdkj : ${user.userId}');
-        log("Tapped Contractor Profile Data: ${contractorProfile?.toJson()}");
-
         contractorProfile?.username = widget.data.username ?? '';
         contractorProfile?.firstName = widget.data.firstName ?? '';
         contractorProfile?.lastName = widget.data.lastName ?? '';
@@ -1961,10 +1942,6 @@ class _AllContractorCardState extends State<AllContractorCard> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      log(
-                        "Tapped Contractor Profile Data: ${contractorProfile?.toJson()}",
-                      );
-
                       contractorProfile?.username = widget.data.username ?? '';
                       contractorProfile?.firstName =
                           widget.data.firstName ?? '';

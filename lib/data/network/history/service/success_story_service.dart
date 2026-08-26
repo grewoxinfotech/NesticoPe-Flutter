@@ -47,12 +47,9 @@ class SuccessStoryService {
           (json) => BuyerSideResellerSuccessStoryItem.fromJson(json),
         );
       } else {
-        print("Failed to load Review: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Review");
       }
     } catch (e) {
-      print("Exception in Review: $e");
       rethrow;
     }
   }

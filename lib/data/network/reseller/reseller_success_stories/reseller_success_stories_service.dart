@@ -43,25 +43,20 @@ class ResellerSuccessStoryService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      debugPrint("📡 Fetching Reseller Success Stories from: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        debugPrint("✅ Success Stories API Response: $data");
 
         return PaginationResponse<ResellerSuccessItem>.fromJson(
           data,
           (json) => ResellerSuccessItem.fromJson(json),
         );
       } else {
-        debugPrint("❌ Failed to load success stories: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
         throw Exception("Failed to load success stories");
       }
     } catch (e) {
-      debugPrint("⚠️ Exception in fetchSuccessStories: $e");
       rethrow;
     }
   }
@@ -73,7 +68,6 @@ class ResellerSuccessStoryService {
   }) async {
     try {
       final uri = Uri.parse(baseUrl);
-      debugPrint("📤 Creating Success Story at: $uri");
 
       final headerMap = await headers();
       var request = http.MultipartRequest('POST', uri);
@@ -108,14 +102,8 @@ class ResellerSuccessStoryService {
         }
       });
 
-      debugPrint("🧾 Multipart fields: ${request.fields}");
-      debugPrint("📎 Attached files: ${request.files.length}");
-
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      debugPrint("📩 Create Success Story Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -133,7 +121,6 @@ class ResellerSuccessStoryService {
       );
       return false;
     } catch (e) {
-      debugPrint("❌ Create Success Story Exception: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: "Failed to create success success",
@@ -149,10 +136,8 @@ class ResellerSuccessStoryService {
     required ResellerSuccessItem storyData,
     File? image,
   }) async {
-    log("djfhd $image");
     try {
       final uri = Uri.parse('$baseUrl/$storyId');
-      debugPrint("📤 Updating Success Story at: $uri");
 
       final headerMap = await headers();
       var request = http.MultipartRequest('PUT', uri);
@@ -167,7 +152,7 @@ class ResellerSuccessStoryService {
       // ===== Attach image if local file =====
       if (image != null) {
         final isNetwork = Uri.tryParse(image.path)?.isAbsolute ?? false;
-        log("djfhd $isNetwork");
+
         if (!isNetwork) {
           request.files.add(
             await http.MultipartFile.fromPath(
@@ -190,14 +175,8 @@ class ResellerSuccessStoryService {
         }
       });
 
-      debugPrint("🧾 Multipart fields: ${request.fields}");
-      debugPrint("📎 Attached files: ${request.files.length}");
-
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      debugPrint("📩 Update Success Story Response: ${response.statusCode}");
-      debugPrint("📄 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -224,7 +203,6 @@ class ResellerSuccessStoryService {
       );*/
       return false;
     } catch (e) {
-      debugPrint("❌ Update Success Story Exception: $e");
       /*   CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while updating success success",
@@ -241,16 +219,14 @@ class ResellerSuccessStoryService {
 
   Future<bool> deleteSuccessStory(String id) async {
     final uri = Uri.parse('$baseUrl/$id');
-    debugPrint("📤 Deleting Success Story at: $uri");
+
     // Implementation for delete can be added here
     final response = await http.delete(uri, headers: await headers());
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
-      debugPrint("✅ Success Story deleted successfully");
       return data['success'];
     } else {
-      debugPrint("❌ Failed to delete Success Story: ${response.statusCode}");
       return false;
     }
   }

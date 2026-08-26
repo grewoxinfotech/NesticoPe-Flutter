@@ -6,13 +6,11 @@ import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 
 class ContractorCategoryServiceController
     extends PaginatedController<ContractorServiceCategory> {
-
-
-@override
-void onInit() {
-  super.onInit();
-  loadInitial();
-}
+  @override
+  void onInit() {
+    super.onInit();
+    loadInitial();
+  }
 
   @override
   Future<PaginationResponse<ContractorServiceCategory>> fetchItems(
@@ -24,7 +22,8 @@ void onInit() {
 
     return response;
   }
-    Future<void> refreshService() async {
+
+  Future<void> refreshService() async {
     try {
       isRefreshing.value = true;
       refreshList();

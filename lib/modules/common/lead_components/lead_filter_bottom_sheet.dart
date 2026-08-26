@@ -588,7 +588,7 @@ class _LeadFilterScreenState extends State<LeadFilterScreen> {
                       ),
                       onPressed: () {
                         widget.selectedFilters.clear();
-                        log("Project Lead Filter issues ${tempSelectedFilters.map((element) => element,)}");
+
                         widget.selectedFilters.addAll(tempSelectedFilters);
                         widget.onApplyFilters();
                         tempSelectedFilters.clear();

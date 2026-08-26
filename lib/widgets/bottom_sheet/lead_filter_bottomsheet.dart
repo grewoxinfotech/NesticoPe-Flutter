@@ -296,9 +296,7 @@ class _LeadBuildFilterScreenState extends State<LeadBuildFilterScreen> {
             onPressed: () {
               tempFilters.clear();
               widget.controller.resetFilters();
-              setState(() {
-
-              });
+              setState(() {});
             },
             child: Text(
               'Clear All',

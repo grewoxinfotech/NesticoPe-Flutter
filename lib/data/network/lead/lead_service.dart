@@ -37,15 +37,11 @@ class LeadService {
   }
 
   Future<bool?> importLeadDataExcelFile(
-      List<int> bytes,
-      String fileName,
-      ) async {
+    List<int> bytes,
+    String fileName,
+  ) async {
     try {
-      print("📦 Uploading file: $fileName");
-      print("📦 Bytes length: ${bytes.length}");
-
       if (bytes.isEmpty) {
-        print("❌ File bytes are empty");
         return null;
       }
 
@@ -69,9 +65,6 @@ class LeadService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      print("📥 Status Code: ${response.statusCode}");
-      print("📥 Response: ${response.body}");
-
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
 
@@ -81,10 +74,9 @@ class LeadService {
             message: decoded['message'],
             contentType: ContentType.success,
           );
-          print("✅ Import successful");
+
           return true;
         } else {
-          print("❌ Backend says failed: ${decoded["message"]}");
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Fail',
             message: decoded['message'],
@@ -93,7 +85,6 @@ class LeadService {
           return null;
         }
       } else {
-        print("❌ HTTP Error: ${response.body}");
         return null;
       }
     } catch (e, stack) {
@@ -102,8 +93,7 @@ class LeadService {
         message: stack.toString(),
         contentType: ContentType.success,
       );
-      print("💥 Import Error: $e");
-      print(stack);
+
       return null;
     }
   }
@@ -182,7 +172,7 @@ class LeadService {
     int limit = 10,
     Map<String, String>? filters,
     bool fromReseller = false,
-    String? module
+    String? module,
   }) async {
     final user = await SecureStorage.getUserData();
     try {
@@ -195,7 +185,7 @@ class LeadService {
 
         if (userId != null) 'reseller_id': userId,
         if (filters != null) ...filters,
-        if (module != null) "module":module,
+        if (module != null) "module": module,
       };
       // } else {
       //   // Subsequent pages: include all filters including property_id
@@ -213,12 +203,7 @@ class LeadService {
 
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("Leads dgjfdkggrthugjrtuigPI URL: $uri");
-      print("Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-      print("Leads API response status: ${response.statusCode}");
-      print("Leads API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -228,12 +213,9 @@ class LeadService {
           (json) => LeadItem.fromJson(json),
         );
       } else {
-        print("Failed to load leads: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load leads");
       }
     } catch (e) {
-      print("Exception in fetchLeads: $e");
       rethrow;
     }
   }
@@ -264,14 +246,7 @@ class LeadService {
 
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("My Contractor Profile API URL: $uri");
-      print("Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-      print(
-        "My Contractor Profile API response status: ${response.statusCode}",
-      );
-      print("My Contractor Profile API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -281,12 +256,9 @@ class LeadService {
           (json) => NewUpdatedLeadModel.fromJson(json),
         );
       } else {
-        print("My Contractor Profile to load leads: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("My Contractor Profile to load leads");
       }
     } catch (e) {
-      print("Exception in fetchLeads: $e");
       rethrow;
     }
   }
@@ -310,7 +282,7 @@ class LeadService {
         };
       } else {
         // Subsequent pages: include all filters including property_id
-        queryParameters = {if (filters != null) ...filters,};
+        queryParameters = {if (filters != null) ...filters};
       }
 
       // Build the base URL
@@ -318,12 +290,7 @@ class LeadService {
 
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("Property Inquiry API URL: $uri");
-      print("Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-      print("Property Inquiry API response status: ${response.statusCode}");
-      print("Property Inquiry API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -333,12 +300,9 @@ class LeadService {
           (json) => PropertyInquireItem.fromMap(json),
         );
       } else {
-        print("Failed to load Property Inquiry: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Property Inquiry");
       }
     } catch (e) {
-      print("Exception in fetch Property Inquiry: $e");
       rethrow;
     }
   }
@@ -346,12 +310,8 @@ class LeadService {
   Future<PropertyInquireItem?> getInquiryById(String inquiryId) async {
     try {
       final uri = Uri.parse("$baseGetByIdInquiryUrl/$inquiryId");
-      print("Get Inquiry by ID API URL: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      print("Get Inquiry by ID response status: ${response.statusCode}");
-      print("Get Inquiry by ID response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -362,11 +322,9 @@ class LeadService {
 
         return PropertyInquireItem.fromMap(inquiryData);
       } else {
-        print("Failed to fetch inquiry by ID: ${response.statusCode}");
         throw Exception("Failed to fetch inquiry by ID");
       }
     } catch (e) {
-      print("Exception in getInquiryById: $e");
       rethrow;
     }
   }
@@ -405,7 +363,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Update lead exception: $e");
+
       return false;
     }
   }
@@ -418,17 +376,11 @@ class LeadService {
       final url = Uri.parse("$baseLeadNegotiablePriceUrl");
       final headerData = await headers();
 
-      print("📤 Sending POST request to: $url");
-      print("📦 Payload: $data");
-
       final response = await http.post(
         url,
         headers: headerData,
         body: jsonEncode(data),
       );
-
-      print("📥 Response Status: ${response.statusCode}");
-      print("📥 Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
@@ -447,9 +399,7 @@ class LeadService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print(
-          "❌ Failed to update negotiable price. Status: ${response.statusCode}",
-        );
+
         return false;
       }
     } on SocketException catch (e) {
@@ -458,7 +408,7 @@ class LeadService {
         message: "$e",
         contentType: ContentType.failure,
       );
-      print("🌐 Network error: $e");
+
       return false;
     } on FormatException catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -466,7 +416,7 @@ class LeadService {
         message: "$e",
         contentType: ContentType.failure,
       );
-      print("⚠️ Invalid response format: $e");
+
       return false;
     } catch (e, stackTrace) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -474,8 +424,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("🔥 Unexpected exception in updateRejectOfNegotiable: $e");
-      print(stackTrace);
+
       return false;
     }
   }
@@ -508,14 +457,7 @@ class LeadService {
 
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("Property Negotiable Price API URL: $uri");
-      print("Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-      print(
-        "Property Negotiable Price API response status: ${response.statusCode}",
-      );
-      print("Property Negotiable Price API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -525,14 +467,9 @@ class LeadService {
           (json) => NegotiableItem.fromMap(json),
         );
       } else {
-        print(
-          "Failed to load Property Negotiable Price: ${response.statusCode}",
-        );
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Property Negotiable Price");
       }
     } catch (e) {
-      print("Exception in fetch Property Negotiable Price: $e");
       rethrow;
     }
   }
@@ -545,7 +482,7 @@ class LeadService {
         headers: await headers(),
         body: jsonEncode(lead.toJson()),
       );
-      debugPrint("Create lead response: ${response.body}");
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
@@ -571,7 +508,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Create lead exception: $e");
+
       return false;
     }
   }
@@ -608,7 +545,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Update lead exception: $e");
+
       return false;
     }
   }
@@ -643,7 +580,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Delete lead exception: $e");
+
       return false;
     }
   }
@@ -655,7 +592,6 @@ class LeadService {
     String? module,
     Map<String, String>? filters,
     required String propertyId,
-
   }) async {
     try {
       final Map<String, String> queryParameters;
@@ -678,44 +614,36 @@ class LeadService {
       }
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("Lead Datfdkokodfkodfkoa URI: $uri");
+
       final response = await http.get(uri, headers: await headers());
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        AppLogger.structured("Lead Data from seller", data);
+
         return PaginationResponse<LeadItem>.fromJson(
           data,
           (json) => LeadItem.fromJson(json),
         );
       } else {
-        print("Failed to load leads: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load leads");
       }
     } catch (e) {
-      print("Exception in fetchLeads: $e");
       rethrow;
     }
   }
 
   Future<NewUpdatedLeadModel> getLeadDataByID(String id) async {
-    print("Get lead data by ID: $id");
     try {
       final uri = Uri.parse("$baseUrl/$id");
-      print("Lead Data URI: $uri");
+
       final response = await http.get(uri, headers: await headers());
-      print("Lead Data response status: ${response.statusCode}");
-      print("Lead Data response body: ${response.body}");
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return NewUpdatedLeadModel.fromJson(data['data']);
       } else {
-        print("Failed to load lead data: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load lead data");
       }
     } catch (e) {
-      print("Exception in getLeadDataByID: $e");
       rethrow;
     }
   }
@@ -743,21 +671,11 @@ class LeadService {
         queryParameters = {if (filters != null) ...filters, 'limit': 'all'};
       }
 
-      log("Selected QueryParameter: $queryParameters");
-
       // Build the base URL
       final baseUri = "$baseLeadVisitUrl";
       final uri = Uri.parse(baseUri).replace(queryParameters: queryParameters);
 
-      print("Property LeadVisitData API URL: $uri");
-      print("Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-
-      print(
-        "Property LeadVisitData API response status: ${response.statusCode}",
-      );
-      print("Property LeadVisitData API response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -767,12 +685,9 @@ class LeadService {
           (json) => LeadVisitItem.fromMap(json),
         );
       } else {
-        print("Failed to load Property LeadVisitData: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Property LeadVisitData");
       }
     } catch (e) {
-      print("Exception in fetch Property LeadVisitData: $e");
       rethrow;
     }
   }
@@ -782,15 +697,13 @@ class LeadService {
     String id,
   ) async {
     try {
-      log("Chnage datae ${user}");
       final response = await http.put(
         Uri.parse('$baseLeadVisitUrl/$id'),
         headers: await headers(),
         body: jsonEncode(user),
       );
-      debugPrint("Update lead visit response: ${response.body}");
+
       if (response.statusCode == 201 || response.statusCode == 200) {
-        print("Lead visit data updated successfully.");
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -808,7 +721,7 @@ class LeadService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Failed to update lead visit data: ${response.statusCode}");
+
         return false;
       }
     } catch (e) {
@@ -817,7 +730,7 @@ class LeadService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Create lead visit exception: $e");
+
       return false;
     }
   }

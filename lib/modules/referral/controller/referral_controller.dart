@@ -59,19 +59,13 @@ class ReferralController extends GetxController {
   Future<void> fetchReferralService() async {
     try {
       final ReferralModel model =
-      await Referral_Service.instance.fetchReferrals();
+          await Referral_Service.instance.fetchReferrals();
 
       // Save model to Rx variable
       dummyReferral.value = model;
 
       // Check if referrals list is not empty
       isGenerated.value = (model.data?.referrals?.isNotEmpty ?? false);
-
-      print('Referrals fetched: ${model.data?.referrals?.length ?? 0}');
-    } catch (e) {
-      print('fetchReferralService error: $e');
-    }
+    } catch (e) {}
   }
-
-
 }

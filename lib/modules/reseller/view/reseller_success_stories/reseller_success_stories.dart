@@ -555,7 +555,6 @@ class _ContractorSuccessStoryCardState
     final formattedDate = _formatMonthYear(
       widget.story.monthYear.toIso8601String(),
     );
-    log("Success Story Card ${widget.story.toJson()}");
 
     return Align(
       alignment: Alignment.topCenter,
@@ -592,7 +591,7 @@ class _ContractorSuccessStoryCardState
                       fit: BoxFit.cover,
                     ),
                   ),
-          
+
                   // Published/Draft Badge
                   Positioned(
                     top: 12,
@@ -640,7 +639,7 @@ class _ContractorSuccessStoryCardState
                       ),
                     ),
                   ),
-          
+
                   // Date Badge (bottom-left)
                   Positioned(
                     bottom: 10,
@@ -677,7 +676,7 @@ class _ContractorSuccessStoryCardState
                   ),
                 ],
               ),
-          
+
               // 🔹 Content Section
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -751,11 +750,11 @@ class _ContractorSuccessStoryCardState
                       size: AppFontSizes.caption,
                       colorClickableText: ColorRes.primary,
                     ),
-          
+
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
                     const SizedBox(height: 8),
-          
+
                     // Achievement Box
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,15 +797,15 @@ class _ContractorSuccessStoryCardState
                         ),*/
                       ],
                     ),
-          
+
                     const SizedBox(height: 8),
                     Divider(height: 1, color: ColorRes.border),
                     const SizedBox(height: 8),
-          
+
                     // Performance Section
                     _buildPerformanceSection(widget.story),
                     const SizedBox(height: 8),
-          
+
                     // Action Buttons
                     Row(
                       children: [
@@ -824,7 +823,7 @@ class _ContractorSuccessStoryCardState
                                     monthYear: DateTime.parse(
                                       widget.story.monthYear.toIso8601String(),
                                     ),
-          
+
                                     rating: widget.story.rating,
                                     status: widget.story.status,
                                     image: widget.story.image,
@@ -977,7 +976,6 @@ class _ContractorSuccessStoryCardState
   }
 
   Widget _buildPerformanceSection(ResellerSuccessItem story) {
-    log("Success Story Performance ${story.toJson()}");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

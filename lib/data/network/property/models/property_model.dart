@@ -1104,10 +1104,11 @@ class ParkingInfo {
   }
 
   Map<String, dynamic> toJson() => {
-        'covered_parking': covered,
-        'open_parking': open,
-      };
+    'covered_parking': covered,
+    'open_parking': open,
+  };
 }
+
 class FinancialInfo {
   /// Sell price
   double price;

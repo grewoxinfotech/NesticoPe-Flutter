@@ -17,7 +17,6 @@ class SignUpSubscriptionScreen extends StatefulWidget {
   final String? headingText;
   final String? subtitleText;
   final String? ctaText;
-  
 
   const SignUpSubscriptionScreen({
     super.key,
@@ -47,9 +46,10 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
   void initState() {
     super.initState();
     _prefillFromSecureStorage();
-    _contactController = Get.isRegistered<ContactController>()
-        ? Get.find<ContactController>()
-        : Get.put(ContactController());
+    _contactController =
+        Get.isRegistered<ContactController>()
+            ? Get.find<ContactController>()
+            : Get.put(ContactController());
     if (_contactController.primaryPhone.value.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _contactController.loadContacts(reset: true);
@@ -88,9 +88,7 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
         ].any((v) => (v ?? '').trim().isNotEmpty);
         if (mounted) setState(() {});
       }
-    } catch (e) {
-      log('Prefill error: $e');
-    }
+    } catch (e) {}
   }
 
   @override
@@ -102,8 +100,7 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String heading =
-        widget.headingText ?? 'Unlock ${widget.title} Plans';
+    final String heading = widget.headingText ?? 'Unlock ${widget.title} Plans';
     final String subtitle =
         widget.subtitleText ?? 'Fill your details to view pricing and features';
     final String cta = widget.ctaText ?? 'Unlock Plans';
@@ -209,7 +206,11 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Icon(Icons.check_circle_rounded, color: Colors.green, size: 56),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      color: Colors.green,
+                      size: 56,
+                    ),
                     const SizedBox(height: 10),
                     const Text(
                       'Thank You!',
@@ -230,7 +231,11 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    Container(height: 1, width: double.infinity, color: ColorRes.leadGreyColor.shade200),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: ColorRes.leadGreyColor.shade200,
+                    ),
                     const SizedBox(height: 14),
                     Obx(() {
                       final phone = _contactController.primaryPhone.value;
@@ -247,7 +252,10 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.phone, color: ColorRes.primary),
+                                    const Icon(
+                                      Icons.phone,
+                                      color: ColorRes.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       phone,
@@ -268,7 +276,9 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                                 onPressed: () async {
                                   await ContactHelper.openWhatsApp(phone);
                                 },
-                                icon: const Icon(Icons.chat_bubble_outline_rounded),
+                                icon: const Icon(
+                                  Icons.chat_bubble_outline_rounded,
+                                ),
                                 label: const Text(
                                   'Chat with Us',
                                   style: TextStyle(
@@ -277,7 +287,9 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorRes.primary.withOpacity(0.08),
+                                  backgroundColor: ColorRes.primary.withOpacity(
+                                    0.08,
+                                  ),
                                   foregroundColor: ColorRes.primary,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 18,
@@ -294,9 +306,12 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                             const SizedBox(height: 8),
                             const Text(
                               'Fetching contact details...',
-                              style: TextStyle(color: Colors.black45, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.black45,
+                                fontSize: 12,
+                              ),
                             ),
-                          ]
+                          ],
                         ],
                       );
                     }),
@@ -437,13 +452,13 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
                           ),
                           elevation: 0,
                         ),
-                      child: Text(
-                        cta,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                        child: Text(
+                          cta,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
                       ),
                     ),
                   ],
@@ -462,8 +477,6 @@ class _SignUpSubscriptionScreenState extends State<SignUpSubscriptionScreen> {
     TextInputType keyboard = TextInputType.text,
     String? Function(String?)? validator,
   }) {
-    log('hint Text For TextFormField: $hint');
-
     return TextFormField(
       controller: controller,
       keyboardType: keyboard,

@@ -36,21 +36,11 @@ class NotificationSyncService {
         body: jsonEncode(payload),
       );
 
-      debugPrint('📦 Notification sync response: ${syncNotificationUrl}');
-      
-
       final data = jsonDecode(response.body);
 
-      debugPrint('📦 Notification sync payload: $payload');
-      debugPrint('📩 Notification sync response: $data');
-
       if (response.statusCode == 200 && data['success'] == true) {
-        debugPrint('✅ Notification sync successful');
-      } else {
-        debugPrint('❌ Notification sync failed: ${data['message']}');
-      }
+      } else {}
     } catch (e, stack) {
-      debugPrint('❌ Error during notification sync: $e');
       debugPrintStack(stackTrace: stack);
     }
   }
@@ -61,24 +51,14 @@ class NotificationSyncService {
       final response = await http.delete(
         Uri.parse(ApiConstants.removeNotificationId),
         headers: reqHeaders,
-        body: jsonEncode({
-          'deviceToken': deviceToken,
-        }),
+        body: jsonEncode({'deviceToken': deviceToken}),
       );
 
       final data = jsonDecode(response.body);
 
-      debugPrint('📦 Notification sync payload: $data');
-      debugPrint('📩 Notification sync response: $data');
-
-
       if (response.statusCode == 200 && data['success'] == true) {
-        debugPrint('✅ Notification sync successful');
-      } else {
-        debugPrint('❌ Notification sync failed: ${data['message']}');
-      }
+      } else {}
     } catch (e, stack) {
-      debugPrint('❌ Error during notification sync: $e');
       debugPrintStack(stackTrace: stack);
     }
   }

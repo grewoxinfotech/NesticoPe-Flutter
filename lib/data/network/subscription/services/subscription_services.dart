@@ -291,7 +291,6 @@ class RazorpayOrderResponse {
   }
 }
 
-
 class SubscriptionPlanService {
   final String baseUrl = ApiConstants.subscriptionPlan;
   final String subscription = ApiConstants.subscription;
@@ -322,11 +321,8 @@ class SubscriptionPlanService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      debugPrint("Fetching Plans from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("Plans API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -336,9 +332,6 @@ class SubscriptionPlanService {
           (json) => SubscriptionPlan.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch plans: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
         CustomSnackBar.show(
           Get.overlayContext!,
           message: "Failed to load subscription plans",
@@ -348,7 +341,6 @@ class SubscriptionPlanService {
         throw Exception("Failed to load subscription plans");
       }
     } catch (e) {
-      debugPrint("Exception in fetchPlans: $e");
       rethrow;
     }
   }
@@ -357,23 +349,16 @@ class SubscriptionPlanService {
   Future<SubscriptionPlan?> getPlanById(String id) async {
     try {
       final url = "$baseUrl/$id";
-      debugPrint("Get plan by ID: $url");
 
       final response = await http.get(Uri.parse(url), headers: await headers());
-
-      debugPrint("Get plan by ID response: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonBody = json.decode(response.body);
         final model = SubscriptionPlansResponse.fromJson(jsonBody);
 
         return model.data.items.isNotEmpty ? model.data.items.first : null;
-      } else {
-        debugPrint("Failed to get plan by ID: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Get plan by ID exception: $e");
-    }
+      } else {}
+    } catch (e) {}
     return null;
   }
 
@@ -382,9 +367,6 @@ class SubscriptionPlanService {
     try {
       final payload = {'planId': planId, 'autoRenew': false};
 
-      debugPrint("Creating Razorpay order with payload: $payload");
-      debugPrint("Create order URL: $createOrderUrl");
-
       final response = await http.post(
         Uri.parse(createOrderUrl),
         headers: await headers(),
@@ -392,7 +374,6 @@ class SubscriptionPlanService {
       );
 
       final data = jsonDecode(response.body);
-      debugPrint("Create order response: $data");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return RazorpayOrderResponse.fromJson(data);
@@ -405,7 +386,6 @@ class SubscriptionPlanService {
         return null;
       }
     } catch (e) {
-      debugPrint("Exception in createRazorpayOrder: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: e.toString(),
@@ -434,8 +414,6 @@ class SubscriptionPlanService {
         'userId': userId,
       };
 
-      debugPrint("Verifying payment with payload: $payload");
-
       final response = await http.post(
         Uri.parse("${subscription}/verify-payment"),
         headers: await headers(),
@@ -443,7 +421,6 @@ class SubscriptionPlanService {
       );
 
       final data = jsonDecode(response.body);
-      debugPrint("Verify payment response: $data");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
@@ -456,7 +433,6 @@ class SubscriptionPlanService {
         return false;
       }
     } catch (e) {
-      debugPrint("Exception in verifyPayment: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: e.toString(),
@@ -472,9 +448,7 @@ class SubscriptionPlanService {
     try {
       final uri = subscription;
       final payload = {'planId': planId.toString(), "autoRenew": false};
-      print("Buy plan payload: $payload");
 
-      print("Buy plan url: $uri");
       final response = await http.post(
         Uri.parse(uri),
         headers: await headers(),
@@ -482,7 +456,6 @@ class SubscriptionPlanService {
       );
 
       final data = jsonDecode(response.body);
-      debugPrint("Buy plan response: $data");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
@@ -500,7 +473,7 @@ class SubscriptionPlanService {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("Exception in BuyPlan: $e");
+
       return false;
     }
   }
@@ -508,9 +481,7 @@ class SubscriptionPlanService {
   Future<bool> subscriptionInquiryPlan(Map<String, dynamic> payload) async {
     try {
       final uri = subscriptionInquiry;
-      print("Inquiry plan payload: $payload");
 
-      print("Inquiry plan url: $uri");
       final response = await http.post(
         Uri.parse(uri),
         headers: await headers(),
@@ -518,7 +489,6 @@ class SubscriptionPlanService {
       );
 
       final data = jsonDecode(response.body);
-      debugPrint("Inquiry plan response: $data");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
@@ -536,7 +506,7 @@ class SubscriptionPlanService {
         message: e.toString(),
         contentType: ContentType.failure,
       );
-      print("Exception in InquiryPlan: $e");
+
       return false;
     }
   }
@@ -545,7 +515,6 @@ class SubscriptionPlanService {
   Future<bool> activateSubscription(String subscriptionId) async {
     try {
       final url = ApiConstants.subscriptionActivate(subscriptionId);
-      debugPrint('Activate subscription POST: $url');
 
       final response = await http.post(
         Uri.parse(url),
@@ -555,9 +524,7 @@ class SubscriptionPlanService {
       final dynamic data = jsonDecode(response.body);
 
       final ok =
-          response.statusCode == 200 &&
-          data is Map &&
-          data['success'] == true;
+          response.statusCode == 200 && data is Map && data['success'] == true;
 
       if (ok) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -571,9 +538,7 @@ class SubscriptionPlanService {
       }
 
       final message =
-          data is Map
-              ? data['message']?.toString()
-              : 'Activation failed';
+          data is Map ? data['message']?.toString() : 'Activation failed';
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: message ?? 'Activation failed',
@@ -581,7 +546,6 @@ class SubscriptionPlanService {
       );
       return false;
     } catch (e) {
-      debugPrint('Exception in activateSubscription: $e');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: e.toString(),
@@ -607,11 +571,8 @@ class SubscriptionPlanService {
       final uri = Uri.parse(
         subscription,
       ).replace(queryParameters: queryParameters);
-      debugPrint("Fetching Plans from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint("Plans API Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -621,9 +582,6 @@ class SubscriptionPlanService {
           (json) => CurrentUserSubscriptionItem.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch plans: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
         CustomSnackBar.show(
           Get.overlayContext!,
           message: "Failed to load subscription plans",
@@ -633,7 +591,6 @@ class SubscriptionPlanService {
         throw Exception("Failed to load subscription plans");
       }
     } catch (e) {
-      debugPrint("Exception in fetchPlans: $e");
       rethrow;
     }
   }

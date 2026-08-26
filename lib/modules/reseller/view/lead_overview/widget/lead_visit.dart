@@ -124,21 +124,8 @@ class _LeadVisitState extends State<LeadVisit> {
       final selectedInquiry = propertyInquiryController?.selectedInquiry.value;
 
       if (selectedInquiry != null) {
-        print(
-          'Setting visit ID for user ${widget.buyerID} and property ${widget.propertyId}',
-        );
-        print(
-          'Selected Inquiry: ${selectedInquiry.toMap()} and property: ${selectedInquiry.propertyId}',
-        );
-
         leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
-        print(
-          'Visit ID set: ${leadVisitController.items.map((e) => e.toMap())}',
-        );
       } else if (widget.propertyId != null) {
-        print(
-          'Setting Buyer ID for user ${widget.buyerID} and property ${widget.propertyId}',
-        );
         leadVisitController.setLeadVisitId(widget.buyerID, widget.propertyId);
       }
     });
@@ -182,20 +169,15 @@ class _LeadVisitState extends State<LeadVisit> {
                     .where((id) => id != null && id!.isNotEmpty)
                     .cast<String>()
                     .toList();
-        
+
             // Fetch visitors’ profiles using the collected buyerIds
             // if (buyerIds.isNotEmpty) {
             //   leadVisitController.getTheVisitersProfile(buyerIds);
             // }
             for (var visit in buyerIds) {
-              log("Selected Data From Visit ${visit}");
               leadVisitController.getTheVisitersProfile(visit);
             }
-        
-            log(
-              "Selected Visit: ${leadVisitController.selectedVisit.value?.toJson()}",
-            );
-        
+
             return RefreshIndicator(
               onRefresh: leadVisitController.refreshLead,
               color: ColorRes.primary,
@@ -205,19 +187,22 @@ class _LeadVisitState extends State<LeadVisit> {
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
                   final visit = leadVisitController.items[index];
-        
+
                   // Retrieve the user profile based on buyerId
                   final User? user =
                       visit.buyerId != null
                           ? leadVisitController.userProfiles[visit.buyerId]
-                          : User(username: widget.leadItem?.name,email: widget.leadItem?.email);
+                          : User(
+                            username: widget.leadItem?.name,
+                            email: widget.leadItem?.email,
+                          );
                   // log("USrtr Data From Visit ${user?.toJson()}");
-        
+
                   return _buildVisitCard(
                     context,
                     visit,
                     leadVisitController,
-                    user
+                    user,
                   );
                 },
               ),

@@ -317,10 +317,7 @@ class CreateProjectScreen extends StatelessWidget {
     (_) => GlobalKey<FormState>(),
   );
 
-  CreateProjectScreen({
-    super.key,
-    this.isFromEdit = false,
-  }) : projectId = null;
+  CreateProjectScreen({super.key, this.isFromEdit = false}) : projectId = null;
 
   ProjectWizardController get controller {
     if (Get.isRegistered<ProjectWizardController>()) {
@@ -430,9 +427,9 @@ class CreateProjectScreen extends StatelessWidget {
                                 topRight: Radius.circular(28),
                               ),
                             ),
-                          child: Obx(() {
+                            child: Obx(() {
                               final step = controller.currentStep.value;
-                              print('Current styep $step');
+
                               return SingleChildScrollView(
                                 child: Column(
                                   children: [
@@ -454,7 +451,10 @@ class CreateProjectScreen extends StatelessWidget {
                                       ),
                                       switchInCurve: Curves.easeOut,
                                       switchOutCurve: Curves.easeIn,
-                                      child: KeyedSubtree(  key: ValueKey<int>(step),child: _buildStep(step)),
+                                      child: KeyedSubtree(
+                                        key: ValueKey<int>(step),
+                                        child: _buildStep(step),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -618,9 +618,7 @@ class CreateProjectScreen extends StatelessWidget {
       case 4:
         return UploadMediaScreen();
       case 5:
-        return StepReview(
-
-        ); // Use index 5 since formKeys now has 6 elements (0-5)
+        return StepReview(); // Use index 5 since formKeys now has 6 elements (0-5)
       default:
         return const Center(child: Text('Step not found'));
     }

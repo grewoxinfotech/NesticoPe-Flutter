@@ -204,8 +204,6 @@ class _HomeHeaderState extends State<HomeHeader> {
 
                 GestureDetector(
                   onTap: () async {
-                    print("Post Property tapped");
-
                     try {
                       var userType = UserHelper.userType;
 
@@ -254,9 +252,6 @@ class _HomeHeaderState extends State<HomeHeader> {
                         return;
                       }
                     } catch (e, s) {
-                      print(e);
-                      print(s);
-
                       NesticoPeSnackBar.showAwesomeSnackbar(
                         title: 'Error',
                         message: "Something went wrong. Please try again.",

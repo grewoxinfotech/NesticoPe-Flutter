@@ -28,10 +28,10 @@ Color getStatusColor(LeadStatus status) {
   }
 }
 
-
 String formatDateForGlobal(String dateString) {
   try {
-    final dateTime = DateTime.parse(dateString).toLocal(); // Convert to local time
+    final dateTime =
+        DateTime.parse(dateString).toLocal(); // Convert to local time
     final formattedDate = DateFormat('MMM dd yyyy').format(dateTime);
     return formattedDate;
   } catch (e) {

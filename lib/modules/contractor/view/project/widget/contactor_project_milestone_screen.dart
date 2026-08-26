@@ -147,18 +147,18 @@ class _MilestoneCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        // border: Border.all(color: ColorRes.leadGreyColor.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          // border: Border.all(color: ColorRes.leadGreyColor.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -227,7 +227,9 @@ class _MilestoneCard extends StatelessWidget {
                           SizedBox(width: 8),
                           _StatusChip(
                             label: milestone.paymentStatus ?? '',
-                            color: _paymentStatusColor(milestone.paymentStatus!),
+                            color: _paymentStatusColor(
+                              milestone.paymentStatus!,
+                            ),
                           ),
                           SizedBox(width: 8),
                           _StatusChip(
@@ -273,21 +275,21 @@ class _MilestoneCard extends StatelessWidget {
                   ),
                 ],
               ),
-      
+
               const SizedBox(height: 4),
-      
+
               ReadMoreClass(
                 description: milestone.description ?? '',
                 trimLines: 3,
                 size: 13,
                 colorClickableText: ColorRes.primary,
               ),
-      
+
               // Text(milestone.description ?? '', style: theme.textTheme.bodySmall),
               const SizedBox(height: 6),
               Divider(color: ColorRes.leadGreyColor.shade100),
               const SizedBox(height: 6),
-      
+
               /// Amounts
               Row(
                 children: [
@@ -299,14 +301,14 @@ class _MilestoneCard extends StatelessWidget {
                       ),
                     ),
                   ),
-      
+
                   Container(
                     width: 1,
                     height: 32,
                     color: Colors.grey.shade300,
                     margin: const EdgeInsets.symmetric(horizontal: 12),
                   ),
-      
+
                   Expanded(
                     child: _AmountTile(
                       label: 'Paid',
@@ -316,14 +318,14 @@ class _MilestoneCard extends StatelessWidget {
                       // value: milestone.paidAmount!,
                     ),
                   ),
-      
+
                   Container(
                     width: 1,
                     height: 32,
                     color: Colors.grey.shade300,
                     margin: const EdgeInsets.symmetric(horizontal: 12),
                   ),
-      
+
                   Expanded(
                     child: _AmountTile(
                       label: 'Remaining',
@@ -335,9 +337,9 @@ class _MilestoneCard extends StatelessWidget {
                   ),
                 ],
               ),
-      
+
               const SizedBox(height: 16),
-      
+
               /// Type + Payment Status
               /*  Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -443,12 +445,23 @@ class _AmountTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style:  TextStyle(fontSize: 11, color: ColorRes.leadGreyColor.shade800, fontWeight: FontWeight.w500)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: ColorRes.leadGreyColor.shade800,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
 
         const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: ColorRes.textPrimary),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: ColorRes.textPrimary,
+          ),
         ),
       ],
     );

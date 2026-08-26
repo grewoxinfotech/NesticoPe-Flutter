@@ -49,10 +49,10 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
     }
     propertyController = Get.put(
       ResellerPropertyController(resellerId: resellerId ?? ''),
-
     );
     isInitialized.value = true; // Mark as initialized
   }
+
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => LeadController(), tag: "reseller");
@@ -85,7 +85,7 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
               FocusScope.of(context).unfocus();
               leadController.resetForm();
               Get.to(
-                () => AddLeadScreen(controller: leadController,),
+                () => AddLeadScreen(controller: leadController),
                 binding: BindingsBuilder(() {
                   Get.lazyPut(() => LeadController(), tag: "reseller");
                 }),
@@ -153,7 +153,15 @@ class _ResellerLeadScreenState extends State<ResellerLeadScreen> {
                                   ),
                                 );
                               },
-                              child: buildLeadCard(context, lead, controller,propertyController??ResellerPropertyController(resellerId: lead.resellerId??'')),
+                              child: buildLeadCard(
+                                context,
+                                lead,
+                                controller,
+                                propertyController ??
+                                    ResellerPropertyController(
+                                      resellerId: lead.resellerId ?? '',
+                                    ),
+                              ),
                             );
                           },
                         ),
@@ -202,7 +210,7 @@ Widget buildSelectedFiltersChips(
     if (selectedFilters.isEmpty) {
       return const SizedBox.shrink();
     }
-    print("Selected Filters: $selectedFilters");
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: getResponsivePadding(context),
@@ -396,23 +404,19 @@ Widget buildLeadCard(
   BuildContext context,
   LeadItem lead,
   DashboardController controller,
-    ResellerPropertyController resellerPropertyController,
+  ResellerPropertyController resellerPropertyController,
 ) {
   final leadController = Get.find<LeadController>(tag: "reseller");
   final isCompact = MediaQuery.of(context).size.width < 600;
   final cardPadding = isCompact ? 12.0 : 16.0;
   final Items? property = resellerPropertyController.items
       .cast<Items?>()
-      .firstWhere(
-        (e) => e?.propertyId == lead.propertyId,
-    orElse: () => null,
-  );
+      .firstWhere((e) => e?.propertyId == lead.propertyId, orElse: () => null);
 
   final priceManager = PropertyPriceManager(
-    listingType: property?.listingType??'',
+    listingType: property?.listingType ?? '',
     financialInfo: property?.propertyDetails?.financialInfo,
   );
-
 
   return Container(
     padding: EdgeInsets.all(cardPadding),
@@ -607,7 +611,13 @@ Widget buildLeadCard(
                   color: ColorRes.orangeColor,
                   onPressed: () {
                     leadController.resetForm();
-                    Get.to(() => AddLeadScreen(lead: lead, isEditMode: true,controller: leadController,));
+                    Get.to(
+                      () => AddLeadScreen(
+                        lead: lead,
+                        isEditMode: true,
+                        controller: leadController,
+                      ),
+                    );
                   },
 
                   tooltip: 'Edit Lead',

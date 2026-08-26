@@ -587,7 +587,6 @@ class PropertyDetailManager {
         age.toString().trim().isNotEmpty &&
         age.toString().toLowerCase() != 'null' &&
         age != 0) {
-      log("Adding property age: $age");
       details.add({"Age of Property": "$age years"});
     }
 
@@ -602,7 +601,6 @@ bool isValidField(dynamic value) {
 }
 
 IconData getpropertyIcon(String title) {
-  debugPrint("Getting icon for title: ${title.toLowerCase()}");
   switch (title.toLowerCase()) {
     case 'bhk':
       return Icons.bed_outlined;

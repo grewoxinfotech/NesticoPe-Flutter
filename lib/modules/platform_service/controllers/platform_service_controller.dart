@@ -30,10 +30,9 @@ class PlatformServicesController
         page: page,
         filters: filters,
       );
-      debugPrint("Fetched platform services: ${response.items.length}");
+
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -71,9 +70,7 @@ class PlatformServicesController
         items.refresh();
         return service;
       }
-    } catch (e) {
-      debugPrint("Get service error: $e");
-    }
+    } catch (e) {}
     return null;
   }
 }

@@ -106,7 +106,10 @@ class ContractorEmployeeScreen extends StatelessWidget {
                     dashboardController.hasActivePlan
                         ? 'Limit Reached, please upgrade your plan.'
                         : 'You do not have an active subscription. Please activate a plan to continue.',
-                        buttonText: dashboardController.hasActivePlan?'Upgrade Plan':'Buy Plan'
+                buttonText:
+                    dashboardController.hasActivePlan
+                        ? 'Upgrade Plan'
+                        : 'Buy Plan',
               );
               return;
             }
@@ -597,7 +600,7 @@ void showAddEmployeeDialog(
                                       title: 'Limit Reached',
                                       message:
                                           'Limit Reached, please upgrade your plan.',
-                                          buttonText: 'Upgrade Plan'
+                                      buttonText: 'Upgrade Plan',
                                     );
                                     return;
                                   }

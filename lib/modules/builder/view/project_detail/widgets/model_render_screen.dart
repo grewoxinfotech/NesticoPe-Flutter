@@ -56,7 +56,7 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
         widget.modelUrl,
         'property_model.glb',
       );
-      print("Check The 3D model ${widget.modelUrl}");
+
       String? usdz;
       if (Platform.isIOS) {
         usdz = await ModelCacheService.downloadAndCache(
@@ -71,7 +71,6 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
         isLoading = false;
       });
     } catch (e) {
-      debugPrint('Model download error: $e');
       setState(() {
         isLoading = false;
       });
@@ -113,14 +112,8 @@ class _ModelRenderScreenState extends State<ModelRenderScreen> {
                 autoPlay: true,
                 loading: Loading.eager,
                 onWebViewCreated: (controller) async {
-                  debugPrint('WebView Created');
-
                   controller.setNavigationDelegate(
-                    NavigationDelegate(
-                      onWebResourceError: (error) {
-                        debugPrint('WEB ERROR: ${error.description}');
-                      },
-                    ),
+                    NavigationDelegate(onWebResourceError: (error) {}),
                   );
                 },
               ),

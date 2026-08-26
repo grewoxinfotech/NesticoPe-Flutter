@@ -12,7 +12,6 @@ class BannerItem {
   final String type;
   final bool isAdvertisement;
   final bool isShowOnMobile;
- 
 
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -64,7 +63,9 @@ class BannerItem {
 
   Map<String, dynamic> toJson() {
     String formatDate(DateTime? d) =>
-        d != null ? DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'").format(d.toUtc()) : '';
+        d != null
+            ? DateFormat("yyyy-MM-ddTHH:mm:ss.SSS'Z'").format(d.toUtc())
+            : '';
     return {
       'id': id,
       'title': title,

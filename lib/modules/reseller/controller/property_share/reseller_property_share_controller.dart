@@ -317,7 +317,6 @@ class ReSellerPropertyShareController extends GetxController {
         );
       }
     } catch (e) {
-      debugPrint("⚠️ Error During Form Creation: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong while creating the form.",
@@ -414,14 +413,12 @@ class ReSellerPropertyShareController extends GetxController {
       );
 
       if (alreadyExists) {
-        print("Share already exists for $platform and $shareType");
         final exist = propertyShareItems.firstWhereOrNull(
           (share) =>
               share.platform?.toLowerCase() == platform.toLowerCase() &&
               share.shareType?.toLowerCase() == shareType.toLowerCase(),
         );
 
-        print("exist: ${exist?.toJson()}");
         handleShare(
           platform: platform,
           shareType: shareType,
@@ -447,8 +444,6 @@ class ReSellerPropertyShareController extends GetxController {
         final data = await _propertyShareService.addPropertyShare(shareData);
 
         if (data != null) {
-          debugPrint("✅ Property share created successfully: $data");
-
           // 🔹 Step 6: Add to local list & handle share action
           propertyShareItems.add(shareData);
           handleShare(
@@ -471,8 +466,6 @@ class ReSellerPropertyShareController extends GetxController {
         }
       }
     } catch (e, stack) {
-      debugPrint("❌ Error During Property Share Creation: $e");
-      debugPrint(stack.toString());
     } finally {
       isLoading.value = false;
     }
@@ -505,7 +498,6 @@ class ReSellerPropertyShareController extends GetxController {
         );
       }
     } catch (e) {
-      print("Error During Multi Property Share Creation: $e");
     } finally {
       isLoading.value = false;
     }
@@ -532,7 +524,6 @@ class ReSellerPropertyShareController extends GetxController {
       if (existingShares != null && existingShares.isNotEmpty) {
         final existingLink = existingShares.first.shareUrl;
         if (existingLink != null && existingLink.isNotEmpty) {
-          debugPrint("🔁 Existing share found: $existingLink");
           Get.to(
             () => ResellerPropertyShareLinkScreen(
               shareId: existingShares.first.id ?? '',
@@ -544,7 +535,6 @@ class ReSellerPropertyShareController extends GetxController {
           return;
         }
       } else {
-        print("No existing shares found for this property/reseller");
         Get.to(() => ReSellerPropertyShare(propertyId: [propertyId]));
       }
 
@@ -556,7 +546,6 @@ class ReSellerPropertyShareController extends GetxController {
       //   shareType: "chat",
       // );
     } catch (e) {
-      debugPrint("⚠️ Error handling property share: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Something went wrong while sharing property.",
@@ -576,7 +565,6 @@ class ReSellerPropertyShareController extends GetxController {
         Get.back();
       }
     } catch (e) {
-      print("Error Deleting Property Share: $e");
     } finally {
       isLoading.value = false;
     }
@@ -591,7 +579,6 @@ class ReSellerPropertyShareController extends GetxController {
         multiShareItems.addAll(data);
       }
     } catch (e) {
-      print("Error Getting Multi Property Share: $e");
     } finally {
       isLoading.value = false;
     }

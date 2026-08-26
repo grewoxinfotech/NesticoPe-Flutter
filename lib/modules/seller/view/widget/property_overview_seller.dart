@@ -256,9 +256,6 @@ class _PropertyOverviewSellerScreenState
           if (_property.value == null) {
             return const Center(child: Text("Property not found"));
           }
-          log(
-            'Rendering property overview for ID: ${_property.value!.toJson()}',
-          );
 
           final property = _property.value!;
 
@@ -503,9 +500,7 @@ class _PropertyOverviewSellerScreenState
                   onTap: () {
                     leadPropertyNegotiablePriceController
                         .setLeadNegotiablePriceId(property.id ?? '');
-                    log(
-                      'Negotiable Price ID set: ${leadPropertyNegotiablePriceController.items.map((e) => e.toMap())}',
-                    );
+
                     Get.to(
                       () => LeadNegotiablePriceScreen(
                         controller: leadPropertyNegotiablePriceController,
@@ -1641,10 +1636,7 @@ class _PropertyOverviewSellerScreenState
                   ),
 
                 if (priceManager.bookingAmount != null)
-                  _buildInfoRow(
-                    "Booking Amount",
-                    priceManager.bookingAmount!,
-                  ),
+                  _buildInfoRow("Booking Amount", priceManager.bookingAmount!),
               ],
             ),
           ),
@@ -1907,7 +1899,6 @@ class _PropertyOverviewSellerScreenState
   Widget _buildAmenitiesSection(BuildContext context, bool isCompact) {
     final property = _property.value!;
     final amenities = property.propertyDetails?.amenities ?? [];
-    log("Amenities: ${amenities.map((e) => e).toList()}");
 
     return Padding(
       padding: EdgeInsets.all(16),

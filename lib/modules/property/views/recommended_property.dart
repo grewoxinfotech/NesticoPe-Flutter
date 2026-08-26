@@ -31,11 +31,11 @@ class RecommendedProperty extends StatelessWidget {
             color: ColorRes.leadGreyColor.shade50,
             child: Column(
               children: [
-                   const SizedBox(height: 12),
-                          const TitleWithViewAll(title: 'Recommended Properties'),
-                          const SizedBox(height: 12),
+                const SizedBox(height: 12),
+                const TitleWithViewAll(title: 'Recommended Properties'),
+                const SizedBox(height: 12),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12,),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: SizedBox(
                     height: 310,
                     child: Obx(() {

@@ -35,12 +35,10 @@ class MouService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         // Handle the platform fee setting data as needed
-      return PaginationResponse<PlatformFeeItem>.fromJson(
-  data,
-  (item) => PlatformFeeItem.fromJson(
-    Map<String, dynamic>.from(item),
-  ),
-);
+        return PaginationResponse<PlatformFeeItem>.fromJson(
+          data,
+          (item) => PlatformFeeItem.fromJson(Map<String, dynamic>.from(item)),
+        );
         // print("Platform Fee Setting: $data");
       } else {
         throw Exception(
@@ -68,9 +66,7 @@ class MouService {
 
       if (response.statusCode == 200) {
         // final data = jsonDecode(response.body);
-print(jsonDecode(response.body).runtimeType);
-print(jsonDecode(response.body)['data'].runtimeType);
-print(jsonDecode(response.body)['data']['items'].runtimeType);
+
         // print(" Mou Check it right ${data}");
 
         // Handle the platform fee setting data as needed

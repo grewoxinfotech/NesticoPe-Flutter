@@ -16,11 +16,10 @@ import '../controller/user_subscription_controller.dart';
 class MySubscriptionScreen extends StatelessWidget {
   const MySubscriptionScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CurrentUserPlanController());
-    
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorRes.white,
@@ -31,9 +30,9 @@ class MySubscriptionScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child:
-            (  UserHelper.isReseller ||
-        UserHelper.isSellerOwner ||
-        UserHelper.isSellerBuilder)
+            (UserHelper.isReseller ||
+                    UserHelper.isSellerOwner ||
+                    UserHelper.isSellerBuilder)
                 ? Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -57,7 +56,11 @@ class MySubscriptionScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Subscription management and history features are being developed for ${UserHelper.isReseller ? 'partner' : UserHelper.isSellerOwner ? 'owner' :  'builder'}.",
+                          "Subscription management and history features are being developed for ${UserHelper.isReseller
+                              ? 'partner'
+                              : UserHelper.isSellerOwner
+                              ? 'owner'
+                              : 'builder'}.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: ColorRes.textSecondary,
@@ -84,69 +87,70 @@ class MySubscriptionScreen extends StatelessWidget {
                   ),
                 )
                 : Obx(() {
-          /// Initial loading
-          if (controller.isLoading.value && controller.items.isEmpty) {
-            return MySubscriptionListScreenShimmer();
-          }
+                  /// Initial loading
+                  if (controller.isLoading.value && controller.items.isEmpty) {
+                    return MySubscriptionListScreenShimmer();
+                  }
 
-          /// Empty state
-          if (controller.items.isEmpty) {
-            return const Center(child: Text("No subscriptions found"));
-          }
+                  /// Empty state
+                  if (controller.items.isEmpty) {
+                    return const Center(child: Text("No subscriptions found"));
+                  }
 
-          return NotificationListener<ScrollEndNotification>(
-            onNotification: (scrollEnd) {
-              final metrics = scrollEnd.metrics;
-              if (metrics.atEdge && metrics.pixels != 0) {
-                controller.loadMore();
-              }
-              return false;
-            },
+                  return NotificationListener<ScrollEndNotification>(
+                    onNotification: (scrollEnd) {
+                      final metrics = scrollEnd.metrics;
+                      if (metrics.atEdge && metrics.pixels != 0) {
+                        controller.loadMore();
+                      }
+                      return false;
+                    },
 
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: controller.items.length,
-              itemBuilder: (context, index) {
-                /// Pagination loader at bottom
-                if (index == controller.items.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: controller.items.length,
+                      itemBuilder: (context, index) {
+                        /// Pagination loader at bottom
+                        if (index == controller.items.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+
+                        final item = controller.items[index];
+                        final plan = item.plan;
+
+                        final String startDate = Formatter.formatDate(
+                          item.startDate.toString(),
+                        );
+
+                        final String endDate = Formatter.formatDate(
+                          item.endDate.toString(),
+                        );
+
+                        final String price = Formatter.formatPrice(
+                          double.tryParse(plan?.amount ?? "0") ?? 0,
+                        );
+
+                        final bool canActivateImmediately =
+                            (item.status ?? '').toLowerCase() == 'pending';
+
+                        return _SubscriptionCard(
+                          planName: plan?.name ?? "Unknown Plan",
+                          startDate: startDate,
+                          endDate: endDate,
+                          price: price,
+                          status: item.status ?? '',
+                          planId: item.id,
+                          canActivateImmediately: canActivateImmediately,
+                          onActivate:
+                              () => controller.activateSubscription(item.id),
+                        );
+                      },
+                    ),
                   );
-                }
-
-                final item = controller.items[index];
-                final plan = item.plan;
-
-                final String startDate = Formatter.formatDate(
-                  item.startDate.toString(),
-                );
-
-                final String endDate = Formatter.formatDate(
-                  item.endDate.toString(),
-                );
-
-                final String price = Formatter.formatPrice(
-                  double.tryParse(plan?.amount ?? "0") ?? 0,
-                );
-
-                final bool canActivateImmediately =
-                    (item.status ?? '').toLowerCase() == 'pending';
-
-                return _SubscriptionCard(
-                  planName: plan?.name ?? "Unknown Plan",
-                  startDate: startDate,
-                  endDate: endDate,
-                  price: price,
-                  status: item.status ?? '',
-                  planId: item.id,
-                  canActivateImmediately: canActivateImmediately,
-                  onActivate: () => controller.activateSubscription(item.id),
-                );
-              },
-            ),
-          );
-        }),
+                }),
       ),
     );
   }
@@ -188,7 +192,7 @@ class _SubscriptionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-         boxShadow: [
+        boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
             blurRadius: 10,
@@ -237,7 +241,8 @@ class _SubscriptionCard extends StatelessWidget {
                       onSubmit: (reason) {
                         ticketController.submitTicket(
                           payload: TicketCreateRequest(
-                            title: 'Subscription Cancellation Request: ${planName}',
+                            title:
+                                'Subscription Cancellation Request: ${planName}',
                             description:
                                 'Reason for cancellation: ${reason.trim()}\n\n Subscription Details: \n- Plan ID: ${planId} \n- Plan Name: ${planName} \n- Start Date: ${startDate} \n- End Date: ${endDate} \n- Price: ${price}',
                             category: 'subscription_cancellation',
@@ -300,7 +305,16 @@ class _SubscriptionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 12,fontWeight: FontWeight.w500,color: ColorRes.textPrimary))),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: ColorRes.textPrimary,
+              ),
+            ),
+          ),
         ],
       ),
     );

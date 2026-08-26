@@ -323,7 +323,6 @@ class ContractorServiceController
 
   @override
   void onInit() {
-    print("Initializing ContractorServiceController for ID: $contractorId");
     super.onInit();
     loadInitial();
   }
@@ -334,18 +333,15 @@ class ContractorServiceController
   @override
   Future<PaginationResponse<ContractorServiceItem>> fetchItems(int page) async {
     try {
-      print("Fetching items for Contractor ID: $contractorId, page: $page");
       final response = await _service.fetchContractorService(
         page: page,
         filters: filters,
         id: contractorId,
       );
 
-      print("Fetched Contractor Services: ${response.items.length}");
       fetchUserDataFromUrl();
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -354,7 +350,6 @@ class ContractorServiceController
     userData.value = await _serviceUser.getUserById(contractorId);
     final userId = userData.value?.id ?? '';
     final username = userData.value?.username ?? '';
-    log("Fetched user profile for contractorId=$userId username=$username");
   }
 
   Future<void> createInquiry(
@@ -376,7 +371,6 @@ class ContractorServiceController
       }
 
       if (!formState.validate()) {
-        print("❌ Form validation failed");
         return;
       }
 
@@ -398,11 +392,12 @@ class ContractorServiceController
       // Extracting state (if user entered "City, State")
 
       // Prepare request body
-      final serviceIds = services
-          .map((e) => e.id)
-          .whereType<String>()
-          .where((id) => id.trim().isNotEmpty)
-          .toList();
+      final serviceIds =
+          services
+              .map((e) => e.id)
+              .whereType<String>()
+              .where((id) => id.trim().isNotEmpty)
+              .toList();
 
       if (serviceIds.isEmpty) {
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -432,11 +427,8 @@ class ContractorServiceController
         },
       };
 
-      print("Request Body: $data");
-
       // API Call
       final response = await _service.createInquiry(data);
-      print('✅ Inquiry created successfully: $response');
 
       if (response) {
         try {
@@ -446,22 +438,14 @@ class ContractorServiceController
             message: "Inquiry submitted successfully",
             contentType: ContentType.success,
           );
-        } catch (e, st) {
-          log('⚠️ Post-success UI step failed: $e');
-          log('Stack: $st');
-        }
+        } catch (e, st) {}
 
         // Always attempt to close the dialog/screen on success.
         try {
           Get.back(result: true); // optional redirect
-        } catch (e, st) {
-          log('❌ Get.back failed after inquiry success: $e');
-          log('Stack: $st');
-        }
+        } catch (e, st) {}
       }
     } catch (e, st) {
-      log('❌ Error creating inquiry: $e');
-      log('Stack: $st');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: e.toString(),
@@ -526,10 +510,7 @@ class ContractorServiceController
       if (existing != null) return existing;
 
       // If needed, create a getById endpoint later
-      print("Service not found in list. You may add getById API support.");
-    } catch (e) {
-      print("Error getServiceById: $e");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -545,9 +526,7 @@ class ContractorServiceController
         items[index].isActive = !current;
         items.refresh();
       }
-    } catch (e) {
-      print("Error toggling active status: $e");
-    }
+    } catch (e) {}
   }
 
   /// --------------------------------------------------------------------------
@@ -562,7 +541,6 @@ class ContractorServiceController
       }
       return success;
     } catch (e) {
-      print("Error deleting service: $e");
       return false;
     }
   }

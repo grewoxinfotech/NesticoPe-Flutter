@@ -477,16 +477,10 @@ class _PropertyDetailState extends State<PropertyDetail> {
   void initState() {
     super.initState();
 
-    print("🔵 initState called");
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("🟡 PostFrameCallback triggered");
-
       final Map<String, String> uiFilters = {};
 
       if (widget.filters != null && widget.filters!.isNotEmpty) {
-        print("🟢 Incoming widget.filters: ${widget.filters}");
-
         if (widget.filters![0].containsKey('approval_status')) {
           uiFilters['approval_status'] = '';
         }
@@ -495,28 +489,19 @@ class _PropertyDetailState extends State<PropertyDetail> {
         }
 
         for (final filter in widget.filters!) {
-          print("➡️ Adding filter: $filter");
           uiFilters.addAll(filter);
         }
-      } else {
-        print("⚠️ No filters received from widget");
-      }
-
-      print("✅ Final uiFilters: $uiFilters");
+      } else {}
 
       setState(() {
         selectedFilters = uiFilters;
       });
-
-      print("📌 selectedFilters set: $selectedFilters");
 
       _applyFilters();
     });
 
     // Listen to controller loading
     controller.isLoading.listen((loading) {
-      print("⏳ isLoading changed: $loading");
-
       if (mounted) {
         setState(() {
           _isLoading = loading;
@@ -526,8 +511,6 @@ class _PropertyDetailState extends State<PropertyDetail> {
 
     // Listen to items
     controller.items.listen((items) {
-      print("📦 Items updated: ${items.length} items");
-
       if (mounted) {
         setState(() {
           _items = items;
@@ -537,17 +520,10 @@ class _PropertyDetailState extends State<PropertyDetail> {
   }
 
   void _applyFilters() {
-    print("🚀 Applying Filters...");
-
-    print("🔒 Locked Filters: ");
-    print("🎯 Selected Filters: $selectedFilters");
-
     final finalFilters = {
       // ..._lockedFilters,
       ...selectedFilters,
     };
-
-    print("🧾 Final Filters Sent to Controller: $finalFilters");
 
     controller.applyFilters(finalFilters);
   }

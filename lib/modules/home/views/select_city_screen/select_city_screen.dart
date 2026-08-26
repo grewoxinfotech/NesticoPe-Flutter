@@ -1365,11 +1365,6 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
         extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
           child: Column(
-
-
-
-
-            
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ─── Full-width hero banner with embedded search ───────────────
@@ -1410,10 +1405,10 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                         style: TextStyle(
                           // fontWeight: FontWeight.w600,
                           fontSize: 14,
-                            color: Colors.white,
-                              // fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.8,
+                          color: Colors.white,
+                          // fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -1478,7 +1473,6 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
                         Obx(() {
                           final cities = popularController.allTrendingCities;
                           if (cities.isEmpty) {
@@ -1610,9 +1604,7 @@ class _HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // "PREMIUM CURATOR" badge
-                SizedBox(
-  height: MediaQuery.of(context).size.height * 0.06,
-),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -1785,7 +1777,8 @@ class _PredictionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visiblePredictions = predictions.take(_maxVisiblePredictions).toList();
+    final visiblePredictions =
+        predictions.take(_maxVisiblePredictions).toList();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1832,7 +1825,7 @@ class _PredictionList extends StatelessWidget {
                       color: const Color(0xFFEEF0FB),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child:  Icon(
+                    child: Icon(
                       Icons.location_on_outlined,
                       size: 20,
                       color: ColorRes.primary,
@@ -1858,7 +1851,7 @@ class _PredictionList extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade600,
-                              fontWeight: AppFontWeights.medium
+                              fontWeight: AppFontWeights.medium,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

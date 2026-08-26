@@ -3004,7 +3004,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                   ),
                 ),
                 Obx(() {
-                  final isAadharVerified = ((controller.profileData.value?.user?.isAadharVerified == true) || UserHelper.isAadharVerified);
+                  final isAadharVerified =
+                      ((controller.profileData.value?.user?.isAadharVerified ==
+                              true) ||
+                          UserHelper.isAadharVerified);
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -3015,15 +3018,23 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
                           ),
                           color: const Color.fromARGB(255, 28, 28, 44),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          isAadharVerified ? 'Verified' : 'Pending / Not Verified',
+                          isAadharVerified
+                              ? 'Verified'
+                              : 'Pending / Not Verified',
                           style: TextStyle(
-                            color: isAadharVerified ? ColorRes.success : Colors.orange.shade400,
+                            color:
+                                isAadharVerified
+                                    ? ColorRes.success
+                                    : Colors.orange.shade400,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
@@ -3036,7 +3047,10 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                           height: 28,
                           child: ElevatedButton(
                             onPressed: () async {
-                              if (dashboardController.activeSubscription.value == null) {
+                              if (dashboardController
+                                      .activeSubscription
+                                      .value ==
+                                  null) {
                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                   title: 'Subscription Required',
                                   message: 'First active plan then verify',
@@ -3044,16 +3058,23 @@ class _ContractorProfileScreenState extends State<ContractorProfileScreen> {
                                 );
                                 return;
                               }
-                              final verified = await AadharVerificationDialog.show(context);
+                              final verified =
+                                  await AadharVerificationDialog.show(context);
                               if (verified == true) {
                                 controller.refreshFollowUp();
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: dashboardController.activeSubscription.value != null
-                                  ? ColorRes.primary
-                                  : Colors.grey.shade400,
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              backgroundColor:
+                                  dashboardController
+                                              .activeSubscription
+                                              .value !=
+                                          null
+                                      ? ColorRes.primary
+                                      : Colors.grey.shade400,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),

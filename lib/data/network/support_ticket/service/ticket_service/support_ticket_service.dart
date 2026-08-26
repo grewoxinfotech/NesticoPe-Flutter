@@ -33,25 +33,20 @@ class TicketService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParams);
-      print("🔹 Ticket URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        print("📥 Ticket data: $json");
 
         return PaginationResponse<TicketItem>.fromJson(
           json,
           (json) => TicketItem.fromJson(json),
         );
       } else {
-        print("❌ Failed to load tickets: ${response.statusCode}");
-        print("Response: ${response.body}");
         throw Exception("Failed to load tickets");
       }
     } catch (e) {
-      print("❌ Exception in fetchTickets: $e");
       rethrow;
     }
   }
@@ -59,8 +54,6 @@ class TicketService {
   /// 🆕 POST – Create Ticket
   Future<bool> createTicket(TicketCreateRequest ticket, File image) async {
     try {
-      print("📤 Create Ticket payload: ${ticket.toJson()}");
-
       final uri = Uri.parse(baseUrl);
 
       http.MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -81,10 +74,7 @@ class TicketService {
 
       final response = await http.Response.fromStream(streamedResponse);
 
-      print("📥 Ticket response: ${response.body}");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("✅ Ticket created successfully");
         return true;
       } else {
         final data = jsonDecode(response.body);
@@ -93,11 +83,10 @@ class TicketService {
           message: data['message'],
           contentType: ContentType.failure,
         );
-        print("❌ Ticket creation failed: ${response.body}");
+
         return false;
       }
     } catch (e) {
-      print("❌ Error creating ticket: $e");
       return false;
     }
   }
@@ -112,11 +101,7 @@ class TicketService {
         body: jsonEncode(ticket.toJson()),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("📤 Create Ticket payload: ${ticket.toJson()}");
-        
-        print("✅ Ticket created successfully ${response.statusCode}");
         final data = jsonDecode(response.body);
-        print("📥 Ticket response   ssssc: $data");
 
         final item = data['data'];
         if (item != null) {
@@ -124,11 +109,9 @@ class TicketService {
         }
         return null;
       } else {
-        print("❌ Ticket creation failed: ${response.body}");
         return null;
       }
     } catch (e) {
-      print("❌ Error creating ticket (simple): $e");
       return null;
     }
   }
@@ -145,11 +128,9 @@ class TicketService {
         }
         return null;
       } else {
-        print('❌ fetchTicketById failed: ${res.statusCode} ${res.body}');
         return null;
       }
     } catch (e) {
-      print('❌ fetchTicketById exception: $e');
       return null;
     }
   }

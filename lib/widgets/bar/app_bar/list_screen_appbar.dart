@@ -15,7 +15,7 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
   const ListScreenAppbar({
     super.key,
     this.showAppBar = true,
-    this.showIconWithText=false,
+    this.showIconWithText = false,
     required this.title,
     this.onBack,
     this.onFilterTap,
@@ -32,17 +32,16 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: ColorRes.white,
       automaticallyImplyLeading: !isFormScreen, // ✅ don’t reserve space
       leadingWidth: isFormScreen ? 0 : null, // ✅ remove left padding space
-
       // ✅ Conditionally show back icon
-      leading: isFormScreen
-          ? null // no space at all
-          : GestureDetector(
-        onTap: onBack ?? Get.back,
-        child: const Icon(Icons.arrow_back, color: ColorRes.textColor),
-      ),
+      leading:
+          isFormScreen
+              ? null // no space at all
+              : GestureDetector(
+                onTap: onBack ?? Get.back,
+                child: const Icon(Icons.arrow_back, color: ColorRes.textColor),
+              ),
 
-     // ✅ center title if no back icon
-
+      // ✅ center title if no back icon
       title: Text(
         title,
         style: const TextStyle(
@@ -52,29 +51,37 @@ class ListScreenAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
 
       // ✅ Filter icon (optional)
-      actions: showFilter
-          ? [
-
-
-        GestureDetector(
-          onTap: onFilterTap,
-          child:  Icon(
-            Icons.filter_list,
-            size: 22,
-            color: ColorRes.primary,
-          ),
-        ),
-       if(showIconWithText)...[
-         Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(onTap: onFilterTap,child: Text('Filter',style: TextStyle(color: ColorRes.primary,fontSize: 15,fontWeight: FontWeight.w500),)),
-        )
-       ]else...[
-        SizedBox(width: 12,)
-       ]
-
-      ]
-          : [],
+      actions:
+          showFilter
+              ? [
+                GestureDetector(
+                  onTap: onFilterTap,
+                  child: Icon(
+                    Icons.filter_list,
+                    size: 22,
+                    color: ColorRes.primary,
+                  ),
+                ),
+                if (showIconWithText) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: onFilterTap,
+                      child: Text(
+                        'Filter',
+                        style: TextStyle(
+                          color: ColorRes.primary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  SizedBox(width: 12),
+                ],
+              ]
+              : [],
     );
   }
 

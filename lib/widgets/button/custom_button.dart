@@ -6,7 +6,6 @@ import 'package:nesticope_app/widgets/display/card.dart';
 import '../../app/constants/app_font_sizes.dart';
 import '../../app/constants/color_res.dart';
 
-
 class CustomButton extends StatelessWidget {
   final GestureTapCallback? onTap;
   final String title;
@@ -29,7 +28,7 @@ class CustomButton extends StatelessWidget {
     this.borderRadius,
     this.boxShadow,
     this.heroTag,
-  }) ;
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,7 @@ class CustomButton extends StatelessWidget {
         child: Text(
           title,
           style:
-          titleTextStyle ??
+              titleTextStyle ??
               TextStyle(
                 fontSize: AppFontSizes.body,
                 fontWeight: AppFontWeights.bold,
@@ -55,12 +54,16 @@ class CustomButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: heroTag != null
-          ? Hero(
-        tag: heroTag!,
-        child: Material(color: ColorRes.transparentColor, child: button),
-      )
-          : Material(color: ColorRes.transparentColor, child: button),
+      child:
+          heroTag != null
+              ? Hero(
+                tag: heroTag!,
+                child: Material(
+                  color: ColorRes.transparentColor,
+                  child: button,
+                ),
+              )
+              : Material(color: ColorRes.transparentColor, child: button),
     );
   }
-} 
+}

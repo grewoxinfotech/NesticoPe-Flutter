@@ -12,43 +12,38 @@ class ProjectCompareManager extends GetxController {
   final RxMap<String, ProjectItem> _selected = <String, ProjectItem>{}.obs;
 
   RxMap<String, ProjectItem> get selected => _selected;
-  List<ProjectItem> get selectedList => _selected.values.toList(growable: false);
+  List<ProjectItem> get selectedList =>
+      _selected.values.toList(growable: false);
   int get count => _selected.length;
 
   bool isSelected(String? id) => id != null && _selected.containsKey(id);
 
-
   void toggle(ProjectItem item, {int max = 5}) {
     final id = item.id;
     if (id.isEmpty) return;
-    
+
     if (_selected.containsKey(id)) {
       _selected.remove(id);
       _selected.refresh();
       return;
     }
-    
+
     if (_selected.length >= max) {
       // Ignore if max reached; UI can show a message
       return;
     }
-    
 
     if (_selected.isEmpty && Get.isRegistered<CompareManager>()) {
       try {
         CompareManager.to.clear();
-      } catch (e) {
-        print('Error clearing property comparison: $e');
-      }
-    }    if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
+      } catch (e) {}
+    }
+    if (_selected.isEmpty && Get.isRegistered<ContractorCompareManager>()) {
       try {
         ContractorCompareManager.to.clear();
-      } catch (e) {
-        print('Error clearing property comparison: $e');
-      }
+      } catch (e) {}
     }
 
-    
     _selected[id] = item;
     _selected.refresh();
   }

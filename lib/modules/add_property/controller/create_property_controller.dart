@@ -133,10 +133,6 @@ class CreatePropertyController extends GetxController {
       );
     }
 
-    debugPrint(
-      "[DEBUG]====> Property Price Trends Add Property: ${trend.map((e) => e.toJson())}",
-    );
-
     return trend;
   }
 
@@ -168,7 +164,7 @@ class CreatePropertyController extends GetxController {
   var mealCharges = "".obs;
   var mealChargesTextFiled = TextEditingController();
   var electricityChargesType = ''.obs;
-  var electricityChargesTextFiled = TextEditingController();  
+  var electricityChargesTextFiled = TextEditingController();
   var pgRulesAvailable = "".obs;
   var nonVegAllowed = "".obs;
   var smokingAllowed = "".obs;
@@ -595,7 +591,6 @@ class CreatePropertyController extends GetxController {
 
         for (var file in files) {
           imageList.add(file.path);
-          print('Image added: ${file.path}');
         }
         imageList.refresh();
 
@@ -617,14 +612,12 @@ class CreatePropertyController extends GetxController {
   void removeBuilderImage(int index) {
     if (index >= 0 && index < imageList.length) {
       imageList.removeAt(index);
-      print('Image removed at index $index');
     }
   }
 
   void removeBuilderVideo(int index) {
     if (index >= 0 && index < videoList.length) {
       videoList.removeAt(index);
-      print('video removed at index $index');
     }
   }
 
@@ -654,7 +647,6 @@ class CreatePropertyController extends GetxController {
         // });
         for (var video in videos) {
           videoList.add(video.path);
-          print('video added: ${video.path}');
         }
         videoList.refresh();
 
@@ -694,7 +686,6 @@ class CreatePropertyController extends GetxController {
         for (var file in result.files) {
           if (file.path != null) {
             documentList.add(file.path!);
-            print('Document added: ${file.path}');
           }
         }
 
@@ -707,8 +698,6 @@ class CreatePropertyController extends GetxController {
         );
       }
     } catch (e) {
-      print('Failed to pick documents: $e');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to pick documents: $e',
@@ -735,7 +724,6 @@ class CreatePropertyController extends GetxController {
         // Download the PDF to temporary directory
         final response = await http.get(Uri.parse(pathOrUrl));
         if (response.statusCode != 200) {
-          print('Failed to download PDF');
           Navigator.of(Get.context!).pop(); // close loader
           return;
         }
@@ -749,9 +737,7 @@ class CreatePropertyController extends GetxController {
 
       // Open the PDF using the default app
       final result = await OpenFilex.open(localPath);
-      print('Open result: ${result.message}');
     } catch (e) {
-      print('PDF open error: $e');
     } finally {
       // Close loader
       Navigator.of(Get.context!).pop();
@@ -761,7 +747,6 @@ class CreatePropertyController extends GetxController {
   void removeBuilderDocument(int index) {
     if (index >= 0 && index < documentList.length) {
       documentList.removeAt(index);
-      print('Removed document at index $index');
     }
   }
 
@@ -798,7 +783,6 @@ class CreatePropertyController extends GetxController {
       selectedRoomAmenities.add(item);
     }
     selectedRoomAmenities.refresh();
-    print("Selected Amenities: $selectedRoomAmenities");
   }
 
   void addOrUpdateRoomAmenities(String item) {
@@ -808,9 +792,6 @@ class CreatePropertyController extends GetxController {
       selectedRoomAmenitiesDataForPG.add(item);
     }
     selectedRoomAmenitiesDataForPG.refresh();
-    print(
-      "Selected selectedRoomAmenitiesDataForPG: $selectedRoomAmenitiesDataForPG",
-    );
   }
 
   void addCommercialAmenities(String items) {
@@ -829,16 +810,12 @@ class CreatePropertyController extends GetxController {
       if (item.isMultiChoice) {
         selectedFurnishing[item.key]!.quantity++;
         selectedFurnishing.refresh();
-        print("Updated Furnishing: ${selectedFurnishing[item.key]}");
       }
     } else {
       selectedFurnishing[item.key] = FurnishingItemModel(
         key: item.key,
         title: item.title,
         quantity: 1,
-      );
-      print(
-        "Added Furnishing: ${FurnishingItemModel(key: item.key, title: item.title, quantity: 1)}",
       );
     }
     selectedFurnishing.refresh();
@@ -860,10 +837,8 @@ class CreatePropertyController extends GetxController {
     if (selectedFurnishing.containsKey(item.key) && item.isMultiChoice) {
       if (selectedFurnishing[item.key]!.quantity > 1) {
         selectedFurnishing[item.key]!.quantity--;
-        print("Decrease Furnishing: ${selectedFurnishing[item.key]}");
       } else {
         selectedFurnishing.remove(item.key);
-        print("Removed Furnishing: ${item.key}");
       }
       selectedFurnishing.refresh();
     }
@@ -892,7 +867,6 @@ class CreatePropertyController extends GetxController {
       list.add(item);
     }
     list.refresh();
-    debugPrint("Updated List: $list");
   }
 
   void nextStep() {
@@ -903,7 +877,6 @@ class CreatePropertyController extends GetxController {
 
       try {
         stepperSelectedIndex.value++;
-        debugPrint("Current Step: ${stepperSelectedIndex.value}");
 
         if (stepsList[stepperSelectedIndex.value] == "Review" ||
             stepsList[stepperSelectedIndex.value] == "Verify") {
@@ -922,18 +895,12 @@ class CreatePropertyController extends GetxController {
   // Separate method to handle review preparation
   Future<void> _prepareReviewData() async {
     try {
-      debugPrint("Preparing review data...");
-
       // Use microtask to prevent blocking UI
       await Future.microtask(() async {
         await _printAllDataAsync();
         await _addReviewModelAsync();
       });
-
-      debugPrint("Review Model Added.");
     } catch (e) {
-      debugPrint("Error preparing review data: $e");
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: "Failed to prepare review data. Please try again.",
@@ -944,13 +911,10 @@ class CreatePropertyController extends GetxController {
 
   Future<void> _prepareCommercialReviewData() async {
     try {
-      debugPrint("Preparing commercial review data...");
       await Future.microtask(() async {
         await _addCommercialReviewModelAsync();
       });
-      debugPrint("Commercial Review Model Added.");
     } catch (e) {
-      debugPrint("Error preparing commercial review data: $e");
       // Handle error appropriately
     }
   }
@@ -971,7 +935,7 @@ class CreatePropertyController extends GetxController {
   void previousStep() {
     if (stepperSelectedIndex.value > 0) {
       stepperSelectedIndex.value--;
-      print('stepper: ${stepperSelectedIndex.value}');
+
       if (stepperSelectedIndex.value == 0) {
         clearAllVariablesExceptPropertyType();
       }
@@ -980,14 +944,12 @@ class CreatePropertyController extends GetxController {
 
   void finalsubmitForm() {
     // Final submit logic
-    debugPrint("Final form submission");
   }
 
   // bool isSelected(String item) => selectedItems.contains(item);
 
   void select(String index) {
     selectedIndex.value = index;
-    debugPrint("Selected index: $index");
   }
 
   // Toggle user type
@@ -995,7 +957,7 @@ class CreatePropertyController extends GetxController {
     selectedSellerType.value = type;
     // Update isOwner reactive accordingly
     isOwner.value = (type == SellerType.owner);
-    print("Selected User Type: $type"); // Debug log
+    // Debug log
   }
 
   void toggleOwner(bool ownerSelected) {
@@ -1008,12 +970,10 @@ class CreatePropertyController extends GetxController {
 
   void submitForm() {
     if (isProcessing.value) return;
-    print("1===================== ${isLogin.value}======================");
 
     if (!isLogin.value) {
       Get.lazyPut(() => AuthController());
       final authController = Get.find<AuthController>();
-      print("2===================== ${isLogin.value}======================");
 
       // if (isOwner.value) {
       //   authController.sellerRegister(
@@ -1085,9 +1045,7 @@ class CreatePropertyController extends GetxController {
 
       if (editingIndex.value == -1) {
         rooms.add(room);
-        print("Room: ${rooms.map((r) => r.toMap()).toList()}");
       } else {
-        print("Room: ${rooms.map((element) => element.toMap())}");
         rooms[editingIndex.value] = room;
         editingIndex.value = -1;
       }
@@ -1137,8 +1095,6 @@ class CreatePropertyController extends GetxController {
           selectedImages.add(PhotoImageModel(path: file.path));
         }
       } catch (e) {
-        debugPrint("Error picking image from camera: $e");
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Error',
           message: "Failed to pick image: ${e.toString()}",
@@ -1191,8 +1147,6 @@ class CreatePropertyController extends GetxController {
           }
         }
       } catch (e) {
-        debugPrint("Error picking images: $e");
-
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Error',
           message: "Failed to pick images: ${e.toString()}",
@@ -1227,34 +1181,7 @@ class CreatePropertyController extends GetxController {
   Future<void> _printAllDataAsync() async {
     await Future.delayed(Duration.zero);
 
-    debugPrint("========== Property Data ==========");
-    debugPrint("Is Owner: ${isOwner.value}");
-    debugPrint("Property Type: ${propertyType.value}");
-    debugPrint("Looking To: ${lookingTo.value}");
-    debugPrint("Phone: ${phoneController.text}");
-    debugPrint("Name: ${nameController.text}");
-    debugPrint("City: ${cityController.text}");
-    debugPrint("Locality: ${localityController.text}");
-    debugPrint("PG Name: ${pgNameController.text}");
-
     // Print collections efficiently
-    debugPrint(
-      "Rooms (${rooms.length}): ${rooms.map((r) => r.roomType).join(', ')}",
-    );
-    debugPrint(
-      "Images (${selectedImages.length}): ${selectedImages.length} selected",
-    );
-    debugPrint(
-      "Images (${selectedImages.length}): ${selectedImages.length} selected",
-    );
-    debugPrint(
-      "Images (${selectedImages.length}): ${selectedImages.length} selected",
-    );
-    debugPrint("Meal Available: ${mealAvailableList.join(', ')}");
-    debugPrint("Best Suited: ${bestSuitedList.join(', ')}");
-    debugPrint("Common Areas: ${commonAreasList.join(', ')}");
-    debugPrint("Step Index: ${stepperSelectedIndex.value}");
-    debugPrint("===================================");
   }
 
   // Async version of addReviewModel
@@ -1316,7 +1243,6 @@ class CreatePropertyController extends GetxController {
       // clearAllData();
       // stepperSelectedIndex.value = 0; // <-- REMOVE THIS LINE
     } catch (e) {
-      debugPrint("Error creating review model: $e");
       rethrow;
     }
   }
@@ -1325,8 +1251,6 @@ class CreatePropertyController extends GetxController {
   // Updated _addCommercialReviewModelAsync method matching CommercialPropertyModel
   Future<void> _addCommercialReviewModelAsync() async {
     try {
-      debugPrint("Preparing commercial review data...");
-
       // Use microtask to prevent blocking UI
       await Future.microtask(() {
         // Use the factory method from CommercialPropertyModel
@@ -1337,10 +1261,7 @@ class CreatePropertyController extends GetxController {
         // Assign to the commercialReview observable
         commercialReview.value = commercialReviewModel;
       });
-
-      debugPrint("Commercial Review Model created successfully");
     } catch (e) {
-      debugPrint("Error creating commercial review model: $e");
       rethrow;
     }
   }
@@ -1471,10 +1392,7 @@ class CreatePropertyController extends GetxController {
 
         commercialReview.value = commercialReviewModel;
       });
-
-      debugPrint("Commercial Review Model created successfully");
     } catch (e) {
-      debugPrint("Error creating commercial review model: $e");
       rethrow;
     }
   }
@@ -1485,215 +1403,36 @@ class CreatePropertyController extends GetxController {
   Future<void> printAllControllerVariables() async {
     await Future.delayed(Duration.zero);
 
-    debugPrint("========== ALL CONTROLLER VARIABLES ==========");
-
     // Basic reactive variables
-    debugPrint("--- Basic Variables ---");
-    debugPrint("isOwner: ${isOwner.value}");
-    debugPrint("propertyType: ${propertyType.value}");
-    debugPrint("rent_propertyType: ${rent_propertyType.value}");
-    debugPrint("lookingTo: ${lookingTo.value}");
-    debugPrint("countryCode: ${countryCode.value}");
-    debugPrint("bhkType: ${bhkType.value}");
-    debugPrint("isShareWithAgents: ${isShareWithAgents.value}");
-    debugPrint("rent_Bathroom: ${rent_Bathroom.value}");
-    debugPrint("isLogin: ${isLogin.value}");
-    debugPrint("furnishingType: ${furnishingType.value}");
-    debugPrint("stepIndex: ${stepIndex.value}");
-    debugPrint("stepperSelectedIndex: ${stepperSelectedIndex.value}");
 
     // Area and property details
-    debugPrint("--- Area & Property Details ---");
-    debugPrint("areaUnit: ${areaUnit.value}");
-    debugPrint("carpetAreaUnit: ${carpetAreaUnit.value}");
-    debugPrint("commercial_plotArea: ${commercial_plotArea.value}");
-    debugPrint("rent_facing: ${rent_facing.value}");
-    debugPrint("selectedDate: ${selectedDate.value}");
-    debugPrint("selectedTime: ${selectedTime.value}");
 
     // Rent specific variables
-    debugPrint("--- Rent Specific Variables ---");
-    debugPrint("rent_Painting_Charges: ${rent_Painting_Charges.value}");
-    debugPrint("rent_Parking_Charges: ${rent_Parking_Charges.value}");
-    debugPrint("rent_Balcony: ${rent_Balcony.value}");
-    debugPrint("rent_OpenParking: ${rent_OpenParking.value}");
-    debugPrint("rent_CoveredParking: ${rent_CoveredParking.value}");
-    debugPrint(
-      "rent_maintenanceChargeType: ${rent_maintenanceChargeType.value}",
-    );
-    debugPrint("rent_Pet_Friendly: ${rent_Pet_Friendly.value}");
-    debugPrint("rent_lockInPeriod: ${rent_lockInPeriod.value}");
-    debugPrint("rent_depositType: ${rent_depositType.value}");
-    debugPrint(
-      "rent_Selected_Tenants_for_Bachelors: ${rent_Selected_Tenants_for_Bachelors.value}",
-    );
 
     // Commercial properties
-    debugPrint("--- Commercial Properties ---");
-    debugPrint("commercial_ZoneType: ${commercial_ZoneType.value}");
-    debugPrint("commercial_LocationHub: ${commercial_LocationHub.value}");
-    debugPrint(
-      "commercial_property_condition: ${commercial_property_condition.value}",
-    );
-    debugPrint(
-      "commercial_Square_AreaUnti_Build: ${commercial_Square_AreaUnti_Build.value}",
-    );
-    debugPrint(
-      "commercial_Square_AreaUnti_Carpet: ${commercial_Square_AreaUnti_Carpet.value}",
-    );
-    debugPrint("commercial_ownerShipList: ${commercial_ownerShipList.value}");
-    debugPrint(
-      "commercial_construction_status_value: ${commercial_construction_status_value.value}",
-    );
-    debugPrint(
-      "commercial_rent_posessionStatus: ${commercial_rent_posessionStatus.value}",
-    );
-    debugPrint("selectedFloors: ${selectedFloors.toList()}");
 
     // Sell properties
-    debugPrint("--- Sell Properties ---");
-    debugPrint("sell_rent_Servent_Room: ${sell_rent_Servent_Room.value}");
-    debugPrint("sell_constructionStatus: ${sell_constructionStatus.value}");
 
     // Other variables
-    debugPrint("--- Other Variables ---");
-    debugPrint("mealAvailable: ${mealAvailable.value}");
-    debugPrint("labelOfPhoto: ${labelOfPhoto.value}");
-    debugPrint("selectedIndex: ${selectedIndex.value}");
-    debugPrint("tempRoomType: ${tempRoomType.value}");
-    debugPrint("editingIndex: ${editingIndex.value}");
-    debugPrint("isProcessing: ${isProcessing.value}");
 
     // Text Controllers
-    debugPrint("--- Text Controllers ---");
-    debugPrint("phoneController: ${phoneController.text}");
-    debugPrint("nameController: ${nameController.text}");
-    debugPrint("cityController: ${cityController.text}");
-    debugPrint("localityController: ${localityController.text}");
-    debugPrint("pgNameController: ${pgNameController.text}");
-    debugPrint("totalRoomsController: ${totalRoomsController.text}");
-    debugPrint("noticPeriodController: ${noticPeriodController.text}");
-    debugPrint("ageOfPropertyController: ${ageOfPropertyController.text}");
-    debugPrint("rentBuildingController: ${rentBuildingController.text}");
-    debugPrint("lockPeriodController: ${lockPeriodController.text}");
-    debugPrint("areaController: ${areaController.text}");
-    debugPrint("carpetAreaController: ${carpetAreaController.text}");
-    debugPrint("tempMonthlyRent: ${tempMonthlyRent.text}");
-    debugPrint("tempDeposit: ${tempDeposit.text}");
 
     // Commercial text controllers
-    debugPrint("commercial_plot: ${commercial_plot.text}");
-    debugPrint("commercial_Property_Name: ${commercial_Property_Name.text}");
-    debugPrint("commercial_other_Location: ${commercial_other_Location.text}");
-    debugPrint(
-      "commercial_Square_BuildArea: ${commercial_Square_BuildArea.text}",
-    );
-    debugPrint(
-      "commercial_Square_CarpetArea: ${commercial_Square_CarpetArea.text}",
-    );
-    debugPrint("commercial_seats: ${commercial_seats.text}");
-    debugPrint("commercial_cabins: ${commercial_cabins.text}");
-    debugPrint("commercial_meeting_room: ${commercial_meeting_room.text}");
-    debugPrint("commercial_total_floor: ${commercial_total_floor.text}");
-    debugPrint("commercial_your_floor: ${commercial_your_floor.text}");
-    debugPrint(
-      "commercial_rent_building_Name: ${commercial_rent_building_Name.text}",
-    );
-    debugPrint(
-      "commercial_rent_Loaclity_Name: ${commercial_rent_Loaclity_Name.text}",
-    );
-    debugPrint(
-      "commercial_rent_AvailableFrom: ${commercial_rent_AvailableFrom.text}",
-    );
-    debugPrint(
-      "commercial_rent_AgeOfPropertInYear: ${commercial_rent_AgeOfPropertInYear.text}",
-    );
 
     // Rent text controllers
-    debugPrint(
-      "rent_Custom_Painting_Charges: ${rent_Custom_Painting_Charges.text}",
-    );
-    debugPrint(
-      "rent_Custom_Parking_Charges: ${rent_Custom_Parking_Charges.text}",
-    );
-    debugPrint("rent_Custom_LockIn_Period: ${rent_Custom_LockIn_Period.text}");
-    debugPrint("rent_MonthilyRent: ${rent_MonthilyRent.text}");
-    debugPrint("rent_SecurityDeposit: ${rent_SecurityDeposit.text}");
-    debugPrint("rent_AvailableFrom: ${rent_AvailableFrom.text}");
 
     // Sell text controllers
-    debugPrint("sell_rent_Address: ${sell_rent_Address.text}");
-    debugPrint("sell_rent_Flat_No: ${sell_rent_Flat_No.text}");
-    debugPrint("sell_rent_Floor_No: ${sell_rent_Floor_No.text}");
-    debugPrint(
-      "sell_rent_propertyDescriptionController: ${sell_rent_propertyDescriptionController.text}",
-    );
-    debugPrint("sell_rent_Total_Floor: ${sell_rent_Total_Floor.text}");
-    debugPrint("sell_AvailableFrom: ${sell_AvailableFrom.text}");
-    debugPrint("sell_ExpectedPrice: ${sell_ExpectedPrice.text}");
-    debugPrint(
-      "sell_rent_Maintenance_Charges: ${sell_rent_Maintenance_Charges.text}",
-    );
-    debugPrint("sell_Rera_Id: ${sell_Rera_Id.text}");
 
     // Collections
-    debugPrint("--- Collections ---");
-    debugPrint(
-      "rooms (${rooms.length}): ${rooms.map((r) => '${r.roomType}: ${r.monthlyRent}').join(', ')}",
-    );
-    debugPrint(
-      "selectedImages (${selectedImages.length}): ${selectedImages.map((img) => '${img.label}: ${img.path}').join(', ')}",
-    );
-    debugPrint(
-      "selectedFurnishing (${selectedFurnishing.length}): ${selectedFurnishing.keys.join(', ')}",
-    );
-    debugPrint(
-      "selectedRoomAmenities (${selectedRoomAmenities.length}): ${selectedRoomAmenities.join(', ')}",
-    );
+
     // debugPrint(
     //   "selectedItems (${selectedItems.length}): ${selectedItems.join(', ')}",
     // );
-    debugPrint(
-      "mealAvailableList (${mealAvailableList.length}): ${mealAvailableList.join(', ')}",
-    );
-    debugPrint(
-      "bestSuitedList (${bestSuitedList.length}): ${bestSuitedList.join(', ')}",
-    );
-    debugPrint(
-      "commonAreasList (${commonAreasList.length}): ${commonAreasList.join(', ')}",
-    );
-    debugPrint("rent_Legal (${rent_Legal.length}): ${rent_Legal.join(', ')}");
-    debugPrint(
-      "sell_Brokerage (${sell_Brokerage.length}): ${sell_Brokerage.join(', ')}",
-    );
-    debugPrint(
-      "sell_Registration_Charges (${sell_Registration_Charges.length}): ${sell_Registration_Charges.join(', ')}",
-    );
-    debugPrint(
-      "sell_Amenities_Furniture (${sell_Amenities_Furniture.length}): ${sell_Amenities_Furniture.join(', ')}",
-    );
-    debugPrint(
-      "rent_Rentals (${rent_Rentals.length}): ${rent_Rentals.join(', ')}",
-    );
-    debugPrint(
-      "rent_Security_DepositType (${rent_Security_DepositType.length}): ${rent_Security_DepositType.join(', ')}",
-    );
-    debugPrint(
-      "rent_HomeServices (${rent_HomeServices.length}): ${rent_HomeServices.join(', ')}",
-    );
-    debugPrint(
-      "rent_Preferred_Tenants (${rent_Preferred_Tenants.length}): ${rent_Preferred_Tenants.join(', ')}",
-    );
 
     // Review model
-    debugPrint("--- Review Model ---");
-    if (review.value != null) {
-      debugPrint("Review Model exists: ${review.value?.pgName}");
-    } else {
-      debugPrint("Review Model: null");
-    }
 
-    debugPrint("============================================");
+    if (review.value != null) {
+    } else {}
   }
 
   /// Clears all variables except propertyType - called when returning to step 0
@@ -1702,8 +1441,6 @@ class CreatePropertyController extends GetxController {
 
     try {
       isProcessing.value = true;
-
-      debugPrint("Clearing all variables except propertyType and lookingTo...");
 
       // Preserve these critical values
       String preservedPropertyType = propertyType.value;
@@ -1870,10 +1607,6 @@ class CreatePropertyController extends GetxController {
           preservedSelectedIndex.isNotEmpty) {
         selectedIndex.value = preservedSelectedIndex;
       }
-
-      debugPrint(
-        "Variables cleared. Preserved - propertyType: ${propertyType.value}, lookingTo: ${lookingTo.value}, selectedIndex: ${selectedIndex.value}",
-      );
     } finally {
       isProcessing.value = false;
     }
@@ -1928,10 +1661,8 @@ class CreatePropertyController extends GetxController {
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
 
       if (type.isEmpty || action.isEmpty) {
-        print("Error: Property type or action is empty.");
         return;
       }
-      log(" Plot type check ${type} ====== $action============$subtype");
 
       bool success = false;
 
@@ -1970,7 +1701,6 @@ class CreatePropertyController extends GetxController {
             );
             break;
           default:
-            print("Error: Invalid residential action");
         }
       } else if (type == "commercial") {
         switch (action) {
@@ -1989,19 +1719,12 @@ class CreatePropertyController extends GetxController {
             );
             break;
           default:
-            print("Error: Invalid commercial action");
         }
-      } else {
-        print("Error: Invalid property type");
-      }
+      } else {}
       if (success) {
-        print("Property added successfully ✅");
         Get.offAll(() => SellerDashboardScreen());
-      } else {
-        print("Failed to Updater property ❌");
-      }
+      } else {}
     } catch (e) {
-      print("Error adding property: $e");
     } finally {
       isLoading.value = false;
     }
@@ -2011,21 +1734,15 @@ class CreatePropertyController extends GetxController {
   Future<void> addProperty() async {
     try {
       isLoading.value = true;
-      log('🧩 addProperty() called');
-      final subtypeSection = rent_propertyType.value.toLowerCase();
 
-      log('steps length: ${stepsList.length}');
-      log(
-        'propertyType: ${propertyType.value}, lookingTo: ${lookingTo.value},subtype: ${subtypeSection} ',
-      );
+      final subtypeSection = rent_propertyType.value.toLowerCase();
 
       final type = propertyType.value.toLowerCase();
       final action = lookingTo.value.toLowerCase();
 
       final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
-      log(" Plot type check ${type} ====== $action============$subtype");
+
       if (type.isEmpty || action.isEmpty) {
-        print("Error: Property type or action is empty.");
         return;
       }
 
@@ -2049,7 +1766,6 @@ class CreatePropertyController extends GetxController {
             success = await _addPropertyResidentialPg();
             break;
           default:
-            print("Error: Invalid residential action");
         }
       } else if (type == "commercial") {
         switch (action) {
@@ -2060,20 +1776,12 @@ class CreatePropertyController extends GetxController {
             success = await _addPropertyCommercialSell(subtype);
             break;
           default:
-            print("Error: Invalid commercial action");
         }
-      } else {
-        print("Error: Invalid property type");
-      }
+      } else {}
       if (success) {
-        print("Property added successfully ✅");
         Get.offAll(() => SellerDashboardScreen());
-      } else {
-        print("Failed to add property ❌");
-      }
+      } else {}
     } catch (e, s) {
-      log('❌ addProperty error: $e');
-      log('Stacktrace: $s');
     } finally {
       isLoading.value = false;
     }
@@ -2085,7 +1793,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialSellPlot();
-      AppLogger.structured("Payload Plot : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2103,7 +1811,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential sell: $e");
       return false;
     }
   }
@@ -2117,7 +1824,6 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialRent();
-      print("Payload of Residential Rent:  ${payload.propertyDetails?.bhk}");
 
       final success =
           isEdit
@@ -2136,7 +1842,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential rent: $e");
       return false;
     }
   }
@@ -2147,18 +1852,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialSell();
-      AppLogger.structured("Payload : ", payload.toJson());
 
-      debugPrint(
-        "Payload of Residential Rent Image:${imageList.map((element) => File(element)).toList()}",
-      );
-
-      debugPrint(
-        "Payload of Residential Rent video :${videoList.map((element) => File(element)).toList()}",
-      );
-      debugPrint(
-        "Payload of Residential Rent document:${documentList.map((element) => File(element)).toList()}",
-      );
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2176,7 +1870,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential sell: $e");
       return false;
     }
   }
@@ -2187,10 +1880,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadResidentialPG();
-      AppLogger.structured(
-        "Payload : ",
-        payload.propertyDetails?.furnishInfo?.toJson(),
-      );
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2208,7 +1898,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2224,35 +1913,27 @@ class CreatePropertyController extends GetxController {
     try {
       switch (subtype) {
         case "plot":
-          print("Adding Commercial Rent → Plot");
           return await _addPropertyCommercialRentPlot();
           break;
         case "other":
-          print("Adding Commercial Rent → Other");
           return await _addPropertyCommercialRentOther();
           break;
         case "office":
-          print("Adding Commercial Rent → Office");
           return await _addPropertyCommercialRentOffice();
           break;
         case "showroom":
-          print("Adding Commercial Rent → Showroom");
           return await _addPropertyCommercialRentShowRoom();
           break;
         case "shop":
-          print("Adding Commercial Rent → Shop");
           return await _addPropertyCommercialRentShop();
           break;
         case "warehouse":
-          print("Adding Commercial Rent → Warehouse");
           return await _addPropertyCommercialRentWarehouse();
           break;
         default:
-          print("Error: Invalid commercial rent subtype");
           return false;
       }
     } catch (e) {
-      print("Error adding commercial rent: $e");
       return false;
     }
   }
@@ -2265,53 +1946,45 @@ class CreatePropertyController extends GetxController {
     try {
       switch (subtype) {
         case "plot":
-          print("Adding Commercial Rent → Plot");
           return await _addPropertyCommercialRentPlot(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "other":
-          print("Adding Commercial Rent → Other");
           return await _addPropertyCommercialRentOther(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "office":
-          print("Adding Commercial Rent → Office");
           return await _addPropertyCommercialRentOffice(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "showroom":
-          print("Adding Commercial Rent → Showroom");
           return await _addPropertyCommercialRentShowRoom(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "shop":
-          print("Adding Commercial Rent → Shop");
           return await _addPropertyCommercialRentShop(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "warehouse":
-          print("Adding Commercial Rent → Warehouse");
           return await _addPropertyCommercialRentWarehouse(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         default:
-          print("Error: Invalid commercial rent subtype");
           return false;
       }
     } catch (e) {
-      print("Error adding commercial rent: $e");
       return false;
     }
   }
@@ -2322,10 +1995,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadCommercialRentPlot();
-      AppLogger.structured(
-        "Payload Rent Plot In Commercial  : ",
-        payload.toJson(),
-      );
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2343,7 +2013,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2354,7 +2023,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadCommercialRentOther();
-      AppLogger.structured("Payload for Commercial other : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2372,7 +2041,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2426,7 +2094,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentOffice();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2444,7 +2112,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2483,7 +2150,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentShowRoom();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2501,7 +2168,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2540,7 +2206,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentShop();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2558,7 +2224,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2598,7 +2263,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialRentWarehouse();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2616,7 +2281,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2628,35 +2292,27 @@ class CreatePropertyController extends GetxController {
     try {
       switch (subtype) {
         case "plot":
-          print("Adding Commercial Sell → Plot");
           return await _addPropertyCommercialSellPlot();
           break;
         case "other":
-          print("Adding Commercial Sell → Other");
           return await _addPropertyCommercialSellOther();
           break;
         case "office":
-          print("Adding Commercial Sell → Office");
           return await _addPropertyCommercialSellOffice();
           break;
         case "showroom":
-          print("Adding Commercial Sell → Showroom");
           return await _addPropertyCommercialSellShowRoom();
           break;
         case "shop":
-          print("Adding Commercial Sell → Shop");
           return await _addPropertyCommercialSellShop();
           break;
         case "warehouse":
-          print("Adding Commercial Sell → Warehouse");
           return await _addPropertyCommercialSellWarehouse();
           break;
         default:
-          print("Error: Invalid commercial sell subtype");
           return false;
       }
     } catch (e) {
-      print("Error adding commercial sell: $e");
       return false;
     }
   }
@@ -2669,53 +2325,45 @@ class CreatePropertyController extends GetxController {
     try {
       switch (subtype) {
         case "plot":
-          print("Adding Commercial Sell → Plot");
           return await _addPropertyCommercialSellPlot(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "other":
-          print("Adding Commercial Sell → Other");
           return await _addPropertyCommercialSellOther(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "office":
-          print("Adding Commercial Sell → Office");
           return await _addPropertyCommercialSellOffice(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "showroom":
-          print("Adding Commercial Sell → Showroom");
           return await _addPropertyCommercialSellShowRoom(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "shop":
-          print("Adding Commercial Sell → Shop");
           return await _addPropertyCommercialSellShop(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         case "warehouse":
-          print("Adding Commercial Sell → Warehouse");
           return await _addPropertyCommercialSellWarehouse(
             isEdit: true,
             propertyId: propertyId,
           );
           break;
         default:
-          print("Error: Invalid commercial sell subtype");
           return false;
       }
     } catch (e) {
-      print("Error adding commercial sell: $e");
       return false;
     }
   }
@@ -2726,7 +2374,7 @@ class CreatePropertyController extends GetxController {
   }) async {
     try {
       final payload = await buildPropertyPayloadCommercialSellPlot();
-      AppLogger.structured("Payload Commercial Sell Plot : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2744,7 +2392,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2793,7 +2440,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellOther();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2811,7 +2458,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2866,7 +2512,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellOffice();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2884,7 +2530,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2925,7 +2570,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellShowRoom();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -2943,7 +2588,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -2984,7 +2628,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellShop();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3002,7 +2646,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -3044,7 +2687,7 @@ class CreatePropertyController extends GetxController {
       // );
 
       final payload = await buildPropertyPayloadCommercialSellWarehouse();
-      AppLogger.structured("Payload : ", payload.toJson());
+
       final success =
           isEdit
               ? await _propertyService.updateProperty(
@@ -3062,7 +2705,6 @@ class CreatePropertyController extends GetxController {
               );
       return success;
     } catch (e) {
-      print("Error adding residential pg: $e");
       return false;
     }
   }
@@ -3081,9 +2723,7 @@ class CreatePropertyController extends GetxController {
       } catch (_) {
         try {
           parsedDate = DateFormat('d/M/yyyy').parse(rawDate);
-        } catch (e) {
-          print('Date parse error: $e');
-        }
+        } catch (e) {}
       }
     }
 
@@ -3175,22 +2815,23 @@ class CreatePropertyController extends GetxController {
             (rent_CoveredParking.value.isNotEmpty ||
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
-                  coveredParking:
-                      int.tryParse(rent_CoveredParking.value.trim()),
-                  openParking:
-                      int.tryParse(rent_OpenParking.value.trim()),
+                  coveredParking: int.tryParse(
+                    rent_CoveredParking.value.trim(),
+                  ),
+                  openParking: int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         financialInfo:
             (rent_MonthilyRent.text.trim().isNotEmpty ||
                     rent_SecurityDeposit.text.trim().isNotEmpty)
-                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+                ? FinancialInfo(
+                  bookingAmount: double.tryParse(bookingAmount.text.trim()),
                   propertyRentPerMonth: double.tryParse(
                     rent_MonthilyRent.text.trim(),
                   ),
                   electricityChargesType:
                       electricityChargesType.value.isNotEmpty
-                            ? getElectricityChargeType()
+                          ? getElectricityChargeType()
                           : null,
                   electricityChargesPerMonth:
                       electricityChargesType.value.toLowerCase() == 'separate'
@@ -3332,22 +2973,21 @@ class CreatePropertyController extends GetxController {
     );
   }
 
-
   String? getElectricityChargeType() {
-  switch (electricityChargesType.value) {
-    case 'Included in Rent':
-      return 'included';
+    switch (electricityChargesType.value) {
+      case 'Included in Rent':
+        return 'included';
 
-    case 'Separate':
-      return 'separate';
+      case 'Separate':
+        return 'separate';
 
-    case 'Based on Unit':
-      return 'based_on_unit';
+      case 'Based on Unit':
+        return 'based_on_unit';
 
-    default:
-      return null;
+      default:
+        return null;
+    }
   }
-}
 
   Future<AddPropertyModel> buildPropertyPayloadResidentialSell() async {
     final user = await SecureStorage.getUserData();
@@ -3463,10 +3103,10 @@ class CreatePropertyController extends GetxController {
             (rent_CoveredParking.value.isNotEmpty ||
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
-                  coveredParking:
-                      int.tryParse(rent_CoveredParking.value.trim()),
-                  openParking:
-                      int.tryParse(rent_OpenParking.value.trim()),
+                  coveredParking: int.tryParse(
+                    rent_CoveredParking.value.trim(),
+                  ),
+                  openParking: int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         lifInfo: LiftInfo(
@@ -3474,7 +3114,8 @@ class CreatePropertyController extends GetxController {
         ),
         financialInfo:
             (sell_ExpectedPrice.text.trim().isNotEmpty)
-                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+                ? FinancialInfo(
+                  bookingAmount: double.tryParse(bookingAmount.text.trim()),
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
@@ -3641,12 +3282,11 @@ class CreatePropertyController extends GetxController {
       reraId:
           sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
     );
-    print("Data of residential sale : ${data.toJson()}");
+
     return data;
   }
 
   Future<AddPropertyModel> buildPropertyPayloadResidentialSellPlot() async {
-    log("Containetr check any missimn");
     final user = await SecureStorage.getUserData();
     final userId = user?.user?.id ?? "";
     final parsedDate = DateFormat(
@@ -3725,10 +3365,10 @@ class CreatePropertyController extends GetxController {
             (rent_CoveredParking.value.isNotEmpty ||
                     rent_OpenParking.value.isNotEmpty)
                 ? ParkingInfo(
-                  coveredParking:
-                      int.tryParse(rent_CoveredParking.value.trim()),
-                  openParking:
-                      int.tryParse(rent_OpenParking.value.trim()),
+                  coveredParking: int.tryParse(
+                    rent_CoveredParking.value.trim(),
+                  ),
+                  openParking: int.tryParse(rent_OpenParking.value.trim()),
                 )
                 : null,
         lifInfo: LiftInfo(
@@ -3736,7 +3376,8 @@ class CreatePropertyController extends GetxController {
         ),
         financialInfo:
             (sell_ExpectedPrice.text.trim().isNotEmpty)
-                ? FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+                ? FinancialInfo(
+                  bookingAmount: double.tryParse(bookingAmount.text.trim()),
                   propertyPrice: double.tryParse(
                     sell_ExpectedPrice.text.trim(),
                   ),
@@ -3939,7 +3580,7 @@ class CreatePropertyController extends GetxController {
       reraId:
           sell_Rera_Id.text.trim().isNotEmpty ? sell_Rera_Id.text.trim() : null,
     );
-    print("Data of residential sale : ${data.toJson()}");
+
     return data;
   }
 
@@ -4068,7 +3709,8 @@ class CreatePropertyController extends GetxController {
                   : null,
         ),
         amenities: selectedRoomAmenities.value,
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           lockInPeriod:
               lockPeriodController.text.isNotEmpty
                   ? int.tryParse(lockPeriodController.text.trim())
@@ -4218,7 +3860,8 @@ class CreatePropertyController extends GetxController {
                 ? surveyNumberPlotAndLand.text.trim()
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           monthlyRent:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4362,7 +4005,8 @@ class CreatePropertyController extends GetxController {
                 ? commercial_ZoneType.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4543,7 +4187,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           propertyRentPerMonth:
               commercial_rent_cost.text.trim().isNotEmpty
                   ? double.tryParse(commercial_rent_cost.text.trim())
@@ -4665,7 +4310,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
           propertyPrice:
               isPredefinedCostEnabled.value
@@ -4771,7 +4417,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4893,7 +4540,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           brokerCommission: double.tryParse(brokerRageCommission.text.trim()),
           platformFees: double.tryParse(platformFees.text.trim()),
           is_for_sellorrent: isPredefinedCostEnabled.value,
@@ -4973,7 +4621,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5134,7 +4783,8 @@ class CreatePropertyController extends GetxController {
                   ? int.tryParse(commercial_your_floor.text.trim())
                   : null,
         ),
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5318,7 +4968,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5454,7 +5105,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5587,7 +5239,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices
@@ -5727,7 +5380,8 @@ class CreatePropertyController extends GetxController {
                 ? selectedCommercialAmenities.value
                 : null,
 
-        financialInfo: FinancialInfo(bookingAmount: double.tryParse(bookingAmount.text.trim()), 
+        financialInfo: FinancialInfo(
+          bookingAmount: double.tryParse(bookingAmount.text.trim()),
           // propertyPricePast: getPastPriceData(),
           //
           // // 🔮 Future 5 Years Prices

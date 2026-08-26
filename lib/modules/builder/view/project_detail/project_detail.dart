@@ -186,9 +186,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         // } else {
         //   await otherCtrl.loadInitial();
         // }
-      } catch (e) {
-        log('❌ Error loading other projects: $e');
-      }
+      } catch (e) {}
       final currentProject = project.value;
       if (currentProject == null) return;
 
@@ -476,10 +474,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                                   );
                                                 }
                                               } catch (e, s) {
-                                                debugPrint(
-                                                  '❌ Error in Get Offer button: $e',
-                                                );
-                                                debugPrint('$s');
                                                 NesticoPeSnackBar.showAwesomeSnackbar(
                                                   title: 'Error',
                                                   message:
@@ -506,18 +500,18 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                           _buildBrochuresSection(controller, project.value!),
                         // ],
                         // if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
-                       if(!UserHelper.isGuest && !UserHelper.isBuyer)...[
-                         if ((project
-                                ?.value
-                                ?.mediaGallery
-                                ?.documents
-                                .isNotEmpty ??
-                            false))
-                          _buildProjectDocumentsSection(
-                            controller,
-                            project.value!,
-                          ),
-                       ],
+                        if (!UserHelper.isGuest && !UserHelper.isBuyer) ...[
+                          if ((project
+                                  ?.value
+                                  ?.mediaGallery
+                                  ?.documents
+                                  .isNotEmpty ??
+                              false))
+                            _buildProjectDocumentsSection(
+                              controller,
+                              project.value!,
+                            ),
+                        ],
                         // ],
 
                         // Other projects by the same builder (exclude current project)
@@ -743,9 +737,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                     emailIcon: Icons.email,
                                     allowSellerContact: false,
                                     negotiable: false,
-                                    onChatPressed: () {
-                                      print("WhatsApp button clicked!");
-                                    },
+                                    onChatPressed: () {},
                                     onContactPressed: (
                                       name,
                                       phone,
@@ -824,14 +816,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                         );
                                       }
                                     },
-                                    onAllowSellerContactChanged: (value) {
-                                      print("Allow sellers changed: $value");
-                                    },
-                                    onHomeLoanInterestChanged: (value) {
-                                      print(
-                                        "Home loan interest changed: $value",
-                                      );
-                                    },
+                                    onAllowSellerContactChanged: (value) {},
+                                    onHomeLoanInterestChanged: (value) {},
                                   ),
                                 ),
                               ),
@@ -964,9 +950,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
         } else {
           await otherCtrl.loadInitial();
         }
-      } catch (e) {
-        print('Error applying city filter for other projects: $e');
-      }
+      } catch (e) {}
     });
 
     return Obx(() {
@@ -1005,9 +989,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   final data = items[index];
                   return GestureDetector(
                     onTap: () {
-                      print(
-                        "Tapped on project ${data.projectName} with ID ${data.id}",
-                      );
                       // Navigator.of(context).push(
                       //   MaterialPageRoute(
                       //     builder: (_) => ProjectDetailsScreen(
@@ -1119,7 +1100,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                     ),
                   ),
                   child: Row(
-                    children: [                             
+                    children: [
                       const Expanded(
                         child: Text(
                           "Get Offer Price",
@@ -1258,8 +1239,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                   "type": "$type",
                                 },
                               };
-
-                              print('Submitting inquiry: ${inquiry}');
 
                               final success = await controller.addInquiry(
                                 inquiry,
@@ -2069,9 +2048,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     int variantIndex,
     ProjectController controller,
   ) {
-    debugPrint(
-      "Building card for variant: ${variant.mediaItems?.toJson()}, Price: ${variant.price}, Available Units: ${variant.availableUnits}",
-    );
     return Container(
       // // elevation: 2,
       // shape: RoundedRectangleBorder(
@@ -2102,56 +2078,59 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 topRight: Radius.circular(AppRadius.medium),
               ),
             ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.apartment,
-                          color: ColorRes.white,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${variant.buildingName}',
-                          style: const TextStyle(
-                            fontSize: AppFontSizes.small,
-                            fontWeight: AppFontWeights.semiBold,
-                            color: ColorRes.white,
-                          ),
-                        ),
-                      ],
+                    const Icon(
+                      Icons.apartment,
+                      color: ColorRes.white,
+                      size: 16,
                     ),
-                    Spacer(),
-                    // Price + Sold badge (if fully sold)
+                    const SizedBox(width: 6),
                     Text(
-                      '${Formatter.formatPrice(variant.price)}',
+                      '${variant.buildingName}',
                       style: const TextStyle(
                         fontSize: AppFontSizes.small,
-                        fontWeight: AppFontWeights.bold,
+                        fontWeight: AppFontWeights.semiBold,
                         color: ColorRes.white,
                       ),
                     ),
-                     const SizedBox(width: 6),
-                        if (variant.availableUnits == 0)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.redAccent,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              'SOLD',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: AppFontSizes.extraSmall,
-                                fontWeight: AppFontWeights.semiBold,
-                              ),
-                            ),
-                          ),
                   ],
                 ),
+                Spacer(),
+                // Price + Sold badge (if fully sold)
+                Text(
+                  '${Formatter.formatPrice(variant.price)}',
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.small,
+                    fontWeight: AppFontWeights.bold,
+                    color: ColorRes.white,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                if (variant.availableUnits == 0)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'SOLD',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: AppFontSizes.extraSmall,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
 
           Expanded(
@@ -2159,7 +2138,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Variant Images (Horizontal ListView)
-                
 
                 // SizedBox(
                 //   height: 125, // fixed height for image list
@@ -2189,7 +2167,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                 //           ),
                 // ),
                 Obx(() {
-                  final type = controller.selectedMediaTypeMap[variantIndex] ?? 0;
+                  final type =
+                      controller.selectedMediaTypeMap[variantIndex] ?? 0;
 
                   // ================= IMAGES =================
                   if (type == 0) {
@@ -2390,12 +2369,13 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                               'Available Units',
                               '${variant.availableUnits}',
                             ),
-                              const SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             _buildDetailRow(
                               'Sold Units',
                               '${variant.soldUnits}',
                             ),
-                            if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
+                            if (variant.bookingAmount != null &&
+                                variant.bookingAmount! > 0) ...[
                               const SizedBox(height: 8),
                               _buildDetailRow(
                                 'Booking Amount',
@@ -2404,7 +2384,6 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                                 ),
                               ),
                             ],
-
                           ],
                         ),
                       ),
@@ -2444,8 +2423,14 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     );
   }
 
-  Widget _mediaButton(String title, int index, ProjectController controller, int variantIndex) {
-    final isSelected = (controller.selectedMediaTypeMap[variantIndex] ?? 0) == index;
+  Widget _mediaButton(
+    String title,
+    int index,
+    ProjectController controller,
+    int variantIndex,
+  ) {
+    final isSelected =
+        (controller.selectedMediaTypeMap[variantIndex] ?? 0) == index;
 
     return Expanded(
       child: GestureDetector(
@@ -2466,8 +2451,8 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
                   index == 0
                       ? Icons.image
                       : index == 1
-                          ? Icons.videocam
-                          : Icons.view_in_ar,
+                      ? Icons.videocam
+                      : Icons.view_in_ar,
                   size: 12,
                   color: isSelected ? ColorRes.white : ColorRes.black,
                 ),

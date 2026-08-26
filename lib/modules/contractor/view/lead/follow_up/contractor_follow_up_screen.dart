@@ -122,32 +122,34 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
               }
 
               return RefreshIndicator(
-                  onRefresh: controller.refreshFollowUp,
-                  color: ColorRes.primary,
-                  child: items.isEmpty
-                      ? SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Center(
-                        child: Text(
-                          "No FollowUp available",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.body,
-                            color: ColorRes.textSecondary,
-                            fontWeight: AppFontWeights.medium,
+                onRefresh: controller.refreshFollowUp,
+                color: ColorRes.primary,
+                child:
+                    items.isEmpty
+                        ? SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: Center(
+                              child: Text(
+                                "No FollowUp available",
+                                style: TextStyle(
+                                  fontSize: AppFontSizes.body,
+                                  color: ColorRes.textSecondary,
+                                  fontWeight: AppFontWeights.medium,
+                                ),
+                              ),
+                            ),
                           ),
+                        )
+                        : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: controller.items.length,
+                          itemBuilder: (context, index) {
+                            final item = controller.items[index];
+                            return _buildFollowUpCard(item, controller);
+                          },
                         ),
-                      ),
-                    ),
-                  ) :ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: controller.items.length,
-                itemBuilder: (context, index) {
-                  final item = controller.items[index];
-                  return _buildFollowUpCard(item, controller);
-                },
-                  )
               );
             }),
           ),
@@ -155,7 +157,10 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorRes.primary,
-        onPressed:() {controller.changeTheStatus(false);controller.openAddFollowUpDialog();},
+        onPressed: () {
+          controller.changeTheStatus(false);
+          controller.openAddFollowUpDialog();
+        },
         child: const Icon(Icons.add, color: ColorRes.white),
       ),
     );
@@ -219,12 +224,15 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                 ),
                               ),
 
-                              _buildStatusChip(item.status??''),
+                              _buildStatusChip(item.status ?? ''),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            controller.formatDateTime(item.date??'', item.time??''),
+                            controller.formatDateTime(
+                              item.date ?? '',
+                              item.time ?? '',
+                            ),
                             style: TextStyle(
                               color: ColorRes.textSecondary,
                               fontSize: AppFontSizes.caption,
@@ -247,7 +255,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (item.notes?.isNotEmpty??false) ...[
+                    if (item.notes?.isNotEmpty ?? false) ...[
                       Text(
                         'Notes',
 
@@ -259,7 +267,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        item.notes??'',
+                        item.notes ?? '',
                         style: TextStyle(
                           color: ColorRes.textSecondary,
                           fontSize: AppFontSizes.small,
@@ -317,10 +325,9 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-
                               controller.changeTheStatus(true);
                               controller.populatedFollowUpData(item);
-                             controller.openAddFollowUpDialog();
+                              controller.openAddFollowUpDialog();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
@@ -382,14 +389,16 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                                   "Lead Details",
                                                   style: TextStyle(
                                                     fontSize: AppFontSizes.body,
-                                                    fontWeight: AppFontWeights.semiBold,
+                                                    fontWeight:
+                                                        AppFontWeights.semiBold,
                                                     color: ColorRes.white,
                                                   ),
                                                 ),
                                               ),
                                               InkWell(
                                                 onTap: () => Get.back(),
-                                                borderRadius: BorderRadius.circular(50),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
                                                 child: const Icon(
                                                   Icons.close_rounded,
                                                   color: ColorRes.white,
@@ -408,17 +417,32 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                               vertical: 16,
                                             ),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // TYPE
-                                                if ((item.type ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Type', capitalizeEachWord(item.type)),
+                                                if ((item.type ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Type',
+                                                    capitalizeEachWord(
+                                                      item.type,
+                                                    ),
+                                                  ),
                                                   _buildDivider(),
                                                 ],
 
                                                 // DATE
-                                                if ((item.date ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Date', item.date??''),
+                                                if ((item.date ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Date',
+                                                    item.date ?? '',
+                                                  ),
                                                   _buildDivider(),
                                                 ],
 
@@ -426,32 +450,60 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                                                 if (item.reminder != null) ...[
                                                   _buildDetailRow(
                                                     'Reminder',
-                                                    item.reminder ? 'Yes' : 'No',
+                                                    item.reminder
+                                                        ? 'Yes'
+                                                        : 'No',
                                                   ),
                                                   _buildDivider(),
                                                 ],
 
                                                 // TIME
-                                                if ((item.time ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Time', item.time??''),
+                                                if ((item.time ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Time',
+                                                    item.time ?? '',
+                                                  ),
                                                   _buildDivider(),
                                                 ],
 
                                                 // STATUS
-                                                if ((item.status ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Status', capitalizeEachWord(item.status)),
+                                                if ((item.status ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Status',
+                                                    capitalizeEachWord(
+                                                      item.status,
+                                                    ),
+                                                  ),
                                                   _buildDivider(),
                                                 ],
 
                                                 // LOCATION
-                                                if ((item.location ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Location', item.location??''),
+                                                if ((item.location ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Location',
+                                                    item.location ?? '',
+                                                  ),
                                                   _buildDivider(),
                                                 ],
 
                                                 // NOTE
-                                                if ((item.notes ?? '').toString().trim().isNotEmpty) ...[
-                                                  _buildDetailRow('Note', item.notes??''),
+                                                if ((item.notes ?? '')
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty) ...[
+                                                  _buildDetailRow(
+                                                    'Note',
+                                                    item.notes ?? '',
+                                                  ),
                                                 ],
                                               ],
                                             ),
@@ -482,7 +534,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              controller.deleteLead(item.id,item.type);
+                              controller.deleteLead(item.id, item.type);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
@@ -509,6 +561,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
       );
     });
   }
+
   Widget _buildDetailRow(String title, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -538,10 +591,7 @@ class _ContractorFollowUpScreenState extends State<ContractorFollowUpScreen> {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      height: 20,
-      color: ColorRes.leadGreyColor.shade300,
-    );
+    return Divider(height: 20, color: ColorRes.leadGreyColor.shade300);
   }
 
   Widget _buildStatusChip(String status) {
@@ -629,5 +679,3 @@ String getTitle(String type) {
       return type;
   }
 }
-
-

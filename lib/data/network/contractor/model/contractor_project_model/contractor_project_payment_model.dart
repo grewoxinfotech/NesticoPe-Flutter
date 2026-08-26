@@ -255,11 +255,7 @@ class MilestonePaymentsResponse {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data.toJson()};
   }
 }
 
@@ -282,9 +278,10 @@ class MilestonePaymentsData {
 
   factory MilestonePaymentsData.fromJson(Map<String, dynamic> json) {
     return MilestonePaymentsData(
-      items: (json['items'] as List? ?? [])
-          .map((e) => MilestonePaymentItem.fromJson(e))
-          .toList(),
+      items:
+          (json['items'] as List? ?? [])
+              .map((e) => MilestonePaymentItem.fromJson(e))
+              .toList(),
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 0,
       totalPages: json['totalPages'] ?? 0,
@@ -467,8 +464,6 @@ DateTime? _tryParseDate(dynamic value) {
   try {
     return DateTime.parse(value.toString());
   } catch (e) {
-    log('⚠️ Invalid date format: $value');
     return null;
   }
 }
-

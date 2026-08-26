@@ -88,8 +88,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
               );
               await contractorEmployee.loadInitial();
 
-              log("project edit ${project?.toJson()}");
-
               contractorLeadController.populateProjectForm(
                 project ?? ContractorProjectItem.fromJson({}),
               );
@@ -130,12 +128,12 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
               color: ColorRes.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -147,7 +145,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        project.title.capitalize?.replaceAll("_", " ")??'',
+                        project.title.capitalize?.replaceAll("_", " ") ?? '',
                         style: const TextStyle(
                           fontSize: AppFontSizes.body,
                           fontWeight: AppFontWeights.semiBold,
@@ -276,10 +274,7 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                 _buildSectionTitle(Icons.image_outlined, "Project Photos"),
                 const SizedBox(height: 10),
 
-                _buildProjectPhoto(
-                  project,
-                  project.id,
-                ),
+                _buildProjectPhoto(project, project.id),
                 const SizedBox(height: 20),
 
                 // Created and Updated
@@ -351,7 +346,6 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            log("Data of String ${project.toJson()}");
                             controller.populatedProjectData(project);
                             showStatusDialog(context, controller, project);
                           },
@@ -523,7 +517,12 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _infoRow("Name", client.name.capitalize?.replaceAll("_", " "), "Email", client.email),
+          _infoRow(
+            "Name",
+            client.name.capitalize?.replaceAll("_", " "),
+            "Email",
+            client.email,
+          ),
 
           _infoRow(
             "Phone",
@@ -604,7 +603,11 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTeamMembers(List<ContractorEmployee> project, String projectId, String projectName) {
+  Widget _buildTeamMembers(
+    List<ContractorEmployee> project,
+    String projectId,
+    String projectName,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -635,43 +638,43 @@ class ContractorProjectOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectPhoto(
-    ContractorProjectItem project,
-    String projectId,
-  ) {
-   AppLogger("Structure of project ,",project.meta.beforePhoto.map((e) => e.toJson(),));
-
+  Widget _buildProjectPhoto(ContractorProjectItem project, String projectId) {
+    AppLogger(
+      "Structure of project ,",
+      project.meta.beforePhoto.map((e) => e.toJson()),
+    );
 
     return StatefulBuilder(
-      builder: (context, setState) =>  Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: ColorRes.background,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ListTile(
-          leading: Icon(Icons.image_outlined, size: 20),
-          title: Text(
-            "Project Photos",
-            style: const TextStyle(
-              fontSize: AppFontSizes.caption,
-              color: ColorRes.textColor,
+      builder:
+          (context, setState) => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: ColorRes.background,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ListTile(
+              leading: Icon(Icons.image_outlined, size: 20),
+              title: Text(
+                "Project Photos",
+                style: const TextStyle(
+                  fontSize: AppFontSizes.caption,
+                  color: ColorRes.textColor,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  Get.to(
+                    () => ContractorProjectPhotosScreen(
+                      project: project,
+                      projectId: projectId,
+                    ),
+                  );
+                });
+              },
+              trailing: Icon(Icons.arrow_forward_ios, size: 15),
             ),
           ),
-          onTap: () {
-            setState(() {
-              Get.to(
-                    () => ContractorProjectPhotosScreen(
-                  project: project,
-                  projectId: projectId,
-                ),
-              );
-
-          },);},
-          trailing: Icon(Icons.arrow_forward_ios, size: 15),
-        ),
-      ),
     );
   }
 

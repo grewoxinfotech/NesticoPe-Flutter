@@ -3988,7 +3988,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                               const SizedBox(height: 8),
                               Builder(
                                 builder: (context) {
-                                  print('[PropertyDetail] 📋 Building Details');
                                   return Details(property: currentProperty);
                                 },
                               ),
@@ -4609,7 +4608,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
                             if (!hasData ||
                                 mapController.propertyLatLng.value == null) {
-                              print('No data found');
                               return const SizedBox.shrink();
                             }
 
@@ -4974,10 +4972,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                                 );
                                               }
                                             } catch (e, s) {
-                                              debugPrint(
-                                                '❌ Error in Get Offer button: $e',
-                                              );
-                                              debugPrint('$s');
                                               NesticoPeSnackBar.showAwesomeSnackbar(
                                                 title: "Error",
                                                 message:
@@ -5142,9 +5136,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                   negotiable: false,
 
                                   bookSiteVisit: false,
-                                  onChatPressed: () {
-                                    print("WhatsApp button clicked!");
-                                  },
+                                  onChatPressed: () {},
                                   onContactPressed: (
                                     name,
                                     phone,
@@ -5190,8 +5182,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                                               '${time.minute.toString().padLeft(2, '0')}',
                                       },
                                     };
-
-                                    print('Submitting inquiry: ${inquiry}');
 
                                     final success = await controller.addInquiry(
                                       inquiry,
@@ -5542,7 +5532,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   ) {
     final PageController pageController = PageController();
     String _sanitize(String s) => s.replaceAll('`', '').trim();
-    print("Current property media: ${media.toJson()}");
+
     List<String> images =
         (media.images ?? []).map(_sanitize).where((e) => e.isNotEmpty).toList();
     if (images.isEmpty &&
@@ -5560,7 +5550,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       ...images.map((e) => {"type": "image", "url": e}),
       ...videos.map((e) => {"type": "video", "url": e}),
     ];
-    print("Media list for property $id: $mediaList");
 
     int currentPage = 0;
 
@@ -5617,18 +5606,12 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       });
                     },
                     itemBuilder: (context, index) {
-                      print(
-                        "Building media item at index: ${mediaList[index]}",
-                      );
                       final item = mediaList[index];
                       final url = _sanitize(item["url"] ?? '');
                       const imageOfNotAvailable =
                           "assets/images/not_available_image.png";
 
                       if (item["type"] == "image") {
-                        print(
-                          "Loading image: $url  ============ ${item["type"]}",
-                        );
                         return CachedNetworkImage(
                           imageUrl: url,
                           fit: BoxFit.cover,
@@ -5647,7 +5630,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       } else if (item["type"] == "video") {
                         return CustomVideoPlayer(url: url);
                       } else if (url.isEmpty) {
-                        print("Image URL is empty, showing placeholder.");
                         return Image.asset(
                           imageOfNotAvailable,
                           fit: BoxFit.cover,
@@ -5692,29 +5674,29 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               ),
 
               /// Page indicator
-              if(mediaList.isNotEmpty)...[
+              if (mediaList.isNotEmpty) ...[
                 Positioned(
-                bottom: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorRes.blackShade54,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '${currentPage + 1}/${mediaList.length}',
-                    style: const TextStyle(
-                      color: ColorRes.white,
-                      fontSize: AppFontSizes.small,
-                      fontWeight: AppFontWeights.semiBold,
+                  bottom: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorRes.blackShade54,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${currentPage + 1}/${mediaList.length}',
+                      style: const TextStyle(
+                        color: ColorRes.white,
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.semiBold,
+                      ),
                     ),
                   ),
                 ),
-              ),
               ],
 
               if ((currentProperty.reraId?.isNotEmpty ?? false) &&

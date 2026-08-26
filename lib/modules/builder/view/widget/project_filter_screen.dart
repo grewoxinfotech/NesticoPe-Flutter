@@ -1239,46 +1239,44 @@ class _ResellerProjectFilterScreenState
                 ),
               ),
               const SizedBox(height: 16),
-             if(widget.isProjectItemBuyerFilter)...[
-               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              if (widget.isProjectItemBuyerFilter) ...[
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
 
-                decoration: BoxDecoration(
-                  color: ColorRes.white,
-                  borderRadius: BorderRadius.circular(12),
+                  decoration: BoxDecoration(
+                    color: ColorRes.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      buildToggle(
+                        "Verify RERA ID",
+                        controllerForFilter.isRERAVerified,
+                      ),
+                      SizedBox(height: 10),
+                      buildToggle(
+                        "Property Has Photos",
+                        controllerForFilter.isPropertyHaveImage,
+                      ),
+                      SizedBox(height: 10),
+                      buildToggle(
+                        "Property Has Videos",
+                        controllerForFilter.isPropertyHaveVideo,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    buildToggle(
-                      "Verify RERA ID",
-                      controllerForFilter.isRERAVerified,
-                    ),
-                    SizedBox(height: 10),
-                    buildToggle(
-                      "Property Has Photos",
-                      controllerForFilter.isPropertyHaveImage,
-                    ),
-                    SizedBox(height: 10),
-                    buildToggle(
-                      "Property Has Videos",
-                      controllerForFilter.isPropertyHaveVideo,
-                    ),
-                  ],
+                SizedBox(height: 16),
+                buildSectionTitle('BHK Type'),
+                const SizedBox(height: 7),
+                BHKTypes(
+                  bHKList: controllerForFilter.bHkType,
+                  onSelectionChanged: (index) {},
+                  controllerForFilter: controllerForFilter,
                 ),
-              ),
-              SizedBox(height: 16),
-              buildSectionTitle('BHK Type'),
-              const SizedBox(height: 7),
-              BHKTypes(
-                bHKList: controllerForFilter.bHkType,
-                onSelectionChanged: (index) {
-                  debugPrint('BHK Type $index');
-                },
-                controllerForFilter: controllerForFilter,
-              ),
-              const SizedBox(height: 7),
-              SizedBox(height: 16),
-             ],
+                const SizedBox(height: 7),
+                SizedBox(height: 16),
+              ],
               buildSectionTitle('Approval Status'),
               SizedBox(height: 8),
               Obx(() {
@@ -1300,9 +1298,6 @@ class _ResellerProjectFilterScreenState
                                     controller.resellerApprovalStatus,
                                     option,
                                   );
-                                  log(
-                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerApprovalStatus}",
-                                  );
                                 },
                               ),
                             )
@@ -1321,8 +1316,6 @@ class _ResellerProjectFilterScreenState
                   onMinChanged: (val) {
                     if (val != null) {
                       controller.resellerMinPrice.value = val;
-
-                      print("Main ${controller.resellerMinPrice.value}");
                     }
                   },
                   onMaxChanged: (val) {
@@ -1331,8 +1324,6 @@ class _ResellerProjectFilterScreenState
                       controller.buyerPriceRange(
                         RangeValues(controller.resellerMinPrice.value, val),
                       );
-
-                      print("mxa ${controller.resellerMaxPrice.value}");
                     }
                   },
                   minLabel: "Min Budget",
@@ -1404,9 +1395,6 @@ class _ResellerProjectFilterScreenState
                                     controller.builderProjectStatus,
                                     option,
                                   );
-                                  log(
-                                    "resellerListingType Type Reseller PropertyFilter ${controller.builderProjectStatus}",
-                                  );
                                 },
                               ),
                             )
@@ -1428,11 +1416,7 @@ class _ResellerProjectFilterScreenState
                 autovalidateMode: AutovalidateMode.onUserInteraction,
 
                 onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    log(
-                      "Property  search: $value → ${controller.txtBuilderProjectName.value}",
-                    );
-                  }
+                  if (value.isNotEmpty) {}
                 },
                 controller: controller.txtBuilderProjectName,
               ),
@@ -1450,11 +1434,7 @@ class _ResellerProjectFilterScreenState
                 autovalidateMode: AutovalidateMode.onUserInteraction,
 
                 onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    log(
-                      "Property  search: $value → ${controller.txtBuilderRERAID.value}",
-                    );
-                  }
+                  if (value.isNotEmpty) {}
                 },
                 controller: controller.txtBuilderRERAID,
               ),
@@ -1485,9 +1465,6 @@ class _ResellerProjectFilterScreenState
                                 controller.resellerPropertyType,
                                 option,
                               );
-                              log(
-                                "resellerListingType Type Reseller PropertyFilter ${controller.resellerPropertyType}",
-                              );
                             },
                           );
                         }).toList(),
@@ -1514,9 +1491,6 @@ class _ResellerProjectFilterScreenState
                                   controller.setValue(
                                     controller.resellerVerified,
                                     option,
-                                  );
-                                  log(
-                                    "resellerListingType Type Reseller PropertyFilter ${controller.resellerVerified}",
                                   );
                                 },
                               ),

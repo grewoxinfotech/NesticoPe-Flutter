@@ -21,19 +21,15 @@ class OnboardingCityCompletionHelper {
     final listingType = (homeCategory == 'Rent/Lease') ? 'Rent' : 'Sell';
     final hc = homeCategory ?? 'Buy';
 
-    log('Onboarding city completion: $trimmed (category=$hc)');
-
     // Avoid creating SearchHistoryController here (its onInit triggers network
     // calls and can freeze on selection). Just call the service best-effort.
-    
-      try {
-        await SearchHistoryService.service.addSearchHistory({
-          'keywords': [trimmed],
-        });
-      } catch (e) {
-        log('Search history add failed: $e');
-      }
-    
+
+    try {
+      await SearchHistoryService.service.addSearchHistory({
+        'keywords': [trimmed],
+      });
+    } catch (e) {}
+
     await SecureStorage.saveSelectedCity(trimmed);
     await SecureStorage.setAppLaunched();
     await SecureStorage.saveHomeCategory(hc);
@@ -63,9 +59,8 @@ class OnboardingCityCompletionHelper {
     } else if (UserHelper.userType == UserType.seller &&
         UserHelper.sellerType == SellerType.builder) {
       Get.offAll(() => const BuilderMainScreen());
-    }
-    else{
-       await Get.offAll(() => DashboardScreen(propertyFilter: filter));
+    } else {
+      await Get.offAll(() => DashboardScreen(propertyFilter: filter));
     }
   }
 }

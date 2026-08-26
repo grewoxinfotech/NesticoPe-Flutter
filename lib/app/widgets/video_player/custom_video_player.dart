@@ -47,8 +47,12 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
               color: ColorRes.black,
               width: double.infinity,
               height: double.infinity,
-              child:  Center(
-                child: Icon(Icons.videocam, color: ColorRes.white.withOpacity(0.9), size: 48),
+              child: Center(
+                child: Icon(
+                  Icons.videocam,
+                  color: ColorRes.white.withOpacity(0.9),
+                  size: 48,
+                ),
               ),
             ),
             const CircleAvatar(

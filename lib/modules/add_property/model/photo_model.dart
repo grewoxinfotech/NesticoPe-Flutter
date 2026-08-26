@@ -9,11 +9,7 @@ class PhotoImageModel {
     this.isCover = false,
   });
 
-  PhotoImageModel copyWith({
-    String? path,
-    String? label,
-    bool? isCover,
-  }) {
+  PhotoImageModel copyWith({String? path, String? label, bool? isCover}) {
     return PhotoImageModel(
       path: path ?? this.path,
       label: label ?? this.label,
@@ -22,10 +18,6 @@ class PhotoImageModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'path': path,
-      'label': label,
-      'isCover': isCover,
-    };
+    return {'path': path, 'label': label, 'isCover': isCover};
   }
 }

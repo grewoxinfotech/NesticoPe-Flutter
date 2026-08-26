@@ -38,7 +38,7 @@ class BuyerPropertyListScreenShimmer extends StatelessWidget {
           children: [
             // 🔹 Image Section (Multi-image layout from the screenshot)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
                 children: [
                   // Main Large Image

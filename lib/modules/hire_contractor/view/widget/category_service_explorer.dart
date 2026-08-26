@@ -44,8 +44,6 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer>
   String _viewAllLabel(String category, {String? sub}) {
     final cat = category.trim().toLowerCase();
 
-    print("Category Check Any Thing: $cat  ==========   $sub");
-
     if (cat.contains('supply')) {
       return (sub != null && sub.isNotEmpty) ? '$sub Suppliers' : 'Suppliers';
     }
@@ -134,7 +132,7 @@ class _CategoryServiceExplorerState extends State<CategoryServiceExplorer>
     final controller = Get.find<HireContractorFilterProfileController>();
 
     final key = _keyForMap(widget.categoryName);
-    print('Category Key : $key');
+
     final groups = [...controller.getServiceNamesForCategory(key)]
       ..sort((a, b) {
         final aTrend = (a['trending'] as bool?) ?? false;

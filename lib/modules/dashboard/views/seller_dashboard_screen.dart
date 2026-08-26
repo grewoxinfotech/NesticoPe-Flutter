@@ -269,7 +269,6 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                                 .value = await SecureStorage.hasNewSellerLead(
                               currentLeadCount,
                             );
-        
                           } else if (UserHelper.isSellerBuilder) {
                             await SecureStorage.saveBuilderLeadCount(
                               sellerOverviewController

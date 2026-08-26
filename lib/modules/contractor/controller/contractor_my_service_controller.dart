@@ -285,9 +285,7 @@ class ContractorMyServiceController
           );
         }
       }
-    } catch (e) {
-      print("Error picking images: $e");
-    }
+    } catch (e) {}
   }
 
   void removeSelectedImage(int index) {
@@ -321,10 +319,9 @@ class ContractorMyServiceController
           getTheContractorByID(id); // async call (no await needed)
         }
       }
-      print("Fetched items: ${response.items.length}");
+
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -344,9 +341,7 @@ class ContractorMyServiceController
     try {
       await Get.find<ContractorDashboardController>()
           .reloadAfterServiceChange();
-    } catch (e, s) {
-      log('Contractor dashboard reload: $e', stackTrace: s);
-    }
+    } catch (e, s) {}
   }
 
   Future<void> refreshService() async {
@@ -389,12 +384,7 @@ class ContractorMyServiceController
         value,
       );
       await _reloadRegisteredContractorDashboard();
-
-      print(
-        "Service sdkfjfijdifjdifoj${item.serviceName} status changed to: $value",
-      );
     } catch (e) {
-      print("Error toggling service: $e");
       final index = items.indexWhere((e) => e.id == item.id);
       if (index != -1) {
         items[index].isActive = !value;
@@ -413,9 +403,7 @@ class ContractorMyServiceController
         items.refresh();
         await _reloadRegisteredContractorDashboard();
       }
-    } catch (e) {
-      print("❌ Error deleting review: $e");
-    }
+    } catch (e) {}
   }
 
   //--------------------------SERVICE CATEGORY-------------
@@ -609,11 +597,8 @@ class ContractorMyServiceController
       // Convert to payload map for API
       final payload = contractorServiceItem.toMap();
 
-      AppLogger.structured("Create service payload: ", payload);
-
       final response = await ContractorMyService.contractorMyService
           .createService(payload, imagePaths: selectedImagePaths);
-      print("Create Service Response: $response");
 
       if (response) {
         Get.back(); // Close form
@@ -632,8 +617,6 @@ class ContractorMyServiceController
         // );
       }
     } catch (e) {
-      print("Error creating service: $e");
-
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: 'Error',
       //   message: 'Failed to create service',
@@ -700,14 +683,9 @@ class ContractorMyServiceController
         [];
   }*/
   void populateFormForEdit(ContractorServiceItem service) {
-    AppLogger.structured("PopulatedForm ", service.toMap());
-
     editingService.value = service;
     selectedServiceNameDropdown.value = service.serviceName;
 
-    log(
-      "Check any ${selectedServiceNameDropdown.value}===== ${service.serviceName}",
-    );
     // Basic fields
     descriptionController.text = service.description ?? '';
     minRangeController.text = service.meta?.minPriceRange?.toString() ?? '';
@@ -796,10 +774,6 @@ class ContractorMyServiceController
           },
     );
 
-    log(
-      "Check service name section ${service.serviceName}   ${selectedServiceNameDropdown.value}",
-    );
-
     selectedServiceNameDropdown.value = match['value'] as String;
 
     // Image handling
@@ -809,9 +783,6 @@ class ContractorMyServiceController
     // Load workItemOptions using category ID + service value
     workItemOptions.assignAll(
       getWorkItemsForServiceName(catId, match['value'] as String),
-    );
-    log(
-      "Check service name section dsfdsf ${workItemOptions}   ${selectedServiceNameDropdown.value}",
     );
 
     // ✅ FIX: API saves work VALUES, but workItemOptions contains LABELS
@@ -1513,10 +1484,6 @@ class ContractorMyServiceController
   };*/
 
   bool isService(String service) {
-    debugPrint(
-      "Selected Service NBame : ${selectedServiceNameDropdown.value}, Checking: $service",
-    );
-
     return selectedServiceNameDropdown.value == service;
   }
 
@@ -2188,7 +2155,6 @@ class ContractorMyServiceController
   };
 
   List<Map<String, dynamic>> getServiceNamesForCategory(String categoryId) {
-    log("getServiceNamesForCategory ${categoryId}");
     return kServiceCategoryData[categoryId] ?? [];
   }
 
@@ -2208,38 +2174,22 @@ class ContractorMyServiceController
     String categoryId,
     String serviceValue,
   ) {
-    log("🔍 Called getWorkItemsForServiceName");
-    log("➡ categoryId: $categoryId");
-    log("➡ serviceValue: $serviceValue");
-
     final normalizedCategory = categoryId.toLowerCase().replaceAll(" ", "_");
-    log("➡ normalizedCategory: $normalizedCategory");
 
     final services = kServiceCategoryData[normalizedCategory] ?? [];
-    log("➡ services found: ${services.length}");
 
-    if (services.isEmpty) {
-      log("⚠ No services found for category: $normalizedCategory");
-    }
+    if (services.isEmpty) {}
 
     for (final s in services) {
-      log("---- Checking service: ${s['value']}");
-
       if (s['value'] == serviceValue) {
-        log("✅ Match found for serviceValue: $serviceValue");
-
         final items = s['items'] as List? ?? [];
-        log("➡ Raw items: $items");
-        log("➡ Items count: ${items.length}");
 
         final result = items.cast<String>().toList();
-        log("✅ Returning items: $result");
 
         return result;
       }
     }
 
-    log("❌ No matching service found for serviceValue: $serviceValue");
     return [];
   }
 
@@ -2693,7 +2643,6 @@ class ContractorMyServiceController
       );
 
       final payload = updatedServiceItem.toMap();
-      AppLogger.structured("Update service payload: ", payload);
 
       final response = await ContractorMyService.contractorMyService
           .updateContractorService(
@@ -2709,7 +2658,6 @@ class ContractorMyServiceController
         await _reloadRegisteredContractorDashboard();
       }
     } catch (e) {
-      print("Error updating service: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Failed to update service",

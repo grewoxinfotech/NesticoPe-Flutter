@@ -20,7 +20,6 @@ class BuyFilters extends StatefulWidget {
 class _BuyFiltersState extends State<BuyFilters> {
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,33 +41,24 @@ class _BuyFiltersState extends State<BuyFilters> {
         //   ),
         // ),
         Obx(
-              () => BudgetFilterChange(
+          () => BudgetFilterChange(
             minSelected: widget.controllerForFilter.min.value,
             maxSelected: widget.controllerForFilter.max.value,
             budgetList: widget.controllerForFilter.budgetValues.value,
             onMinChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.min.value = val;
-                print("Main ${widget.controllerForFilter.min.value}");
               }
             },
             onMaxChanged: (val) {
               if (val != null) {
                 widget.controllerForFilter.max.value = val;
-
-                print("mxa ${widget.controllerForFilter.max.value}");
               }
-
-
-
-
-              
             },
             minLabel: "Min Budget",
             maxLabel: "Max Budget",
           ),
         ),
-
 
         const SizedBox(height: 7),
 
@@ -76,9 +66,7 @@ class _BuyFiltersState extends State<BuyFilters> {
         const SizedBox(height: 7),
         BHKTypes(
           bHKList: widget.controllerForFilter.bHkType,
-          onSelectionChanged: (index) {
-            debugPrint('BHK Type $index');
-          },
+          onSelectionChanged: (index) {},
           controllerForFilter: widget.controllerForFilter,
         ),
         const SizedBox(height: 7),
@@ -89,9 +77,7 @@ class _BuyFiltersState extends State<BuyFilters> {
           items: widget.controllerForFilter.propertyTypesList,
           controllerForFilter: widget.controllerForFilter,
           selectedItems: widget.controllerForFilter.subpropertyType,
-          onSelectionChanged: (index) {
-            debugPrint('Sub property Type $index');
-          },
+          onSelectionChanged: (index) {},
         ),
         const SizedBox(height: 7),
 
@@ -104,14 +90,11 @@ class _BuyFiltersState extends State<BuyFilters> {
         //   },
         // ),
         // const SizedBox(height: 7),
-
         buildPropertyFilterHeadingPadding('Furnishing Type'),
         const SizedBox(height: 7),
         ListedBy(
           listedByList: widget.controllerForFilter.furnishingType,
-          onTap: (items) {
-            debugPrint('Furnishing $items');
-          },
+          onTap: (items) {},
           controllerForFilter: widget.controllerForFilter,
           selectedString: widget.controllerForFilter.rentFurnishing,
         ),

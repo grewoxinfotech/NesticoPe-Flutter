@@ -16,9 +16,10 @@ class ResellerLeaderboardCitywise {
     return ResellerLeaderboardCitywise(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) => ResellerLeaderboardCitywiseData.fromJson(e))
-          .toList() ??
+      data:
+          (json['data'] as List<dynamic>?)
+              ?.map((e) => ResellerLeaderboardCitywiseData.fromJson(e))
+              .toList() ??
           [],
     );
   }
@@ -106,7 +107,6 @@ class ResellerLeaderboardCitywiseData {
   Map<String, dynamic> toMap() => toJson();
 }
 
-
 /// 📊 Reseller City Leaderboard - All Cities Model
 class ResellerCityLeaderBoardAllCities {
   final bool success;
@@ -124,10 +124,10 @@ class ResellerCityLeaderBoardAllCities {
     return ResellerCityLeaderBoardAllCities(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) =>
-          ResellerCityLeaderBoardAllCitiesData.fromJson(e))
-          .toList() ??
+      data:
+          (json['data'] as List<dynamic>?)
+              ?.map((e) => ResellerCityLeaderBoardAllCitiesData.fromJson(e))
+              .toList() ??
           [],
     );
   }
@@ -160,17 +160,15 @@ class ResellerCityLeaderBoardAllCitiesData {
   });
 
   factory ResellerCityLeaderBoardAllCitiesData.fromJson(
-      Map<String, dynamic> json) {
+    Map<String, dynamic> json,
+  ) {
     return ResellerCityLeaderBoardAllCitiesData(
       city: json['city'] ?? '',
       count: json['count'] ?? 0,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'city': city,
-    'count': count,
-  };
+  Map<String, dynamic> toJson() => {'city': city, 'count': count};
 
   Map<String, dynamic> toMap() => toJson();
 }

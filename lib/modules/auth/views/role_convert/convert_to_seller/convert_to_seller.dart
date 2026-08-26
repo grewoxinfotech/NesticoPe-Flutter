@@ -186,23 +186,23 @@ class _SellerConversionScreenState extends State<SellerConversionScreen> {
                                   controller.isLoading.value
                                       ? null
                                       : () {
-                                       if(UserHelper.isGuest){
-                                        Get.to(() => OtpLoginScreen());
-  
-                                       }else{
-                                         if (_selectedSellerType == null) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: "Error",
-                                            message:
-                                                "Please choose whether you are an Owner or a Builder",
-                                            contentType: ContentType.failure,
-                                          );
+                                        if (UserHelper.isGuest) {
+                                          Get.to(() => OtpLoginScreen());
                                         } else {
-                                          controller.covertBuyerToSeller(
-                                            _selectedSellerType!.toLowerCase(),
-                                          );
+                                          if (_selectedSellerType == null) {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: "Error",
+                                              message:
+                                                  "Please choose whether you are an Owner or a Builder",
+                                              contentType: ContentType.failure,
+                                            );
+                                          } else {
+                                            controller.covertBuyerToSeller(
+                                              _selectedSellerType!
+                                                  .toLowerCase(),
+                                            );
+                                          }
                                         }
-                                       }
                                       },
                               child:
                                   controller.isLoading.value

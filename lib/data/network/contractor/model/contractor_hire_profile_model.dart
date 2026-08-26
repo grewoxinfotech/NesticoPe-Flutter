@@ -1,4 +1,3 @@
-
 class HireContractorUserProfileResponse {
   final bool success;
   final String message;
@@ -14,9 +13,10 @@ class HireContractorUserProfileResponse {
 
   factory HireContractorUserProfileResponse.fromMap(Map<String, dynamic> map) {
     final data = map['data'] ?? {};
-    final profiles = (data['profiles'] as List<dynamic>?)
-        ?.map((e) => HireContractorUserProfile.fromMap(e))
-        .toList() ??
+    final profiles =
+        (data['profiles'] as List<dynamic>?)
+            ?.map((e) => HireContractorUserProfile.fromMap(e))
+            .toList() ??
         [];
 
     return HireContractorUserProfileResponse(
@@ -38,7 +38,6 @@ class HireContractorUserProfileResponse {
     };
   }
 }
-
 
 class HireContractorUserProfile {
   final String id;

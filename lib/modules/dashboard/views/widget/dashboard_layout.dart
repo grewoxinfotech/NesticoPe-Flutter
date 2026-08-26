@@ -55,7 +55,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-  //  
+      //
       appBar: AppBar(
         title: Text(
           'Dashboard',
@@ -76,7 +76,6 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                       : Get.put(AuthController(), permanent: true);
               auth.logout();
               // Get.offAll(()=>DashboardScreen());
-              
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 12),

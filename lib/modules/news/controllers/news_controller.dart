@@ -28,10 +28,9 @@ class NewsController extends PaginatedController<NewsItem> {
   Future<PaginationResponse<NewsItem>> fetchItems(int page) async {
     try {
       final response = await _service.fetchNews(page: page, filters: filters);
-      print("Fetched news items: ${response.items.length}");
+
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -69,9 +68,7 @@ class NewsController extends PaginatedController<NewsItem> {
         items.refresh();
         return news;
       }
-    } catch (e) {
-      print("Get news error: $e");
-    }
+    } catch (e) {}
     return null;
   }
 }

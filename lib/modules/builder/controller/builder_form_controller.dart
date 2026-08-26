@@ -680,11 +680,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void onInit() {
     super.onInit();
     if (isBuilderView) {
-      print('isBuilderView');
       setUserIdFilter();
       // loadTopProject();
     } else {
-      print('isBuyerView');
       getCity();
       // loadTopProject();// buyer view, no filter
     }
@@ -720,7 +718,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       map[key] = value;
 
       // 🧾 Log each building name as it’s processed
-      log("🏢 Saved: $key = $value");
     }
 
     project.update((p) {
@@ -728,10 +725,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     });
 
     // 🧠 Final summary log
-    log("✅ All building names updated: ${map.toString()}");
-    log(
-      "📦 Project model now has buildingNames: ${project.value.buildingNames}",
-    );
   }
 
   Future<void> assignData() async {
@@ -795,26 +788,20 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     try {
       final city = await SecureStorage.getSelectedCity();
       if (city != null && city.isNotEmpty) {
-        print("🏙️ City retrieved: $city");
         selectedCity.value = city;
 
         // Fetch
-      } else {
-        print("⚠️ No city selected");
-      }
+      } else {}
 
       // Apply city filter and load properties
       final filter = {'city': selectedCity.value};
       await applyFilters(filter);
       await loadTopProject();
-    } catch (e) {
-      print("❌ Error getting city: $e");
-    }
+    } catch (e) {}
   }
 
   Future<PaginationResponse<ProjectItem>> fetchItems(int page) async {
     try {
-      log("dkvjcvifj $filters");
       var user = await SecureStorage.getUserData();
       var userId = user?.user?.id;
 
@@ -838,10 +825,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         filters: filters,
       );
 
-      print("Fetched items: ${response.items.length}");
       return response; // ✅ full response with items + meta
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -850,7 +835,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     youWantWithoutCity.value = true;
     filters ??= {};
     filters!.remove('city');
-    print("🔍 Top Applied: city removed");
   }
 
   void fetchCreatedBy({
@@ -869,13 +853,13 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   void cityAssign(String city) {
     selectedCity.value = city;
-    log("dhgfyfg ${selectedCity.value}");
+
     //refresh();
   }
 
   void applyFilter(String key, String val) {
     filters ??= {};
-    print('jfgig $key');
+
     if (key == 'propertyTypes') {
       // Add/replace property type while keeping city
       final cityValue = youWantWithoutCity.value ? null : filters!['city'];
@@ -883,7 +867,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         if (cityValue != null) 'city': cityValue,
         'propertyTypes': val,
       };
-      print("🔍 Top Applied: propertyTypes=$val, city=${cityValue ?? '-'}");
     } else if (key == 'city') {
       // When changing city, REMOVE propertyType & listingType
       if (youWantWithoutCity.value) {
@@ -893,7 +876,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       }
 
       selectedCity.value = val;
-      print("🏙️ City changed → Reset filters. city=$val");
+
       // Reload top properties when city changes
       loadTopProject();
     } else if (key == 'listingType') {
@@ -903,14 +886,10 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         if (cityValue != null) 'city': cityValue,
         'listingType': val.toUpperCase(),
       };
-      print("🔍Top Applied: listingType=$val, city=${cityValue ?? '-'}");
     } else {
       // Generic filter
       filters![key] = val;
-      print("🔧 Top Applied filter: $key=$val");
     }
-
-    print("📊 Current filters: $filters");
 
     // Reset pagination
     currentPage.value = 1;
@@ -923,25 +902,18 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<void> loadTopProject({int page = 1}) async {
     try {
-      print("🏗️ Loading top properties, page $page...");
       final response = await fetchTopItems(page);
       if (page == 1) {
         topProjects.assignAll(response.items);
       } else {
         topProjects.addAll(response.items);
       }
-      print(
-        "✅ Loaded ${response.items.length} top properties ${topProjects.value.map((e) => e.toJson())}",
-      );
-    } catch (e) {
-      print("❌ Error loading top properties: $e");
-    }
+    } catch (e) {}
   }
 
   /// Apply filters and refresh (expects a plain Map)
   Future<void> applyFilters(Map<String, String> newFilters) async {
     try {
-      log("🔍 Applying filters builder status : $newFilters");
       isLoading.value = true;
       final incoming = Map<String, String>.from(newFilters);
       if (youWantWithoutCity.value) {
@@ -961,9 +933,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void clearFilter(String key) {
     filters ??= {};
     filters!.remove(key);
-
-    print("🗑️ Cleared filter - $key");
-    print("📊 Current filters: $filters");
 
     // reset pagination state
     currentPage.value = 1;
@@ -1004,10 +973,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         filters: filters,
       );
 
-      print("Fetched ydyfgyfdgyfd items: ${response.items.length}  ${filters}");
       return response; // ✅ full response with items + meta
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -1041,7 +1008,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         });
       }
     } catch (e) {
-      print('Error fetching user data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -1067,7 +1033,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   void setCommonMethodValue<T>(Rx<T> target, T value) {
     target.value = value;
-    print('selected Property ${target.value}');
   }
 
   Future<void> builderImagePicker() async {
@@ -1095,7 +1060,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
             if (p == null) return;
             for (var file in files) {
               p.imageList.add(file.path);
-              print('image added ${file.path}');
             }
           });
           project.refresh();
@@ -1139,7 +1103,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
             if (p == null) return;
             for (var video in videos) {
               p.videoList.add(video.path);
-              print('Video added: ${video.path}');
             }
           });
           project.refresh();
@@ -1170,12 +1133,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     if (result != null) {
       PlatformFile file = result.files.first;
 
-      print('Selected file: ${file.name}');
       uploadBrocherPath.value = file.path ?? 'No Data Found';
       uploadBrocherName.value = file.name;
-      print(
-        'Path: ${file.path}  ${uploadBrocherName.value} ${uploadBrocherPath.value}',
-      );
+
       uploadBrocherPath.refresh();
 
       if (file.path != null && file.path!.isNotEmpty) {
@@ -1184,9 +1144,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           p!.pdfPath = file.path;
         });
       }
-    } else {
-      print('File selection canceled.');
-    }
+    } else {}
   }
 
   // Future<void> pdfPreviewByDefaultApp(String path) async {
@@ -1241,7 +1199,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         // Download the PDF to temporary directory
         final response = await http.get(Uri.parse(pathOrUrl));
         if (response.statusCode != 200) {
-          print('Failed to download PDF');
           Navigator.of(Get.context!).pop(); // close loader
           return;
         }
@@ -1255,9 +1212,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
       // Open the PDF using the default app
       final result = await OpenFilex.open(localPath);
-      print('Open result: ${result.message}');
     } catch (e) {
-      print('PDF open error: $e');
     } finally {
       // Close loader
       Navigator.of(Get.context!).pop();
@@ -1302,7 +1257,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
           for (var file in result.files) {
             if (file.path != null) {
               p.documentList.add(file.path!);
-              print('Document added: ${file.path}');
             }
           }
         });
@@ -1316,7 +1270,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         );
       }
     } catch (e) {
-      print('Failed to pick documents: $e');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'Failed to pick documents: $e',
@@ -1339,16 +1292,14 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     try {
       // Check cache firs
       final data = await _builderService.getProjectById(id);
-      print('Fetched item: ${data}');
+
       items.add(data);
       return data;
 
       // If not in cache, fetch from API
       // Note: You may need to add this method to BuilderService
       // For now, return null if not in cach
-    } catch (e) {
-      print('Get project error: $e');
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -1359,7 +1310,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   void next() {
     if (_validateCurrentStep()) {
-      print('length of formkey ${formKeys.length}');
       if (currentStep.value < 5) currentStep.value++;
     }
   }
@@ -1395,7 +1345,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       }
       buildingNameControllers.clear();
     }
-    print('Selected Property Types ${builderPropertyType.value}');
   }
 
   void toggleAmenitiesView() {
@@ -1492,7 +1441,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       }
       await createBuilderProject();
     } catch (e) {
-      print('Create builder project error: $e');
     } finally {
       isLoading.value = false;
     }
@@ -1504,10 +1452,9 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       // if (kDebugMode) {
       //   printProjectDetails();
       // }
-      log("Updating project with ID: $projectId");
+
       await updateBuilderProject(projectId);
     } catch (e) {
-      print('Create builder project error: $e');
     } finally {
       isLoading.value = false;
     }
@@ -1515,11 +1462,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<void> createBuilderProject() async {
     try {
-      log(
-        "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
-      );
       var data = await _buildProjectPayload();
-      AppLogger.structured("📦 Final dsjcdjhdjhdsd :\n", data.toJson());
 
       final success = await _builderService.createProject(
         projectData: data,
@@ -1557,7 +1500,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         // );
       }
     } catch (e) {
-      print('Create builder project error: $e');
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: "Failed to Create Project",
       //   message: "",
@@ -1674,7 +1616,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
         // );
       }
     } catch (e) {
-      print('Update builder project error: $e');
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: "Failed to Update Project",
       //   message: "",
@@ -1707,7 +1648,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<AddProjectModel> _buildUpdateProjectPayload() async {
     final AddProjectModel p = project.value;
-    print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
+
     final user = await SecureStorage.getUserData();
     return AddProjectModel(
       projectName: p.projectName,
@@ -1764,7 +1705,7 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
 
   Future<AddProjectModel> _buildProjectPayload() async {
     final AddProjectModel p = project.value;
-    print('Building payload ---- > ${p.projectContactInfo?.toJson()}');
+
     final user = await SecureStorage.getUserData();
     return AddProjectModel(
       projectName: p.projectName,
@@ -1970,7 +1911,6 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
       p.propertyTypes = updatedData.propertyTypes;
       p.projectHighlights = updatedData.projectHighlights;
       p.brochure = updatedData.brochure;
-      print("✅ Updated Project Data: ${p.toJson()}");
     });
 
     // ✅ Populate the controllers with existing variant data
@@ -2000,90 +1940,40 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   void printProjectDetails() {
     final AddProjectModel p = project.value;
 
-    print('===== Project Details =====');
-    print('Name: ${p.projectName}');
-    print('Area: ${p.projectArea} sq.ft');
-    print('Total Buildings: ${p.projectSize.totalBuildings}');
-    print('Total Units: ${p.projectSize.totalUnits}');
-    print('Launch Date: ${p.launchDate}');
-    print('Possession Date: ${p.possessionDate}');
-    print('RERA ID: ${p.reraId}');
-    print('Property Type: ${p.propertyTypes}');
-    print('Status: ${p.status}');
-    print('Address: ${p.address}');
-    print('City: ${p.city}');
-    print('State: ${p.state}');
-    print('Zip Code: ${p.zipCode}');
-    print('Location: ${p.location}');
-
     if (p.nearbyLocations.isNotEmpty) {
-      print('Nearby Locations:');
-      for (var i = 0; i < p.nearbyLocations.length; i++) {
-        print('  ${i + 1}: ${p.nearbyLocations[i]}');
-      }
+      for (var i = 0; i < p.nearbyLocations.length; i++) {}
     }
 
-    if (p.amenities.isNotEmpty) {
-      print('Amenities: ${p.amenities.join(', ')}');
-    }
+    if (p.amenities.isNotEmpty) {}
 
     if (p.imageList.isNotEmpty) {
-      print('Images:');
-      for (var img in p.imageList) {
-        print('  $img');
-      }
+      for (var img in p.imageList) {}
     }
     if (p.videoList.isNotEmpty) {
-      print('Videos:');
-      for (var vid in p.videoList) {
-        print('  $vid');
-      }
+      for (var vid in p.videoList) {}
     }
 
-    if (p.brochure?.isNotEmpty ?? false) {
-      print('Brochure: ${p.brochure}');
-    }
+    if (p.brochure?.isNotEmpty ?? false) {}
 
     if (p.projectHighlights.isNotEmpty) {
-      print('Project Highlights:');
-      for (var highlight in p.projectHighlights) {
-        print('  - $highlight');
-      }
+      for (var highlight in p.projectHighlights) {}
     }
 
-    if (p.projectContactInfo != null) {
-      print('Contact Info:');
-      print('  Name: ${p.projectContactInfo!.name}');
-      print('  Phone: ${p.projectContactInfo!.phone}');
-      print('  Email: ${p.projectContactInfo!.email}');
-    }
-
-    print('Owner Info:');
-    print('  Name: ${p.ownerName}');
-    print('  Phone: ${p.ownerPhone}');
-    print('  Email: ${p.ownerEmail}');
+    if (p.projectContactInfo != null) {}
 
     if (p.configurations.isNotEmpty) {
-      print('Configurations:');
       for (var i = 0; i < p.configurations.length; i++) {
         final config = p.configurations[i];
-        print('  Configuration ${i + 1}: BHK ${config.bhk}');
+
         if (config.variants.isNotEmpty) {
           for (var j = 0; j < config.variants.length; j++) {
             final variant = config.variants[j];
-            print(
-              '    Variant ${j + 1}: ${variant.name}, BuiltUp: ${variant.builtUpArea}, BuiltUp: ${variant.pricePerSqFt}, Carpet: ${variant.carpetArea}, Price: ${variant.price}, Total Units: ${variant.totalUnits}, Available Units: ${variant.availableUnits}',
-            );
-            if (variant.specifications.isNotEmpty) {
-              print(
-                '      Specifications: ${variant.specifications.join(', ')}',
-              );
-            }
+
+            if (variant.specifications.isNotEmpty) {}
           }
         }
       }
     }
-    print('============================');
   }
 
   Map<String, dynamic> exportData() {
@@ -2093,12 +1983,8 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
   Future<bool> saveData() async {
     try {
       final projectData = project.value.toJson();
-      log(
-        "📦 Final Payload:\n${const JsonEncoder.withIndent('  ').convert(project.value.toJson())}",
-      );
 
       // TODO: Add API call here
-      print('Saving Project Data: $projectData');
 
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Success",
@@ -2202,6 +2088,5 @@ class ProjectWizardController extends PaginatedController<ProjectItem> {
     for (final c in buildingNameControllers) {
       c.clear();
     }
-    print('✅ Form has been reset successfully');
   }
 }

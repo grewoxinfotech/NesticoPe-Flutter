@@ -900,7 +900,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16,),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
             child:
                 UserHelper.isGuest
                     ? Column(
@@ -1902,7 +1902,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     filters: {'created_by': userId, 'limit': '100'},
                   );
                   final items = resp.items;
-                  log('Fetched tickets: $items');
 
                   if (items.isNotEmpty &&
                       (items.first.id?.isNotEmpty ?? false)) {
@@ -1910,7 +1909,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final ticket =
                         await service.fetchTicketById(id) ?? items.first;
 
-                    print(" Ticket item that shgo ${items.map((e) => e.id)}");
                     Get.to(
                       () =>
                           SupportTicketChatScreen(ticketId: id, ticket: ticket),
@@ -2233,7 +2231,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onTap:
                 (UserHelper.isGuest)
                     ? () {
-
                       NesticoPeSnackBar.showAwesomeSnackbar(
                         title: 'Not Authorized',
                         message: 'Please login to visit profile',
@@ -2403,17 +2400,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _navigateToZeroBrokerage() => print("Navigate to Zero Brokerage");
+  void _navigateToZeroBrokerage() => null;
 
-  void _navigateToSavedSearch() => print("Navigate to Saved Search");
+  void _navigateToSavedSearch() => null;
 
-  void _navigateToNews() => print("Navigate to News");
+  void _navigateToNews() => null;
 
-  void _navigateToServices() => print("Navigate to Services");
+  void _navigateToServices() => null;
 
-  void _navigateToRecommended() => print("Navigate to Recommended");
+  void _navigateToRecommended() => null;
 
-  void _navigateToReportFraud() => print("Navigate to Report Fraud");
+  void _navigateToReportFraud() => null;
 }
 
 class _ProfileWelcomeSection extends StatelessWidget {

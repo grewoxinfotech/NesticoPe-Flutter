@@ -799,10 +799,7 @@ class _ResellerDashboardScreenState extends State<ResellerDashboardScreen> {
             if (controller.isLoading.value && controller.recentLeads.isEmpty) {
               return DashboardShimmer();
             }
-            AppLogger.structured(
-              "Check the dashboard Reseller",
-              controller.resellerInsightsModel.value?.toJson(),
-            );
+
             return RefreshIndicator(
               onRefresh: controller.refreshDashboard,
               child:
@@ -4491,11 +4488,7 @@ Widget buildDailyGoals({
   final double progress = (completedSteps / totalSteps).clamp(0.0, 1.0);
   final remainingSteps = totalSteps - completedSteps;
   final progressPercent = (completedSteps / totalSteps * 100);
-  print("resele $currentStep");
-  print("resele $currentStreak");
-  print("resele $remainingSteps");
-  print("resele $completedSteps");
-  print("resele $progressPercent");
+
   final completeDailyGoal = totalSteps == currentStep;
 
   return Container(

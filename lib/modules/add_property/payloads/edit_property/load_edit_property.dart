@@ -17,13 +17,6 @@ class LoadEditPropertyPayload extends GetxController {
   Rxn<AddPropertyModel> property = Rxn<AddPropertyModel>(null);
 
   void onLoad(CreatePropertyController controller, AddPropertyModel property) {
-    print(
-      "Property Type: During Edit ${property.type}, Property BHK: ${property.propertyDetails?.financialInfo?.toJson()}, Property Title: ${property.title}",
-    );
-    AppLogger.structured(
-      "property Edit Payload for :",
-      property.propertyDetails?.toJson(),
-    );
     controller.sell_Rera_Id.text = property.reraId?.toString() ?? '';
     controller.propertyType.value =
         (property.type != null && property.type!.isNotEmpty)
@@ -224,13 +217,10 @@ class LoadEditPropertyPayload extends GetxController {
             : 'sq.yd.';
 
     controller.rent_CoveredParking.value =
-        property.propertyDetails?.parkingInfo?.coveredParking
-                ?.toString() ??
-            '0';
+        property.propertyDetails?.parkingInfo?.coveredParking?.toString() ??
+        '0';
     controller.rent_OpenParking.value =
-        property.propertyDetails?.parkingInfo?.openParking
-                ?.toString() ??
-            '0';
+        property.propertyDetails?.parkingInfo?.openParking?.toString() ?? '0';
 
     controller.rent_facing.value =
         (property.propertyDetails?.propertyFacing != null &&
@@ -262,8 +252,6 @@ class LoadEditPropertyPayload extends GetxController {
     final possessionStatus =
         property.propertyDetails?.plotInfo?.possessionStatus;
 
-    log("Log of possession datatusedfgefgeyh $possessionStatus");
-
     controller.sell_constructionStatus.value =
         (possessionStatus != null && possessionStatus.trim().isNotEmpty)
             ? (possessionStatus == "Immediate")
@@ -271,9 +259,6 @@ class LoadEditPropertyPayload extends GetxController {
                 : "In Future"
             : "";
 
-    log(
-      'possession status:dfkdnlsf ${controller.sell_constructionStatus.value}',
-    );
     loadFinancialData(controller, property);
     loadPossessionInfo(controller, property);
     loadMedia(controller, property);
@@ -423,10 +408,6 @@ class LoadEditPropertyPayload extends GetxController {
     final possessionStatus =
         property.propertyDetails?.plotInfo?.possessionStatus;
 
-    log(
-      "Log of possession datatus ${property.propertyDetails?.plotInfo?.toJson()}",
-    );
-
     controller.sell_constructionStatus.value =
         (possessionStatus != null && possessionStatus.trim().isNotEmpty)
             ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
@@ -516,10 +497,6 @@ class LoadEditPropertyPayload extends GetxController {
                 .join(' ')
             : 'Included in rent';
 
-    print(
-      "Painting Charges During edt: ${controller.paintingChargesType.value}",
-    );
-
     /// electricity charge
     if ((property.propertyDetails?.financialInfo?.electricityChargesPerMonth !=
             null &&
@@ -544,9 +521,6 @@ class LoadEditPropertyPayload extends GetxController {
           .financialInfo!
           .electricityChargesUnit!
           .toStringAsFixed(0);
-      print(
-        "Electricity Charges During edt: ${controller.electricityChargesPerUnitController.text}  ====${controller.electricityChargesType.value}",
-      );
     } else {
       controller.electricityChargesType.value = 'Included in rent';
     }
@@ -735,7 +709,6 @@ class LoadEditPropertyPayload extends GetxController {
             ? property.propertyDetails!.financialInfo!.maintenanceCharges!
                 .toStringAsFixed(0)
             : '0';
-    log('Maintenance Charge: ${controller.sell_rent_Maintenance_Charges.text}');
 
     controller.rent_Parking_Charges.value =
         ((property.propertyDetails?.financialInfo?.parkingCharges == "include"))
@@ -781,7 +754,6 @@ class LoadEditPropertyPayload extends GetxController {
                 property.propertyDetails!.financialInfo!.noticePeriod != 0)
             ? property.propertyDetails!.financialInfo!.noticePeriod!.toString()
             : '0';
-      print("Notice Period: ${controller.noticPeriodController.text}");      
 
     /// Locked in Period
     controller.lockPeriodController.text =
@@ -903,14 +875,10 @@ class LoadEditPropertyPayload extends GetxController {
       final possessionStatus =
           property.propertyDetails?.possessionInfo?.possessionStatus;
 
-      log("Log of possession datatus $possessionStatus");
-
       controller.sell_constructionStatus.value =
           (possessionStatus != null && possessionStatus.trim().isNotEmpty)
               ? capitalizeEachWord(possessionStatus.replaceAll("_", " "))
               : "";
-
-      log('possession status: ${controller.sell_constructionStatus.value}');
     }
   }
 
@@ -1036,8 +1004,6 @@ class LoadEditPropertyPayload extends GetxController {
       //         ? 1
       //         : 0;
     }
-
-    print('Furnish Info:${controller.selectedFurnishing.value}');
   }
 
   void loadItemByTitle(
@@ -1091,8 +1057,6 @@ class LoadEditPropertyPayload extends GetxController {
     final pgInfo = property.propertyDetails?.pgInfo;
     if (pgInfo == null) return;
 
-    print('Loading PG Info: ${pgInfo.toJson()}');
-
     /// pg name
     controller.pgNameController.text =
         (pgInfo.pgName != null && pgInfo.pgName!.isNotEmpty)
@@ -1100,15 +1064,14 @@ class LoadEditPropertyPayload extends GetxController {
             : '';
 
     /// pg common area
-    controller.commonAreasList.value =
-        _normalizePgCommonAreaList(
-          pgInfo.pgCommonArea
-                  ?.split(',')
-                  .map((e) => e.trim())
-                  .where((value) => value.isNotEmpty)
-                  .toList() ??
-              [],
-        );
+    controller.commonAreasList.value = _normalizePgCommonAreaList(
+      pgInfo.pgCommonArea
+              ?.split(',')
+              .map((e) => e.trim())
+              .where((value) => value.isNotEmpty)
+              .toList() ??
+          [],
+    );
 
     /// pg total bed
     controller.totalRoomsController.text =
@@ -1118,9 +1081,7 @@ class LoadEditPropertyPayload extends GetxController {
 
     /// Pg For
     controller.pgFor.value =
-        (pgInfo.pgFor != null && pgInfo.pgFor!.isNotEmpty)
-            ? pgInfo.pgFor!
-            : '';
+        (pgInfo.pgFor != null && pgInfo.pgFor!.isNotEmpty) ? pgInfo.pgFor! : '';
 
     /// pg best suited for
     controller.bestSuitedList.value =
@@ -1139,11 +1100,12 @@ class LoadEditPropertyPayload extends GetxController {
             ? pgInfo.pgMealOffered!.split(',').map((e) => e.trim()).toList()
             : [];
 
-    if ((pgInfo.mealChargesPerMonth != null && pgInfo.mealChargesPerMonth != 0)) {
+    if ((pgInfo.mealChargesPerMonth != null &&
+        pgInfo.mealChargesPerMonth != 0)) {
       controller.mealCharges.value = 'Separate';
 
-      controller.mealChargesTextFiled.text =
-          pgInfo.mealChargesPerMonth!.toStringAsFixed(0);
+      controller.mealChargesTextFiled.text = pgInfo.mealChargesPerMonth!
+          .toStringAsFixed(0);
     } else {
       controller.mealCharges.value = 'Included in rent';
     }
@@ -1153,13 +1115,15 @@ class LoadEditPropertyPayload extends GetxController {
         pgInfo.electricityChargesPerMonth != 0)) {
       controller.electricityChargesType.value = 'Separate';
 
-      controller.electricityChargesTextFiled.text =
-          pgInfo.electricityChargesPerMonth!.toStringAsFixed(0);
+      controller.electricityChargesTextFiled.text = pgInfo
+          .electricityChargesPerMonth!
+          .toStringAsFixed(0);
     } else if (pgInfo.electricityChargesUnit != null &&
         pgInfo.electricityChargesUnit != 0) {
       controller.electricityChargesType.value = 'Based on Unit';
-      controller.electricityChargesPerUnitController.text =
-          pgInfo.electricityChargesUnit!.toStringAsFixed(0);
+      controller.electricityChargesPerUnitController.text = pgInfo
+          .electricityChargesUnit!
+          .toStringAsFixed(0);
     } else {
       controller.electricityChargesType.value = 'Included in rent';
     }
@@ -1177,7 +1141,8 @@ class LoadEditPropertyPayload extends GetxController {
             : 'No';
 
     controller.visitorsAllowed.value =
-        (pgInfo.pgRules?.visitorAllowed != null && pgInfo.pgRules!.visitorAllowed!)
+        (pgInfo.pgRules?.visitorAllowed != null &&
+                pgInfo.pgRules!.visitorAllowed!)
             ? 'Yes'
             : 'No';
     controller.petAllowed.value =
@@ -1195,7 +1160,8 @@ class LoadEditPropertyPayload extends GetxController {
             ? 'Yes'
             : 'No';
     controller.nonVegAllowed.value =
-        (pgInfo.pgRules?.nonVegAllowed != null && pgInfo.pgRules!.nonVegAllowed!)
+        (pgInfo.pgRules?.nonVegAllowed != null &&
+                pgInfo.pgRules!.nonVegAllowed!)
             ? 'Yes'
             : 'No';
     controller.letEntryAllowed.value =
@@ -1226,10 +1192,6 @@ class LoadEditPropertyPayload extends GetxController {
             controller.selectedRoomAmenitiesDataForPG.value = _mapPgAmenities(
               e.roomFacilityInfo,
             );
-            print(
-              '=========== ${controller.selectedRoomAmenitiesDataForPG.value}',
-            );
-            print('=========== ${_mapPgAmenities(e.roomFacilityInfo)}');
           }
           return RoomModel(
             monthlyRent:
@@ -1256,9 +1218,6 @@ class LoadEditPropertyPayload extends GetxController {
   }
 
   List<String> _normalizePgCommonAreaList(List<String> values) {
-
-    log('Normalizing PG Common Area List: $values');
-
     const normalizedLabels = {
       'living_room': 'Living Room',
       'living rooms': 'Living Room',

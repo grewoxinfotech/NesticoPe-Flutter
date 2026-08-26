@@ -507,7 +507,7 @@ class _BuilderCardState extends State<BuilderCard> {
       onTap: () async {
         final userId = widget.builder.id ?? '';
         final createdBy = widget.builder.id ?? '';
-        log('BuilderCard: ${widget.builder.toMap()},');
+
         final tag = 'top_dev_profile_$userId';
         final projectController =
             Get.isRegistered<ProjectWizardController>(tag: tag)
@@ -784,7 +784,7 @@ class _BuilderCardState extends State<BuilderCard> {
                   // }
                   final userId = widget.builder.id ?? '';
                   final createdBy = widget.builder.id ?? '';
-                  log('BuilderCard: ${widget.builder.toMap()},');
+
                   final tag = 'top_dev_profile_$userId';
                   final projectController =
                       Get.isRegistered<ProjectWizardController>(tag: tag)
@@ -935,9 +935,6 @@ class _BuilderStatusTileState extends State<_BuilderStatusTile> {
         projectController.builderStatus.value = widget.filterlabel;
         profileController.loadSellerProfile(widget.userId);
 
-        log(
-          'Check any the filter label ${projectController.builderStatus.value}, ${tag}',
-        );
         Get.to(
           () => TopDeveloperProfileScreen(
             userId: widget.userId,

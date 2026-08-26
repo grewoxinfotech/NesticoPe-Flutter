@@ -30,13 +30,13 @@ class AreaRangeHelper {
       case "sq.yd.":
         return [
           (sqftRange[0] * sqftToSqyd).round(),
-          (sqftRange[1] * sqftToSqyd).round()
+          (sqftRange[1] * sqftToSqyd).round(),
         ];
 
       case "sq.mt.":
         return [
           (sqftRange[0] * sqftToSqmt).round(),
-          (sqftRange[1] * sqftToSqmt).round()
+          (sqftRange[1] * sqftToSqmt).round(),
         ];
 
       default:

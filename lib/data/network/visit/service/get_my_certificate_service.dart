@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -24,12 +23,9 @@ class GetMyCertificateService {
         final data = jsonDecode(response.body);
         return data;
       } else {
-        debugPrint("Failed to load certificate: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
         throw Exception("Failed to load certificate: ${response.statusCode}");
       }
     } catch (e) {
-      debugPrint("Exception in getMyCertificate: $e");
       rethrow; // Controller handles error
     }
   }

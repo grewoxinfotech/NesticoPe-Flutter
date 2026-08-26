@@ -20,13 +20,16 @@ class SubscriptionLimitGuard {
 
   static Future<bool> handlePlanLimitResponse(http.Response response) async {
     final parsed = _parseBody(response.body);
-    debugPrint('[SubscriptionLimitGuard] Parsed response body: ${response.body}');
+
     final errorCode = _extractErrorCode(parsed);
     final statusCode = response.statusCode;
 
     final isPlanLimit = _isPlanLimitError(statusCode, errorCode);
 
-    dev.log('[SubscriptionLimitGuard] statusCode=$statusCode, errorCode=$errorCode, isPlanLimit=$isPlanLimit', name: 'SubscriptionLimitGuard');
+    dev.log(
+      '[SubscriptionLimitGuard] statusCode=$statusCode, errorCode=$errorCode, isPlanLimit=$isPlanLimit',
+      name: 'SubscriptionLimitGuard',
+    );
 
     if (!isPlanLimit) return false;
 
@@ -41,17 +44,17 @@ class SubscriptionLimitGuard {
             ? 'Active plan required to continue this action.'
             : 'Limit Reached, please upgrade your plan.';
 
-    dev.log('[SubscriptionLimitGuard] Showing plan limit dialog', name: 'SubscriptionLimitGuard');
+    dev.log(
+      '[SubscriptionLimitGuard] Showing plan limit dialog',
+      name: 'SubscriptionLimitGuard',
+    );
     await Get.dialog<void>(
       AlertDialog(
         backgroundColor: Colors.white,
         title: Text(title),
         content: Text(description),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Later'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Later')),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -70,12 +73,18 @@ class SubscriptionLimitGuard {
     );
 
     _dialogVisible = false;
-    dev.log('[SubscriptionLimitGuard] Dialog closed', name: 'SubscriptionLimitGuard');
+    dev.log(
+      '[SubscriptionLimitGuard] Dialog closed',
+      name: 'SubscriptionLimitGuard',
+    );
     return true;
   }
 
   static bool _isPlanLimitError(int statusCode, String errorCode) {
-    dev.log('[SubscriptionLimitGuard] Checking plan limit for status=$statusCode code=$errorCode', name: 'SubscriptionLimitGuard');
+    dev.log(
+      '[SubscriptionLimitGuard] Checking plan limit for status=$statusCode code=$errorCode',
+      name: 'SubscriptionLimitGuard',
+    );
     const maxLimitCodes = {
       'MAX_SERVICES_LIMIT_REACHED',
       'MAX_LEADS_LIMIT_REACHED',
@@ -94,26 +103,44 @@ class SubscriptionLimitGuard {
 
   static String _extractErrorCode(Map<String, dynamic> body) {
     final fromError = body['error'];
-    dev.log('[SubscriptionLimitGuard] extractErrorCode input', name: 'SubscriptionLimitGuard', error: body);
+    dev.log(
+      '[SubscriptionLimitGuard] extractErrorCode input',
+      name: 'SubscriptionLimitGuard',
+      error: body,
+    );
     if (fromError is Map<String, dynamic>) {
       final code = fromError['code']?.toString();
       if (code != null && code.isNotEmpty) {
-        dev.log('[SubscriptionLimitGuard] extracted code from error.map: $code', name: 'SubscriptionLimitGuard');
+        dev.log(
+          '[SubscriptionLimitGuard] extracted code from error.map: $code',
+          name: 'SubscriptionLimitGuard',
+        );
         return code;
       }
     }
     final fallback = body['errorCode']?.toString() ?? '';
-    dev.log('[SubscriptionLimitGuard] extracted fallback errorCode: $fallback', name: 'SubscriptionLimitGuard');
+    dev.log(
+      '[SubscriptionLimitGuard] extracted fallback errorCode: $fallback',
+      name: 'SubscriptionLimitGuard',
+    );
     return fallback;
   }
 
   static Map<String, dynamic> _parseBody(String body) {
     try {
       final decoded = jsonDecode(body);
-      dev.log('[SubscriptionLimitGuard] _parseBody decoded', name: 'SubscriptionLimitGuard', error: decoded);
+      dev.log(
+        '[SubscriptionLimitGuard] _parseBody decoded',
+        name: 'SubscriptionLimitGuard',
+        error: decoded,
+      );
       if (decoded is Map<String, dynamic>) return decoded;
     } catch (e, st) {
-      dev.log('[SubscriptionLimitGuard] _parseBody error: $e', name: 'SubscriptionLimitGuard', error: st);
+      dev.log(
+        '[SubscriptionLimitGuard] _parseBody error: $e',
+        name: 'SubscriptionLimitGuard',
+        error: st,
+      );
     }
     return {};
   }

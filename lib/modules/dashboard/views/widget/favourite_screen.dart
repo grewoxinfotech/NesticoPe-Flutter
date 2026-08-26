@@ -5,11 +5,6 @@ class FavouriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('WishList '),
-
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: Text('WishList ')));
   }
 }

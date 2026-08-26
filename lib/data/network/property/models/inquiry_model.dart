@@ -303,15 +303,18 @@ class Meta {
       visitDate: json['visitDate'] ?? '',
       visitTime: json['visitTime'] ?? '',
       refShareId: json['refShareId']?.toString(),
-      bookSiteVisit: json['bookSiteVisit'] is bool
-          ? json['bookSiteVisit']
-          : (json['bookSiteVisit']?.toString().toLowerCase() == 'true'),
-      selectedVariant: json['selectedVariant'] != null
-          ? SelectedVariant.fromJson(json['selectedVariant'])
-          : null,
-      selectedRoomType: json['selectedRoomType'] != null
-          ? SelectedRoomType.fromJson(json['selectedRoomType'])
-          : null,
+      bookSiteVisit:
+          json['bookSiteVisit'] is bool
+              ? json['bookSiteVisit']
+              : (json['bookSiteVisit']?.toString().toLowerCase() == 'true'),
+      selectedVariant:
+          json['selectedVariant'] != null
+              ? SelectedVariant.fromJson(json['selectedVariant'])
+              : null,
+      selectedRoomType:
+          json['selectedRoomType'] != null
+              ? SelectedRoomType.fromJson(json['selectedRoomType'])
+              : null,
     );
   }
 
@@ -363,24 +366,19 @@ class SelectedRoomType {
   final num price;
   final String roomType;
 
-  SelectedRoomType({
-    required this.price,
-    required this.roomType,
-  });
+  SelectedRoomType({required this.price, required this.roomType});
 
   factory SelectedRoomType.fromJson(Map<String, dynamic> json) {
     return SelectedRoomType(
-      price: json['price'] is num
-          ? json['price']
-          : num.tryParse(json['price']?.toString() ?? '') ?? 0,
+      price:
+          json['price'] is num
+              ? json['price']
+              : num.tryParse(json['price']?.toString() ?? '') ?? 0,
       roomType: json['roomType']?.toString() ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'price': price,
-    'roomType': roomType,
-  };
+  Map<String, dynamic> toJson() => {'price': price, 'roomType': roomType};
 }
 
 // class Meta {
@@ -426,8 +424,6 @@ class SelectedRoomType {
 //     'visitTime': visitTime,
 //   };
 // }
-
-
 
 class InquiryDetails {
   // Common
@@ -478,7 +474,9 @@ class InquiryDetails {
       singlePrice = priceData;
     }
     if (priceRange == null && json['priceRange'] is Map<String, dynamic>) {
-      priceRange = PriceRange.fromJson(json['priceRange'] as Map<String, dynamic>);
+      priceRange = PriceRange.fromJson(
+        json['priceRange'] as Map<String, dynamic>,
+      );
     }
 
     return InquiryDetails(

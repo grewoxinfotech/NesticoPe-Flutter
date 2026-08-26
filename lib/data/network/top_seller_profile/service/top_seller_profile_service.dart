@@ -24,29 +24,20 @@ class TopSellerService {
     return await ApiConstants.getHeaders();
   }
 
-
-
   Future<User> fetchUserModelById(String userId) async {
     try {
       final uri = Uri.parse('${ApiConstants.user}/$userId');
-      print("uri: $uri");
-      final response = await http.get(uri, headers: await headers());
 
-      print("response: ${response.body}");
+      final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        print("USER DATA: $data");
-
         return User.fromJson(data['data']);
       } else {
-        print("Failed to load user model: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load user model");
       }
     } catch (e) {
-      print("Exception in fetchUserModelById: $e");
       rethrow;
     }
   }
@@ -54,24 +45,17 @@ class TopSellerService {
   Future<ProfileSellerModel> fetchSellerProfileById(String sellerId) async {
     try {
       final uri = Uri.parse('$userProfileUrl/$sellerId');
-      print("uri: $uri");
-      final response = await http.get(uri, headers: await headers());
 
-      print("response: ${response.body}");
+      final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        print("data: $data");
-
         return ProfileSellerModel.fromJson(data['data']);
       } else {
-        print("Failed to load seller profile: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load seller profile");
       }
     } catch (e) {
-      print("Exception in fetchSellerProfileById: $e");
       rethrow;
     }
   }
@@ -88,10 +72,8 @@ class TopSellerService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("[TopSellerService] GET: $uri");
 
       final response = await http.get(uri, headers: await headers());
-      print("[TopSellerService] Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -101,12 +83,9 @@ class TopSellerService {
           (json) => TopSeller.fromJson(json),
         );
       } else {
-        print("❌ [TopSellerService] Failed: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load top sellers (${response.statusCode})");
       }
     } catch (e) {
-      print("🔥 [TopSellerService] Exception: $e");
       rethrow; // Let controller handle it
     }
   }
@@ -130,31 +109,22 @@ class TopSellerService {
       final uri = Uri.parse(
         baseBuilderUrl,
       ).replace(queryParameters: queryParameters);
-      print("[TopSellerService] GET: $uri");
 
       final response = await http.get(uri, headers: await headers());
-      print("[TopSellerService] Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         if (city != null) {
-          print("Top Builder All with city: $city");
-          print("Top Builder All $city: ${data}");
-        } else {
-          print("Top Builder All without: ${data}");
-        }
+        } else {}
         return PaginationResponse.fromJson(
           data,
           (json) => BuilderItem.fromMap(json),
         );
       } else {
-        print("❌ [TopSellerService] Failed: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load top sellers (${response.statusCode})");
       }
     } catch (e) {
-      print("🔥 [TopSellerService] Exception: $e");
       rethrow; // Let controller handle it
     }
   }

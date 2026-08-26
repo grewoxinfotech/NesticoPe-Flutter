@@ -230,7 +230,6 @@ import '../../../widgets/button/button.dart';
 import '../controllers/auth_controller.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
-
   ForgetPasswordScreen({super.key});
 
   @override
@@ -240,15 +239,13 @@ class ForgetPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final AuthController authController = Get.put(AuthController());
-    bool _sending = false;
+  bool _sending = false;
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
-        appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -256,16 +253,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         // centerTitle: true,
-         title: Image.asset(
-            'assets/images/Nestico-Pe_Logo-svg.png',
-            height: 48,
-            width: 150,
-            alignment: Alignment.centerLeft,
-            fit: BoxFit.cover,
-          ),
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
+        ),
       ),
       body: Container(
-         decoration: const BoxDecoration(
+        decoration: const BoxDecoration(
           color: ColorRes.white, // dark navy background
           image: DecorationImage(
             image: AssetImage('assets/images/apartment1.png'),
@@ -282,7 +279,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  
                   // Restore icon in rounded square
                   Center(
                     child: Container(
@@ -299,9 +295,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       ),
                     ),
                   ),
-          
+
                   const SizedBox(height: 24),
-          
+
                   // Title
                   const Text(
                     'Restore Access',
@@ -313,9 +309,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       letterSpacing: -0.3,
                     ),
                   ),
-          
+
                   const SizedBox(height: 10),
-          
+
                   // Subtitle
                   Text(
                     'Enter your details to receive a\nsecure verification link.',
@@ -327,9 +323,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       height: 1.6,
                     ),
                   ),
-          
+
                   const SizedBox(height: 32),
-          
+
                   // Input card
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
@@ -357,9 +353,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         //     letterSpacing: 0.9,
                         //   ),
                         // ),
-          
+
                         // const SizedBox(height: 8),
-          
+
                         // Phone field
                         NesticoPeTextField(
                           title: 'Mobile Number',
@@ -382,9 +378,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             return null;
                           },
                         ),
-          
+
                         const SizedBox(height: 8),
-          
+
                         // Helper text
                         Text(
                           "We'll verify your account identity first.",
@@ -398,9 +394,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       ],
                     ),
                   ),
-          
+
                   const SizedBox(height: 24),
-          
+
                   // Send Reset Link / OTP button
                   NesticoPeButton(
                     title: _sending ? 'Sending...' : 'Send OTP',
@@ -411,7 +407,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           id: authController.phoneController.text.trim(),
                         );
                         //  setState(() => _sending = false);
-                        // 
+                        //
                         //setState(() {
                         //   _sending = false;
                         // });
@@ -419,9 +415,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     },
                     height: 48,
                   ),
-          
+
                   const SizedBox(height: 28),
-          
+
                   // Remembered your password? Log In
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -447,7 +443,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                       ),
                     ],
                   ),
-          
+
                   const SizedBox(height: 16),
                 ],
               ),

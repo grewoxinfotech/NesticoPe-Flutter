@@ -1990,7 +1990,6 @@ class _SellerLeadScreenState extends State<SellerLeadScreen> {
         ),
       );
     } catch (e, st) {
-      log('Error opening lead: $e\n$st');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to open lead details.',

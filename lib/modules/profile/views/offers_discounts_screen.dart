@@ -392,8 +392,6 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log('userType Frm Which Panel: ${widget.userType}');
-
     final filteredOffers =
         widget.userType == null
             ? OffersDiscountsScreen.allOffers
@@ -698,7 +696,13 @@ class _OffersDiscountsScreenState extends State<OffersDiscountsScreen> {
                         size: 20,
                       ),
                       label: Text(
-                       (UserHelper.isBuyer|| UserHelper.isGuest)?isSubmitted ? 'Enquiry Submitted' : 'Enquire Now' :isSubmitted ? 'Inquiry Submitted' : 'Inquire Now',
+                        (UserHelper.isBuyer || UserHelper.isGuest)
+                            ? isSubmitted
+                                ? 'Enquiry Submitted'
+                                : 'Enquire Now'
+                            : isSubmitted
+                            ? 'Inquiry Submitted'
+                            : 'Inquire Now',
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor:

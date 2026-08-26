@@ -36,11 +36,6 @@ class StepConfigurations extends GetView<ProjectWizardController> {
     final theme = Theme.of(context);
     return Obx(() {
       final p = controller.project.value;
-      log("Logger of Total Unit ${controller.totalUnitsController.text}");
-      log("Logger of Total Unit ${p.projectSize.totalUnits}");
-      log(
-        "Logger of Total Unit ${p.configurations.map((e) => e.variants.map((e) => e.toJson()))}",
-      );
 
       return Form(
         key: formKey,
@@ -1171,8 +1166,6 @@ class StepConfigurations extends GetView<ProjectWizardController> {
                                                           .buildingName =
                                                       (value ?? ''),
                                             );
-
-                                            log("Selected Building: $value");
                                           }
                                         },
                                         validator: (value) {

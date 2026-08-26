@@ -13,7 +13,7 @@ class ResellerPropertyController extends PaginatedController<Items> {
   Map<String, String>? filters = {};
   final String resellerId;
   ResellerPropertyController({required this.resellerId}) {
-    filters = {'assignedTo': resellerId,'isExpired':false.toString()};
+    filters = {'assignedTo': resellerId, 'isExpired': false.toString()};
   }
 
   /// State
@@ -35,13 +35,8 @@ class ResellerPropertyController extends PaginatedController<Items> {
         filters: filters,
       );
 
-      print(
-        "Reseller Properties → Page $page | Items: ${response.items.length}",
-      );
-
       return response;
     } catch (e) {
-      print("❌ Error fetching reseller properties: $e");
       rethrow;
     }
   }

@@ -1,6 +1,6 @@
 /// Status matches your "Status" array
 enum LeadStatus {
-  new_,        // New
+  new_, // New
   contacted,
   qualified,
   negotiation,
@@ -9,19 +9,11 @@ enum LeadStatus {
   fake,
 }
 
-enum SourceType {
-  app,
-  website,
-  referral,
-  socialMedia,
-  direct,
-  other,
-}
+enum SourceType { app, website, referral, socialMedia, direct, other }
 
 /// Stage matches your "Stage" array
 enum LeadStage {
-
-  newLead,     // New Lead
+  newLead, // New Lead
   contacted,
   interested,
   siteVisit,
@@ -35,10 +27,10 @@ class Lead {
   final String email;
   final String phone;
   final double estimatedValue;
-  final LeadStatus status;      // status of lead
-  final LeadStage stage;        // stage of lead
-  final String property;        // Add property field
-  final String reseller;        // Add reseller field
+  final LeadStatus status; // status of lead
+  final LeadStage stage; // stage of lead
+  final String property; // Add property field
+  final String reseller; // Add reseller field
   final String notes;
   final DateTime createdAt;
 
@@ -113,12 +105,14 @@ class Lead {
       phone: json['phone'] ?? '',
       estimatedValue: (json['estimatedValue'] as num).toDouble(),
       status: LeadStatus.values.firstWhere(
-            (e) => e.toString().split('.').last.toLowerCase() ==
+        (e) =>
+            e.toString().split('.').last.toLowerCase() ==
             (json['status'] ?? '').toString().toLowerCase(),
         orElse: () => LeadStatus.new_,
       ),
       stage: LeadStage.values.firstWhere(
-            (e) => e.toString().split('.').last.toLowerCase() ==
+        (e) =>
+            e.toString().split('.').last.toLowerCase() ==
             (json['stage'] ?? '').toString().toLowerCase(),
         orElse: () => LeadStage.newLead,
       ),
@@ -132,17 +126,17 @@ class Lead {
 
 class Product {
   final String id;
-  final String name;       // property name
-  final String category;   // address
-  final double price;      // monthly rent or price
+  final String name; // property name
+  final String category; // address
+  final double price; // monthly rent or price
   final double rating;
   final int stock;
-  final String image;      // image URL
+  final String image; // image URL
   final String description;
 
-  final int beds;          // no. of bedrooms
-  final double area;       // in m²
-  final int garage;        // no. of garages
+  final int beds; // no. of bedrooms
+  final double area; // in m²
+  final int garage; // no. of garages
 
   Product({
     required this.id,

@@ -31,7 +31,6 @@ class CityService extends GetxService {
           contentType: ContentType.failure,
         );
       }
-      print("cities ===== ${response.body}");
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",

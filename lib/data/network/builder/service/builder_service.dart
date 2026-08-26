@@ -18,16 +18,17 @@ bool _isRemoteGalleryUrl(String raw) {
   final s = raw.trim();
   if (s.isEmpty) return false;
   final u = Uri.tryParse(s);
-  return u != null && u.hasScheme && (u.scheme == 'http' || u.scheme == 'https');
+  return u != null &&
+      u.hasScheme &&
+      (u.scheme == 'http' || u.scheme == 'https');
 }
 
-Map<String, dynamic> _mediaGalleryJsonForMultipart(Map<String, dynamic> source) {
+Map<String, dynamic> _mediaGalleryJsonForMultipart(
+  Map<String, dynamic> source,
+) {
   List<dynamic> remoteOnly(dynamic list) {
     if (list is! List) return <String>[];
-    return list
-        .map((e) => e.toString())
-        .where(_isRemoteGalleryUrl)
-        .toList();
+    return list.map((e) => e.toString()).where(_isRemoteGalleryUrl).toList();
   }
 
   return <String, dynamic>{
@@ -52,10 +53,8 @@ void _normalizeMediaGalleryInProjectMap(Map<String, dynamic> projectMap) {
   for (final key in ['imageList', 'videoList', 'documentList']) {
     final v = projectMap[key];
     if (v is List) {
-      projectMap[key] = v
-          .map((e) => e.toString().trim())
-          .where(_isRemoteGalleryUrl)
-          .toList();
+      projectMap[key] =
+          v.map((e) => e.toString().trim()).where(_isRemoteGalleryUrl).toList();
     }
   }
 }
@@ -71,7 +70,9 @@ void _ensureVariantMediaObject(Map<String, dynamic> projectMap) {
         if (variants is List) {
           for (var v in variants) {
             if (v is Map) {
-              if (!v.containsKey('variantMedia') || v['variantMedia'] == null || v['variantMedia'] is! Map) {
+              if (!v.containsKey('variantMedia') ||
+                  v['variantMedia'] == null ||
+                  v['variantMedia'] is! Map) {
                 v['variantMedia'] = <String, dynamic>{};
               }
             }
@@ -240,28 +241,20 @@ class BuilderService {
       };
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
-      print("📡 Fetching Projects from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-      print("📡 Fetch Projects Status Code: ${response.statusCode}");
-      print("📡 Fetch Projects Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-
 
         return PaginationResponse<ProjectItem>.fromJson(
           data,
           (json) => ProjectItem.fromJson(json),
         );
       } else {
-        print("❌ Failed to load Top projects: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Top projects");
       }
     } catch (e) {
-      print("⚠️ Exception in fetchProjects: $e");
       rethrow; // Let controller handle error
     }
   }
@@ -273,17 +266,16 @@ class BuilderService {
     try {
       final queryParameters = {
         'page': page.toString(),
-        
-          'limit': '10',
+
+        'limit': '10',
         if (filters != null) ...filters,
       };
 
-      final uri = Uri.parse(topProjectUrl).replace(queryParameters: queryParameters);
-      print("📡 Fetching Projects from: $uri");
+      final uri = Uri.parse(
+        topProjectUrl,
+      ).replace(queryParameters: queryParameters);
 
       final response = await http.get(uri, headers: await headers());
-      print("📡 Fetch Top Projects Status Code: ${response.statusCode}");
-      print("📡 Fetch Top Projects Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -293,12 +285,9 @@ class BuilderService {
           (json) => ProjectItem.fromJson(json),
         );
       } else {
-        print("❌ Failed to load projects: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load projects");
       }
     } catch (e) {
-      print("⚠️ Exception in fetchProjects: $e");
       rethrow; // Let controller handle error
     }
   }
@@ -306,22 +295,16 @@ class BuilderService {
   Future<ProjectItem> getProjectById(String projectId) async {
     try {
       final uri = Uri.parse("$baseUrl/$projectId");
-      print("📡 Fetch Project By ID from: $uri");
 
       final response = await http.get(uri, headers: await headers());
-      print("📡 Get Project By ID Status Code: ${response.statusCode}");
-      print("📡 Get Project By ID Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return ProjectItem.fromJson(data['data']);
       } else {
-        print("❌ Failed to load projects: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load projects");
       }
     } catch (e) {
-      print("⚠️ Exception in fetchProjects: $e");
       rethrow; // Let controller handle error
     }
   }
@@ -330,17 +313,14 @@ class BuilderService {
   Future<bool> deleteProject(String projectId) async {
     try {
       final uri = Uri.parse('$baseUrl/$projectId');
-      print('🗑️ Deleting project at: $uri');
+
       final response = await http.delete(uri, headers: await headers());
-      print("🗑️ Delete Project Status Code: ${response.statusCode}");
-      print("🗑️ Delete Project Response Body: ${response.body}");
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return true;
       }
       return false;
     } catch (e) {
-      print('⚠️ Exception while deleting project: $e');
       return false;
     }
   }
@@ -355,8 +335,6 @@ class BuilderService {
   }) async {
     try {
       final uri = Uri.parse(baseUrl);
-      debugPrint("📤 Creating project at: $uri");
-      print("Project Data: ${projectData.toJson()}");
 
       final headerMap = await headers();
 
@@ -443,14 +421,9 @@ class BuilderService {
           );
         }
       }
-      debugPrint("🧾 Multipart fields: ${request.fields}");
-      debugPrint("📎 Attached files: ${request.files.length}");
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      print("📡 Create Project Status Code: ${response.statusCode}");
-      print("📡 Create Project Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -467,7 +440,7 @@ class BuilderService {
         return true;
       }
       final data = jsonDecode(response.body);
-      debugPrint("❌ Create project exception: ${data['message']}");
+
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failergrejhghrd',
 
@@ -476,7 +449,6 @@ class BuilderService {
       );
       return false;
     } catch (e) {
-      debugPrint("❌ Create project exception: $e");
       /*  CustomSnackBar.show(
         Get.overlayContext!,
         message: "Error while creating project",
@@ -640,22 +612,27 @@ class BuilderService {
   }) async {
     try {
       final uri = Uri.parse('$baseUrl/$projectId');
-      debugPrint("📤 Updating project at: $uri");
 
       final retainImageUrls = _retainUrlsFromFiles(images);
       final retainVideoUrls = _retainUrlsFromFiles(videos);
       final retainDocumentUrls = _retainUrlsFromFiles(documents);
 
-      final hasLocalImage =
-          (images ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
-      final hasLocalVideo =
-          (videos ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
-      final hasLocalDocument =
-          (documents ?? []).any((f) => !_isRemoteGalleryUrl(f.path));
+      final hasLocalImage = (images ?? []).any(
+        (f) => !_isRemoteGalleryUrl(f.path),
+      );
+      final hasLocalVideo = (videos ?? []).any(
+        (f) => !_isRemoteGalleryUrl(f.path),
+      );
+      final hasLocalDocument = (documents ?? []).any(
+        (f) => !_isRemoteGalleryUrl(f.path),
+      );
       final hasLocalBrochure =
           brochures != null && !_isRemoteGalleryUrl(brochures.path);
       final hasLocalMediaUpload =
-          hasLocalImage || hasLocalVideo || hasLocalDocument || hasLocalBrochure;
+          hasLocalImage ||
+          hasLocalVideo ||
+          hasLocalDocument ||
+          hasLocalBrochure;
 
       final projectMap = projectData.toJson();
       _ensureVariantMediaObject(projectMap);
@@ -676,11 +653,6 @@ class BuilderService {
           uri,
           headers: headerMap,
           body: jsonEncode(dataPayload),
-        );
-        log(
-          '🧾 Update JSON: images=${retainImageUrls.length}, '
-          'videos=${retainVideoUrls.length}, '
-          'documents=${retainDocumentUrls.length}',
         );
       } else {
         final headerMap = await headers();
@@ -733,19 +705,9 @@ class BuilderService {
           await _attachProjectDocuments(request, documents);
         }
 
-        log(
-          '🧾 Update multipart: retain images=${retainImageUrls.length}, '
-          'videos=${retainVideoUrls.length}, '
-          'documents=${retainDocumentUrls.length}, '
-          'newFiles=${request.files.length}',
-        );
-
         final streamedResponse = await request.send();
         response = await http.Response.fromStream(streamedResponse);
       }
-
-      print("📡 Update Project Status Code: ${response.statusCode}");
-      print("📡 Update Project Response Body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -765,7 +727,6 @@ class BuilderService {
       );
       return false;
     } catch (e) {
-      debugPrint("❌ Update project exception: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: 'Error while updating project',

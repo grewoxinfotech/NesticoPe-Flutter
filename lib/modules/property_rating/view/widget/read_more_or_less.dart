@@ -5,7 +5,6 @@ import 'package:readmore/readmore.dart';
 
 import '../../../../app/constants/app_font_sizes.dart';
 
-
 class ReadMoreClass extends StatelessWidget {
   const ReadMoreClass({
     super.key,
@@ -26,7 +25,6 @@ class ReadMoreClass extends StatelessWidget {
       description,
       trimLines: trimLines,
       colorClickableText: colorClickableText,
-
 
       style: TextStyle(
         fontSize: size,
@@ -51,4 +49,3 @@ class ReadMoreClass extends StatelessWidget {
     );
   }
 }
-

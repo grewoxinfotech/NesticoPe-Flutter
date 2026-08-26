@@ -622,8 +622,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
           color: ColorRes.white, // dark navy background
           image: DecorationImage(
-            
-            image: AssetImage('assets/images/apartment1.png',),
+            image: AssetImage('assets/images/apartment1.png'),
             fit: BoxFit.cover,
 
             // repeat: ImageRepeat.repeat,
@@ -637,12 +636,9 @@ class _LoginScreenState extends State<LoginScreen> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                
-                
+
                 children: [
-                SizedBox(
-  height: MediaQuery.of(context).size.height * 0.12,
-),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.12),
 
                   // ── App Icon ────────────────────────────────────────────
                   Center(

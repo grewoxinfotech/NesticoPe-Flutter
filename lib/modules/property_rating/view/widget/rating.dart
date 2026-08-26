@@ -18,7 +18,6 @@ class RatingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int total = ratingCounts.values.fold(0, (a, b) => a + b);
-    print('total ${ratingCounts.values.fold(0, (a, b) => a + b)}');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -100,7 +99,10 @@ class RatingWidget extends StatelessWidget {
                         1,
                       ),
 
-                      const RatingStars(value: 3.25, fillColor: ColorRes.primary),
+                      const RatingStars(
+                        value: 3.25,
+                        fillColor: ColorRes.primary,
+                      ),
                       const SizedBox(height: 5),
                       buildCommonText(
                         '($total) Ratings',

@@ -37,13 +37,7 @@ class ContractorProjectService {
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      print("📡 Contractor Projects API URL: $uri");
-      print("📦 Query Parameters: $queryParameters");
-
       final response = await http.get(uri, headers: await headers());
-
-      print("📥 Status Code: ${response.statusCode}");
-      print("📥 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
@@ -57,14 +51,11 @@ class ContractorProjectService {
 
         return result;
       } else {
-        print("❌ Failed to fetch contractor projects");
         throw Exception(
           "Failed to load contractor projects: ${response.statusCode}",
         );
       }
     } catch (e, stack) {
-      print("💥 Exception in fetchContractorProjects: $e");
-      print(stack);
       rethrow;
     }
   }
@@ -74,12 +65,7 @@ class ContractorProjectService {
     try {
       final uri = Uri.parse("$baseUrl/$id");
 
-      print("📡 Project By ID API URL: $uri");
-
       final response = await http.get(uri, headers: await headers());
-
-      print("📥 Status Code: ${response.statusCode}");
-      print("📥 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
@@ -89,7 +75,6 @@ class ContractorProjectService {
         throw Exception("Failed to fetch project by ID");
       }
     } catch (e) {
-      print("💥 Exception in fetchProjectById: $e");
       rethrow;
     }
   }

@@ -69,7 +69,6 @@ class SupportTicketController extends PaginatedController<TicketItem> {
 
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -87,14 +86,14 @@ class SupportTicketController extends PaginatedController<TicketItem> {
 
       final ticket =
           payload ??
-              // ? 
-               TicketCreateRequest(
-                title: titleController.text,
-                description: descriptionController.text,
-                category: selectedCategory.value,
-                ticketType: selectedTicketType.value,
-                // priority: selectedPriority.value,
-              );
+          // ?
+          TicketCreateRequest(
+            title: titleController.text,
+            description: descriptionController.text,
+            category: selectedCategory.value,
+            ticketType: selectedTicketType.value,
+            // priority: selectedPriority.value,
+          );
 
       final success = await _service.createTicket(ticket, pickedImages.value);
       if (success) {
@@ -108,7 +107,6 @@ class SupportTicketController extends PaginatedController<TicketItem> {
         Get.back();
       }
     } catch (e) {
-      print("Exception in submitTicket: $e");
     } finally {
       isLoading.value = false;
     }

@@ -24,38 +24,32 @@ class RentAmenities extends StatelessWidget {
                 controller.rent_propertyType.value.toLowerCase() ==
                     "agricultural land")
             ? Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(top: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.orange.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.orange.withOpacity(0.4),
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.info_outline,
-                color: Colors.orange,
-                size: 20,
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.orange.withOpacity(0.4)),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  "Flat furnishing and society amenities are not applicable for Plot or Agricultural Land properties.",
-                  style: TextStyle(
-                    color: Colors.orange.shade800,
-                    fontSize: AppFontSizes.caption,
-                    fontWeight: AppFontWeights.regular,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "Flat furnishing and society amenities are not applicable for Plot or Agricultural Land properties.",
+                      style: TextStyle(
+                        color: Colors.orange.shade800,
+                        fontSize: AppFontSizes.caption,
+                        fontWeight: AppFontWeights.regular,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        )
+            )
             : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -102,7 +96,7 @@ class RentAmenities extends StatelessWidget {
                             },
 
                             child: Container(
-                          width: MediaQuery.of(context).size.width * 0.27,
+                              width: MediaQuery.of(context).size.width * 0.27,
                               height: 120,
                               decoration: BoxDecoration(
                                 color:
@@ -211,7 +205,7 @@ class RentAmenities extends StatelessWidget {
                               controller.addOrUpdateAmenities(e.key);
                             },
                             child: Container(
-                             width: MediaQuery.of(context).size.width * 0.27,
+                              width: MediaQuery.of(context).size.width * 0.27,
                               height: 120,
                               decoration: BoxDecoration(
                                 color:
@@ -300,9 +294,6 @@ class RentAmenities extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             controller.addCommercialAmenities(e.title);
-                            print(
-                              "vdsgvfsdfsd ${controller.selectedCommercialAmenities}",
-                            );
                           },
                           child: Container(
                             width: 95,

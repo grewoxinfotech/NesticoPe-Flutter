@@ -18,13 +18,10 @@ class HireContractorServiceResponse {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data.toMap()};
   }
 }
+
 class HireContractorServiceData {
   final List<HireContractorServiceContractor> contractors;
   final int total;
@@ -38,9 +35,10 @@ class HireContractorServiceData {
 
   factory HireContractorServiceData.fromMap(Map<String, dynamic> map) {
     return HireContractorServiceData(
-      contractors: (map['contractors'] as List<dynamic>?)
-          ?.map((e) => HireContractorServiceContractor.fromMap(e))
-          .toList() ??
+      contractors:
+          (map['contractors'] as List<dynamic>?)
+              ?.map((e) => HireContractorServiceContractor.fromMap(e))
+              .toList() ??
           [],
       total: map['total'] ?? 0,
       categoryId: map['categoryId'] ?? '',
@@ -55,6 +53,7 @@ class HireContractorServiceData {
     };
   }
 }
+
 class HireContractorServiceContractor {
   final String contractorId;
   final String username;
@@ -82,11 +81,13 @@ class HireContractorServiceContractor {
       username: map['username'] ?? '',
       profilePic: map['profilePic'],
       email: map['email'] ?? '',
-      contractorProfile:
-      HireContractorProfile.fromMap(map['contractorProfile'] ?? {}),
-      servicesInCategory: (map['servicesInCategory'] as List<dynamic>?)
-          ?.map((e) => HireContractorCategoryService.fromMap(e))
-          .toList() ??
+      contractorProfile: HireContractorProfile.fromMap(
+        map['contractorProfile'] ?? {},
+      ),
+      servicesInCategory:
+          (map['servicesInCategory'] as List<dynamic>?)
+              ?.map((e) => HireContractorCategoryService.fromMap(e))
+              .toList() ??
           [],
       totalServicesInCategory: map['totalServicesInCategory'] ?? 0,
       avgRatingInCategory: map['avgRatingInCategory'] ?? '0.00',
@@ -106,6 +107,7 @@ class HireContractorServiceContractor {
     };
   }
 }
+
 class HireContractorProfile {
   final int totalServices;
   final int activeServices;
@@ -141,6 +143,7 @@ class HireContractorProfile {
     };
   }
 }
+
 class HireContractorCategoryService {
   final String id;
   final String serviceName;
@@ -161,10 +164,6 @@ class HireContractorCategoryService {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'serviceName': serviceName,
-      'rating': rating,
-    };
+    return {'id': id, 'serviceName': serviceName, 'rating': rating};
   }
 }

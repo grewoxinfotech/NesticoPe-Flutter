@@ -261,17 +261,13 @@ class PropertyHighlightManager {
         case 'rent':
           final fi = pd.financialInfo;
 
-          debugPrint("Check the Financial numbetr ${fi?.toJson()}");
-
           num? rentValue;
 
           if (fi?.propertyRentPerMonth != null &&
               fi!.propertyRentPerMonth! > 0) {
             rentValue = fi.propertyRentPerMonth;
-            debugPrint("===========skdsja ${rentValue}");
           } else if (fi?.monthlyRent != null) {
             rentValue = num.tryParse(fi!.monthlyRent.toString());
-            debugPrint("===========skdsjadd ${rentValue}");
           }
 
           if (rentValue != null && rentValue > 0) {
@@ -387,7 +383,9 @@ class PropertyHighlightManager {
         ),
       );
     }
-    if (pd.possessionInfo?.propertyAgeInYear != null && pd.possessionInfo?.propertyAgeInYear!='null' &&pd.possessionInfo?.propertyAgeInYear!='0') {
+    if (pd.possessionInfo?.propertyAgeInYear != null &&
+        pd.possessionInfo?.propertyAgeInYear != 'null' &&
+        pd.possessionInfo?.propertyAgeInYear != '0') {
       highlights.add(
         PropertyHighlightItem(
           title: "Age of Property",

@@ -33,8 +33,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
   final ResellerSuccessStoryController controllerReseller =
-  Get.find<ResellerSuccessStoryController>();
-
+      Get.find<ResellerSuccessStoryController>();
 
   // final formKey = GlobalKey<FormState>();
   //
@@ -129,7 +128,6 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       await controllerReseller.refreshList();
       controllerReseller.items.refresh();
       await dashboardController.fetchResellerDashboardDataFromApi();
-
     }
     if (!success) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -165,7 +163,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
       updatedAt: DateTime.now(),
       updatedBy: null,
     );
-    log("Update file path ${controller.imagePath.value}");
+
     final success = await controller.updateStory(
       story?.id ?? '',
       data,
@@ -186,7 +184,6 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
     await dashboardController.fetchResellerDashboardDataFromApi();
     await controllerReseller.refreshList();
     controllerReseller.items.refresh();
-
 
     controller.resetForm();
   }
@@ -262,24 +259,22 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
                 hintText: "Select month & year",
                 readOnly: true,
                 onTap: () async {
-                  log("ffihvfdfdvfiufiu ");
-                    final now = DateTime.now();
-                    final picked = await showDatePicker(
+                  final now = DateTime.now();
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: controller.selectedMonthYear.value ?? now,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    helpText: "Select Month and Year",
+                    fieldHintText: "Month/Year",
+                  );
 
-                      context: context,
-                      initialDate: controller.selectedMonthYear.value ?? now,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                      helpText: "Select Month and Year",
-                      fieldHintText: "Month/Year",
-                    );
-
-                    if (picked != null) {
-                      controller.selectedMonthYear.value = picked;
-                      controller.monthYearController.text = DateFormat(
-                        'MMMM yyyy',
-                      ).format(picked);
-                    }
+                  if (picked != null) {
+                    controller.selectedMonthYear.value = picked;
+                    controller.monthYearController.text = DateFormat(
+                      'MMMM yyyy',
+                    ).format(picked);
+                  }
                 },
                 validator:
                     (val) =>
@@ -291,7 +286,7 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // --- Status Dropdown ---
-             /* Text(
+              /* Text(
                 "Status *",
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
@@ -320,7 +315,9 @@ class AddResellerSuccessStoryScreen extends StatelessWidget {
               ),*/
               NesticoPeTextField(
                 title: "Status",
-                controller: TextEditingController(text: controller.selectedStatus.value),
+                controller: TextEditingController(
+                  text: controller.selectedStatus.value,
+                ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 readOnly: true,
                 enabled: false,

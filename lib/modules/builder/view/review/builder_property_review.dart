@@ -132,9 +132,7 @@ import '../../controller/builder_form_controller.dart';
 import '../media/upload_media_screen.dart';
 
 class StepReview extends GetView<ProjectWizardController> {
-
-
-  const StepReview({super.key,});
+  const StepReview({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -354,7 +352,11 @@ class StepReview extends GetView<ProjectWizardController> {
                       const SizedBox(height: 12),
                     ],
 
-                    _buildInfoBadge(Icons.timeline_rounded, 'Status', p.status.capitalize?.replaceAll('_', ' ') ?? ''),
+                    _buildInfoBadge(
+                      Icons.timeline_rounded,
+                      'Status',
+                      p.status.capitalize?.replaceAll('_', ' ') ?? '',
+                    ),
                     if (p.amenities.isNotEmpty) ...[
                       const SizedBox(height: 20),
                       _buildFeatureSection(
@@ -623,6 +625,7 @@ class StepReview extends GetView<ProjectWizardController> {
       ),
     );
   }
+
   Widget _buildBuildNameSection(ThemeData theme, AddProjectModel p) {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -670,28 +673,32 @@ class StepReview extends GetView<ProjectWizardController> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: p.buildingNames?.values.map((name) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  // color: ColorRes.purpleColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: ColorRes.purpleColor.withOpacity(0.4),
-                  ),
-                ),
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: AppFontSizes.small,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.purpleColor,
-                  ),
-                ),
-              );
-            }).toList()??[],
+            children:
+                p.buildingNames?.values.map((name) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      // color: ColorRes.purpleColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: ColorRes.purpleColor.withOpacity(0.4),
+                      ),
+                    ),
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: AppFontSizes.small,
+                        fontWeight: AppFontWeights.medium,
+                        color: ColorRes.purpleColor,
+                      ),
+                    ),
+                  );
+                }).toList() ??
+                [],
           ),
-
         ],
       ),
     );
@@ -1477,55 +1484,60 @@ class StepReview extends GetView<ProjectWizardController> {
                                   height: 100,
                                   fit: BoxFit.cover,
                                 ),*/
-                             if(imagePath.contains('http') || imagePath.contains("https"))...[
-                               ClipRRect(
-                                 borderRadius: BorderRadius.circular(10),
-                                 child: Image.network(
-                                   imagePath,
-                                   width: 140,
-                                   height: 100,
-                                   fit: BoxFit.cover,
-                                   errorBuilder:
-                                       (context, error, stackTrace) => Container(
-                                     decoration: BoxDecoration(
-                                       color:
-                                       ColorRes.leadGreyColor.shade200,
-                                       borderRadius: BorderRadius.circular(
-                                         12,
-                                       ),
-                                     ),
-                                     child: Icon(
-                                       Icons.image,
-                                       color: ColorRes.leadGreyColor,
-                                     ),
-                                   ),
-                                 ),
-                               ),
-                             ]else...[
-                               ClipRRect(
-                                 borderRadius: BorderRadius.circular(10),
-                                 child: Image.file(
-                                   File(imagePath),
-                                   width: 140,
-                                   height: 100,
-                                   fit: BoxFit.cover,
-                                   errorBuilder:
-                                       (context, error, stackTrace) => Container(
-                                     decoration: BoxDecoration(
-                                       color:
-                                       ColorRes.leadGreyColor.shade200,
-                                       borderRadius: BorderRadius.circular(
-                                         12,
-                                       ),
-                                     ),
-                                     child: Icon(
-                                       Icons.image,
-                                       color: ColorRes.leadGreyColor,
-                                     ),
-                                   ),
-                                 ),
-                               ),
-                             ],
+                              if (imagePath.contains('http') ||
+                                  imagePath.contains("https")) ...[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    imagePath,
+                                    width: 140,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    ColorRes
+                                                        .leadGreyColor
+                                                        .shade200,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.image,
+                                                color: ColorRes.leadGreyColor,
+                                              ),
+                                            ),
+                                  ),
+                                ),
+                              ] else ...[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    File(imagePath),
+                                    width: 140,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    ColorRes
+                                                        .leadGreyColor
+                                                        .shade200,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Icon(
+                                                Icons.image,
+                                                color: ColorRes.leadGreyColor,
+                                              ),
+                                            ),
+                                  ),
+                                ),
+                              ],
 
                               if (isLast)
                                 Positioned.fill(
@@ -2002,15 +2014,14 @@ class StepReview extends GetView<ProjectWizardController> {
                                           '₹${_formatPrice(variant.price)}',
                                           style: TextStyle(
                                             fontSize: AppFontSizes.bodySmall,
-                                            fontWeight:
-                                                AppFontWeights.bold,
+                                            fontWeight: AppFontWeights.bold,
                                             color:
                                                 ColorRes.builderGridLightGreen,
                                           ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 12,),
+                                    SizedBox(width: 12),
                                     if (variant.buildingName != null)
                                       Column(
                                         crossAxisAlignment:
@@ -2062,7 +2073,7 @@ class StepReview extends GetView<ProjectWizardController> {
                                   ),
                                 ],
                               ),
-                               const SizedBox(height: 14),
+                              const SizedBox(height: 14),
                               Row(
                                 children: [
                                   Expanded(
@@ -2108,7 +2119,8 @@ class StepReview extends GetView<ProjectWizardController> {
                                   ),
                                 ],
                               ),
-                              if (variant.bookingAmount != null && variant.bookingAmount! > 0) ...[
+                              if (variant.bookingAmount != null &&
+                                  variant.bookingAmount! > 0) ...[
                                 const SizedBox(height: 14),
                                 Row(
                                   children: [

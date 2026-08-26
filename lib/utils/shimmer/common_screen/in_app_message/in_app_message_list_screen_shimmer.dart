@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-class InAppMessageListScreenShimmer extends StatelessWidget{
+class InAppMessageListScreenShimmer extends StatelessWidget {
   const InAppMessageListScreenShimmer({super.key});
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: List.generate(
-        7,
-              (index) => Padding(
+          7,
+          (index) => Padding(
             padding: const EdgeInsets.only(bottom: 16, left: 12, right: 12),
             child: _shimmerCard(),
           ),
@@ -47,11 +47,20 @@ class InAppMessageListScreenShimmer extends StatelessWidget{
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _line(width: MediaQuery.of(Get.context!).size.width * 0.6, height: 16),
+                _line(
+                  width: MediaQuery.of(Get.context!).size.width * 0.6,
+                  height: 16,
+                ),
                 SizedBox(height: 8),
-                _line(width: MediaQuery.of(Get.context!).size.width * 0.6, height: 12),
+                _line(
+                  width: MediaQuery.of(Get.context!).size.width * 0.6,
+                  height: 12,
+                ),
                 SizedBox(height: 4),
-                _line(width: MediaQuery.of(Get.context!).size.width * 0.4, height: 12),
+                _line(
+                  width: MediaQuery.of(Get.context!).size.width * 0.4,
+                  height: 12,
+                ),
                 SizedBox(height: 12),
                 _line(width: 100, height: 12),
               ],
@@ -73,4 +82,3 @@ class InAppMessageListScreenShimmer extends StatelessWidget{
     );
   }
 }
-

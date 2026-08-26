@@ -74,12 +74,11 @@ class PropertyFeatureManager {
       list.add("${parking.covered} Covered");
     }
 
-    if (parking.open != null && parking.open == true ) {
+    if (parking.open != null && parking.open == true) {
       list.add("${parking.open} Open");
     }
 
     // Join the list with comma or return "N/A" if empty
     return list.isNotEmpty ? list.join(", ") : "N/A";
   }
-
 }

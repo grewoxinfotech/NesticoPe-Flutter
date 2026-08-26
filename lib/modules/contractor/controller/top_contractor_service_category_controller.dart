@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../../data/network/contractor/model/contractot_service_model/contractor_service_category_model.dart';
 import '../../../data/network/contractor/service/contactor_service_category_service.dart';
 
-
 class TopCategoryController extends GetxController {
   final TopCategoryService _service = TopCategoryService();
 
@@ -29,7 +28,6 @@ class TopCategoryController extends GetxController {
       final result = await _service.fetchTopCategories(limit: 12);
       categories.assignAll(result);
     } catch (e) {
-      debugPrint("TopCategoryController error: $e");
       errorMessage.value = 'Failed to load categories';
     } finally {
       isLoading.value = false;

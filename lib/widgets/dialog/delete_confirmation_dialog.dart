@@ -24,15 +24,21 @@ void showDeleteConfirmationDialog({
             /// TITLE
             Text(
               title,
-              style: TextStyle(fontSize: AppFontSizes.body, fontWeight: AppFontWeights.semiBold,color: ColorRes.textColor),
-              
+              style: TextStyle(
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textColor,
+              ),
             ),
             const SizedBox(height: 12),
 
             /// MESSAGE
             Text(
               message,
-              style:  TextStyle(fontSize: AppFontSizes.medium, color: ColorRes.black.withOpacity(0.6)),
+              style: TextStyle(
+                fontSize: AppFontSizes.medium,
+                color: ColorRes.black.withOpacity(0.6),
+              ),
             ),
             const SizedBox(height: 22),
 

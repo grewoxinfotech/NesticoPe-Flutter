@@ -425,7 +425,6 @@ class _PlatformServiceHorizontalListState
                               Dialog(
                                 backgroundColor: ColorRes.white,
                                 shape: RoundedRectangleBorder(
-                          
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Padding(
@@ -437,8 +436,10 @@ class _PlatformServiceHorizontalListState
                                     children: [
                                       Row(
                                         children: const [
-                                          Icon(Icons.check_circle,
-                                              color: ColorRes.primary),
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: ColorRes.primary,
+                                          ),
                                           SizedBox(width: 8),
                                           Text(
                                             'Thank You!',
@@ -452,7 +453,7 @@ class _PlatformServiceHorizontalListState
                                         ],
                                       ),
                                       const SizedBox(height: 8),
-                                       Text(
+                                      Text(
                                         'Your Enquiry has been submitted successfully. Our support team will contact you shortly to discuss your needs.',
                                         style: TextStyle(
                                           fontSize: AppFontSizes.small,
@@ -464,16 +465,22 @@ class _PlatformServiceHorizontalListState
                                       if (number.isNotEmpty)
                                         Row(
                                           children: [
-                                            const Icon(Icons.call,
-                                                size: 18,
-                                                color: ColorRes.primary),
+                                            const Icon(
+                                              Icons.call,
+                                              size: 18,
+                                              color: ColorRes.primary,
+                                            ),
                                             const SizedBox(width: 8),
-                                            Text(number,
-                                                style: TextStyle(
-                                                  fontSize: AppFontSizes.small,
-                                                  color: ColorRes.leadGreyColor[700],
-                                                  fontWeight: AppFontWeights.medium,
-                                                )),
+                                            Text(
+                                              number,
+                                              style: TextStyle(
+                                                fontSize: AppFontSizes.small,
+                                                color:
+                                                    ColorRes.leadGreyColor[700],
+                                                fontWeight:
+                                                    AppFontWeights.medium,
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       const SizedBox(height: 16),
@@ -481,45 +488,48 @@ class _PlatformServiceHorizontalListState
                                         children: [
                                           Expanded(
                                             child: ElevatedButton.icon(
-                                              onPressed: number.isNotEmpty
-                                                  ? () async {
-                                                      await ContactHelper
-                                                          .openDialer(number);
-                                                    }
-                                                  : null,
+                                              onPressed:
+                                                  number.isNotEmpty
+                                                      ? () async {
+                                                        await ContactHelper.openDialer(
+                                                          number,
+                                                        );
+                                                      }
+                                                      : null,
                                               icon: const Icon(Icons.call),
                                               label: Text(
                                                 'Call',
                                                 style: TextStyle(
                                                   fontSize: AppFontSizes.small,
                                                   color: Colors.white,
-                                                  fontWeight: AppFontWeights.medium,
+                                                  fontWeight:
+                                                      AppFontWeights.medium,
                                                 ),
                                               ),
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
                                                     ColorRes.primary,
                                                 foregroundColor: Colors.white,
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                  vertical: 12,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                    ),
                                               ),
                                             ),
                                           ),
                                           const SizedBox(width: 12),
                                           Expanded(
                                             child: OutlinedButton.icon(
-                                              onPressed: number.isNotEmpty
-                                                  ? () async {
-                                                      await ContactHelper
-                                                          .openWhatsApp(
-                                                        number,
-                                                        message:
-                                                            'Hi, I already submitted an Enquiry. I want to chat about ${service.title ?? 'service'}.',
-                                                      );
-                                                    }
-                                                  : null,
+                                              onPressed:
+                                                  number.isNotEmpty
+                                                      ? () async {
+                                                        await ContactHelper.openWhatsApp(
+                                                          number,
+                                                          message:
+                                                              'Hi, I already submitted an Enquiry. I want to chat about ${service.title ?? 'service'}.',
+                                                        );
+                                                      }
+                                                      : null,
                                               icon: Image.asset(
                                                 'assets/images/whatsapp.png',
                                                 width: 18,
@@ -530,20 +540,20 @@ class _PlatformServiceHorizontalListState
                                                 style: TextStyle(
                                                   fontSize: AppFontSizes.small,
                                                   color: ColorRes.primary,
-                                                  fontWeight: AppFontWeights.medium,
+                                                  fontWeight:
+                                                      AppFontWeights.medium,
                                                 ),
                                               ),
-                                              style:
-                                                  OutlinedButton.styleFrom(
+                                              style: OutlinedButton.styleFrom(
                                                 side: BorderSide(
                                                   color: ColorRes.primary,
                                                 ),
                                                 foregroundColor:
                                                     ColorRes.primary,
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                  vertical: 12,
-                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                    ),
                                               ),
                                             ),
                                           ),
@@ -577,7 +587,6 @@ class _PlatformServiceHorizontalListState
                         //   );
                         //   return;
                         // }
-
 
                         final fullName = user?.user?.fullName ?? '';
                         final firstName = user?.user?.firstName ?? '';
@@ -618,9 +627,6 @@ class _PlatformServiceHorizontalListState
                           }
                         } catch (_) {}
                       } catch (e, s) {
-                        debugPrint('❌ Error in Get Offer button: $e');
-                        debugPrint('$s');
-
                         NesticoPeSnackBar.showAwesomeSnackbar(
                           title: 'Error',
                           message: 'Something went wrong. Please try again.',
@@ -641,7 +647,6 @@ class _PlatformServiceHorizontalListState
                           width: 1.5,
                         ),
                         borderRadius: BorderRadius.circular(10),
-
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -869,8 +874,6 @@ void addInquiryFromProject(
                               },
                             };
 
-                            print('Submitting inquiry: ${inquiry}');
-
                             final success = await controller
                                 .addForNesticoPeInquiry(inquiry);
 
@@ -923,13 +926,13 @@ void addInquiryFromProject(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child:  Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.send, size: 20),
                             SizedBox(width: 8),
                             Text(
-                              '${(UserHelper.isBuyer|| UserHelper.isGuest)?'Submit Enquiry':'Submit Inquiry'}',
+                              '${(UserHelper.isBuyer || UserHelper.isGuest) ? 'Submit Enquiry' : 'Submit Inquiry'}',
 
                               style: TextStyle(
                                 fontSize: AppFontSizes.medium,

@@ -84,7 +84,7 @@ class _EmployeeTaskListScreenState extends State<EmployeeTaskListScreen> {
                     itemBuilder: (context, index) {
                       final task = tasks[index];
 
-                      return _taskTile(task); 
+                      return _taskTile(task);
                     },
                   )
                   : Center(

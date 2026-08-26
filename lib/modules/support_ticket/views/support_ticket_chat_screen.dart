@@ -259,7 +259,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   @override
   void initState() {
     super.initState();
-  
+
     setState(() {
       _bootstrap();
     });
@@ -283,15 +283,12 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
 
     final id = user?.user?.id ?? "";
     setState(() {
-    final effectiveId = id.isNotEmpty ? id : 'guest';
+      final effectiveId = id.isNotEmpty ? id : 'guest';
 
-    log('User ID:hjghughygh $effectiveId');
-
-    currentUser.value = effectiveId;
-    _socketController.currentUserId.value = effectiveId;  
+      currentUser.value = effectiveId;
+      _socketController.currentUserId.value = effectiveId;
     });
     // Fallback to 'guest' when not logged in to avoid infinite loader
-    
   }
 
   Future<void> _sendMessage() async {
@@ -312,7 +309,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
         description: _messageController.text.trim(),
         category: 'other',
         ticketType: 'custom',
-        
+
         priority: 'medium',
       );
       final created = await svc.createTicketSimple(payload);
@@ -320,9 +317,9 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
         roomId = created!.id!;
         _socketController.roomId.value = roomId;
 
-      if(UserHelper.isGuest){
+        if (UserHelper.isGuest) {
           await SecureStorage.saveSupportTicketId(roomId);
-      }
+        }
         _socketController.joinTicket(roomId);
         _messageController.clear();
         return;
@@ -347,7 +344,7 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
 
       final payload = SendChatMessageAndFile(
         ticketId: roomId,
-        
+
         message: hasText ? _messageController.text.trim() : "",
         fileBuffer: fileBytes,
         fileName: file.name,
@@ -425,7 +422,9 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ChatScreenAppBar(
-        ticket: widget.ticket ?? TicketItem(title: 'Support Ticket', status: 'open'),
+        ticket:
+            widget.ticket ??
+            TicketItem(title: 'Support Ticket', status: 'open'),
       ),
       body: Obx(() {
         final isGuest = UserHelper.isGuest;
@@ -446,7 +445,8 @@ class _SupportTicketChatScreenState extends State<SupportTicketChatScreen> {
               ),
             ),
 
-            if (widget.ticket?.status?.toLowerCase() != 'resolved' || widget.ticket == null)
+            if (widget.ticket?.status?.toLowerCase() != 'resolved' ||
+                widget.ticket == null)
               ChatMessageInputField(
                 messageController: _messageController,
                 onSendTap: _sendMessage,

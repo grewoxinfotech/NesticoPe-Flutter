@@ -92,7 +92,6 @@ class DigitalSignatureController extends GetxController {
 
       Get.back();
     } catch (e) {
-      print("Signature Error: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to upload signature',
@@ -134,7 +133,6 @@ class DigitalSignatureController extends GetxController {
         limit: _limit,
         userId: userId,
       );
-      print("Response of Digital Signature: $response");
 
       /// Parse response based on API structure
       final data = response['data'];

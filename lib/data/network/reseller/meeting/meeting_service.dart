@@ -13,11 +13,13 @@ class MeetingService {
     required int limit,
     required String resellerId,
   }) async {
-    final uri = Uri.parse(ApiConstants.meeting).replace(queryParameters: {
-      'page': page.toString(),
-      'limit': limit.toString(),
-      'resellerId': resellerId,
-    });
+    final uri = Uri.parse(ApiConstants.meeting).replace(
+      queryParameters: {
+        'page': page.toString(),
+        'limit': limit.toString(),
+        'resellerId': resellerId,
+      },
+    );
 
     final res = await http.get(uri, headers: await ApiConstants.getHeaders());
     if (res.statusCode != 200) {
@@ -27,7 +29,9 @@ class MeetingService {
     return PaginationResponse.fromJson(body, (m) => MeetingItem.fromJson(m));
   }
 
-  Future<Map<String, dynamic>> createMeeting(CreateMeetingPayload payload) async {
+  Future<Map<String, dynamic>> createMeeting(
+    CreateMeetingPayload payload,
+  ) async {
     final uri = Uri.parse(ApiConstants.meeting);
     final res = await http.post(
       uri,
@@ -36,7 +40,9 @@ class MeetingService {
     );
     final body = json.decode(res.body);
     if (res.statusCode != 200 && res.statusCode != 201) {
-      throw Exception('Failed to create meeting: ${body['message'] ?? res.statusCode}');
+      throw Exception(
+        'Failed to create meeting: ${body['message'] ?? res.statusCode}',
+      );
     }
     return body as Map<String, dynamic>;
   }

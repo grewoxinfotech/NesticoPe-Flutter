@@ -31,9 +31,7 @@ class NetworkStatusService extends GetxService {
         _isConnected.value =
             result.isNotEmpty && result.first != ConnectivityResult.none;
       });
-    } catch (e) {
-      print('Error initializing network status service: $e');
-    }
+    } catch (e) {}
 
     return this;
   }

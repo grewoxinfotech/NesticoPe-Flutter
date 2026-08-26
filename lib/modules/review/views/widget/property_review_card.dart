@@ -915,6 +915,7 @@ import '../../../reseller/view/lead_overview/widget/lead_follow_up_screen.dart';
 
 class PropertyReviewCard extends StatefulWidget {
   final ReviewItem reviewItem;
+
   /// When true show the complete review (pros/cons, footer etc.).
   /// When false show a compact summary (header, rating, truncated content).
   final bool showFullDetails;
@@ -1108,7 +1109,7 @@ class _PropertyReviewCardState extends State<PropertyReviewCard> {
             children: [
               Flexible(
                 child: Text(
-                  username.replaceAll("_", " ").capitalize??'',
+                  username.replaceAll("_", " ").capitalize ?? '',
                   style: TextStyle(
                     fontSize: AppFontSizes.body,
                     fontWeight: AppFontWeights.semiBold,

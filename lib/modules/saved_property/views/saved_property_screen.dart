@@ -626,7 +626,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                       propertyId.toString().isEmpty) {
                     return const SizedBox.shrink();
                   }
-                  log("Most View ${property.details?.toJson()}");
+
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
                         _favoriteController();
@@ -652,12 +652,7 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                       if (price != null) {
                         formattedPrice = Formatter.formatPrice(price);
                       } else {
-                        log(
-                          "Project Price Range ${property.details?.priceRange}",
-                        );
                         final range = property.details?.priceRange;
-                        log("Project Price Range min ${range?.minPrice}");
-                        log("Project Price Range max ${range?.maxPrice}");
 
                         if (range != null) {
                           final minPrice = range.minPrice;
@@ -675,12 +670,8 @@ class _SeenPropertiesTabState extends State<SeenPropertiesTab> {
                       }
                     } else {
                       // For projects - format price range
-                      log(
-                        "Project Price Range ${property.details?.priceRange}",
-                      );
+
                       final range = property.details?.priceRange;
-                      log("Project Price Range min ${range?.minPrice}");
-                      log("Project Price Range max ${range?.maxPrice}");
 
                       if (range != null) {
                         final minPrice = range.minPrice;
@@ -884,9 +875,6 @@ class _SavedPropertiesTabState extends State<SavedPropertiesTab> {
                 await favoriteController.loadNegotiableMetaForProperty(pid);
               }
             }
-            log(
-              "Contacted Properties: ${manager.favoriteResponse.value?.data?.favorite.map((e) => e.details.priceRange).toList()}",
-            );
           },
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(
@@ -1220,7 +1208,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                       propertyId.toString().isEmpty) {
                     return const SizedBox.shrink();
                   }
-                  log("Most View ${property.toJson()}");
+
                   return Obx(() {
                     final PropertyFavoriteController favoriteController =
                         _favoriteController();
@@ -1281,12 +1269,7 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                       if (price != null) {
                         formattedPrice = Formatter.formatPrice(price);
                       } else {
-                        log(
-                          "Project Price Range ${property.details?.priceRange}",
-                        );
                         final range = property.details?.priceRange;
-                        log("Project Price Range min ${range?.minPrice}");
-                        log("Project Price Range max ${range?.maxPrice}");
 
                         if (range != null) {
                           final minPrice = range.minPrice;
@@ -1304,12 +1287,8 @@ class _ContactedPropertiesTabState extends State<ContactedPropertiesTab> {
                       }
                     } else {
                       // For projects - format price range
-                      log(
-                        "Project Price Range ${property.details?.priceRange}",
-                      );
+
                       final range = property.details?.priceRange;
-                      log("Project Price Range min ${range?.minPrice}");
-                      log("Project Price Range max ${range?.maxPrice}");
 
                       if (range != null) {
                         final minPrice = range.minPrice;

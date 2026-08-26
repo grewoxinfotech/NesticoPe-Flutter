@@ -41,25 +41,20 @@ class RecommendedPropertyService {
       final uri = Uri.parse(
         "$baseUrl/$userId",
       ).replace(queryParameters: queryParams);
-      print("Recommended Property URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Recommended properties data: $data");
 
         return PaginationResponse<Items>.fromJson(
           data,
           (json) => Items.fromJson(json),
         );
       } else {
-        print("Failed to load recommended properties: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load recommended properties");
       }
     } catch (e) {
-      print("Exception in fetchRecommendedProperties: $e");
       rethrow;
     }
   }

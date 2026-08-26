@@ -1357,7 +1357,7 @@ class _ContractorProfileDetailsScreenState
                                 },
                               ),
                             ),
-                             SizedBox(height: 20),
+                            SizedBox(height: 20),
                           ],
                         );
                       }),
@@ -1548,13 +1548,11 @@ class _ContractorProfileDetailsScreenState
           filters: {'created_by': userId, 'limit': '100'},
         );
         final items = resp.items;
-        log('Fetched tickets: $items');
 
         if (items.isNotEmpty && (items.first.id?.isNotEmpty ?? false)) {
           final id = items.first.id!;
           final ticket = await service.fetchTicketById(id) ?? items.first;
 
-          print(" Ticket item that shgo ${items.map((e) => e.id)}");
           Get.to(() => SupportTicketChatScreen(ticketId: id, ticket: ticket));
         } else {
           // No previous ticket found → create on first send
@@ -2951,7 +2949,7 @@ class _ContractorMiniCardState extends State<_ContractorMiniCard> {
                                 ),
                               ),
                             ),
-                            SizedBox(width: 8,),
+                          SizedBox(width: 8),
                           if (widget.contractor.subscription.hasPremiumPlan)
                             Container(
                               padding: const EdgeInsets.symmetric(

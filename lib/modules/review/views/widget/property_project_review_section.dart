@@ -83,11 +83,9 @@
 
 //           return Container(
 //             padding: const EdgeInsets.symmetric(vertical: 12),
-            
+
 //           color: ColorRes.leadGreyColor.shade100,
 
-             
-          
 //             child: Column(
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
@@ -97,7 +95,7 @@
 //                 //   color: ColorRes.leadGreyColor.shade300,
 //                 // ),
 //                 const SizedBox(height: 12),
-            
+
 //                 TitleWithViewAll(
 //                   title: "Reviews & Ratings",
 //                   showViewAll: true,
@@ -109,18 +107,18 @@
 //                     Get.to(() => AllReviewScreen(reviewController: reviewCtrl));
 //                   },
 //                 ),
-            
+
 //                 const SizedBox(height: 12),
-            
+
 //                 // ⭐ Overall Rating (reusable)
 //                 overallWidgetBuilder(
 //                   totalReviews,
 //                   overallRating,
 //                   detailedRatings,
 //                 ),
-            
+
 //                 const SizedBox(height: 12),
-            
+
 //                 // 📋 Review List (reusable)
 //                 if (reviewCtrl.items.isNotEmpty)
 //                   Padding(
@@ -198,8 +196,6 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nesticope_app/modules/auth/views/otp_login_screen.dart';
@@ -263,8 +259,11 @@ class _ReviewSectionState extends State<ReviewSection> {
         Obx(() {
           final overallCtrl = widget.overallController;
           final reviewCtrl = widget.reviewController;
-          final isOverallLoading = overallCtrl.isLoading.value && overallCtrl.ratingData.value == null;
-          final isReviewLoading = reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
+          final isOverallLoading =
+              overallCtrl.isLoading.value &&
+              overallCtrl.ratingData.value == null;
+          final isReviewLoading =
+              reviewCtrl.isLoading.value && reviewCtrl.items.isEmpty;
           if (isOverallLoading && isReviewLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -324,7 +323,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                     },
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding:  EdgeInsets.only(right: 12),
+                        padding: EdgeInsets.only(right: 12),
                         child: widget.reviewCardBuilder(
                           context,
                           reviewCtrl.items[index],
@@ -344,7 +343,10 @@ class _ReviewSectionState extends State<ReviewSection> {
                         width: _current == i ? 18 : 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: _current == i ? ColorRes.primary : ColorRes.leadGreyColor[300],
+                          color:
+                              _current == i
+                                  ? ColorRes.primary
+                                  : ColorRes.leadGreyColor[300],
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),

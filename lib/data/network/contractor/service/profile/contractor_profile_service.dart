@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -15,7 +14,6 @@ import '../../../../../widgets/messages/snack_bar.dart';
 import '../../../../database/secure_storage_service.dart';
 import '../../model/profile/contractor_profile_model.dart';
 
-
 class ContractorProfileUpdate {
   ContractorProfileUpdate._();
 
@@ -26,6 +24,7 @@ class ContractorProfileUpdate {
   static Future<Map<String, String>> header() async {
     return await ApiConstants.getHeaders();
   }
+
   static Future<Map<String, String>> headerUpdateToken() async {
     return await ApiConstants.getUpdatedHeaders();
   }
@@ -37,17 +36,13 @@ class ContractorProfileUpdate {
         headers: await header(),
       );
       final decoded = jsonDecode(response.body);
-      print('📦 Selhjuyler Raw Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return decoded['data'];
       } else {
-        print('⚠️ Contractor Dashboard Error Response: $decoded');
         return decoded['data'];
       }
     } catch (e, stack) {
-      print('❌ Exception in fetchContractorDashboard: $e');
-      print(stack);
       return null;
     }
   }
@@ -98,10 +93,10 @@ class ContractorProfileUpdate {
   //   }
   // }
   Future<Map<String, dynamic>> updateSellerProfileDetails(
-      ContractorUserUpdateProfile user,
-      String userId, {
-        File? profileImageFile,
-      }) async {
+    ContractorUserUpdateProfile user,
+    String userId, {
+    File? profileImageFile,
+  }) async {
     try {
       final uri = Uri.parse('$_baseUrl/$userId');
       final request = http.MultipartRequest('PUT', uri);
@@ -118,7 +113,6 @@ class ContractorProfileUpdate {
             profileImageFile.path,
           ),
         );
-        print('🖼️ Added profile image: ${profileImageFile.path}');
       }
 
       // ✅ Convert user object to Map
@@ -130,13 +124,11 @@ class ContractorProfileUpdate {
       // ✅ Add all flattened fields
       request.fields.addAll(flattenedMap);
 
-      print('📤 Sending multipart request to $uri');
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
       final decoded = jsonDecode(response.body);
-      print('📦 Seller Profile Update Response: $decoded');
-      print('📦 Status Code: ${response.statusCode}');
+
       final jsonData = json.decode(response.body);
       // final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -146,10 +138,10 @@ class ContractorProfileUpdate {
       );
       // ✅ Handle OTP-required responses
       if (decoded['otpRequired'] == true ||
-          decoded['message']?.toString().toLowerCase().contains('otp') == true) {
+          decoded['message']?.toString().toLowerCase().contains('otp') ==
+              true) {
         if (decoded['updatePhoneToken'] != null) {
           await SecureStorage.saveUpdatePhoneToken(decoded['updatePhoneToken']);
-          print('✅ Saved updatePhoneToken for OTP verification');
         }
         return decoded;
       }
@@ -165,31 +157,33 @@ class ContractorProfileUpdate {
         );
         return decoded;
       }
-       json.decode(response.body);
+      json.decode(response.body);
       // final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
-        message: jsonData['message']??"Failed to update profile Data",
+        message: jsonData['message'] ?? "Failed to update profile Data",
         contentType: ContentType.failure,
       );
 
       // ⚠️ Error
-      print('⚠️ Contractor Profile Update Error Response: $decoded');
+
       return decoded;
     } catch (e, stack) {
-      print('❌ Exception in Seller Profile Update: $e');
-      print(stack);
       return {
         'story': false,
         'message': 'Error updating profile: ${e.toString()}',
       };
     }
   }
-  Map<String, String> _flattenToStringMap(Map<String, dynamic> data, [String parentKey = '']) {
+
+  Map<String, String> _flattenToStringMap(
+    Map<String, dynamic> data, [
+    String parentKey = '',
+  ]) {
     final result = <String, String>{};
 
     data.forEach((key, value) {
-      if(key == 'profilePic') return;
+      if (key == 'profilePic') return;
       final newKey = parentKey.isEmpty ? key : '$parentKey[$key]';
       if (value == null) return;
 
@@ -203,24 +197,18 @@ class ContractorProfileUpdate {
     return result;
   }
 
-
-
-
   static const int _phoneUpdateOtpLength = 4;
 
-  Future<Map<String, dynamic>> verifyOtpForSellerNumber(String otp,
-      Map user,
-      String userId,) async {
+  Future<Map<String, dynamic>> verifyOtpForSellerNumber(
+    String otp,
+    Map user,
+    String userId,
+  ) async {
     try {
       if (otp.trim().length != _phoneUpdateOtpLength) {
-        return {
-          'success': false,
-          'message': 'Please enter a 4-digit OTP',
-        };
+        return {'success': false, 'message': 'Please enter a 4-digit OTP'};
       }
-      log('user id dshfbd $userId');
-      log('user OTP  $otp');
-      log("user Data ${user}");
+
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/verify-phone-update'),
         headers: await headerUpdateToken(),
@@ -228,11 +216,10 @@ class ContractorProfileUpdate {
       );
 
       final decoded = jsonDecode(response.body);
-      print('📦 Contractor Verify Update Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Clear the updatePhoneToken after successful verification
-        print('✅ Cleared updatePhoneToken after successful verification');
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -242,7 +229,6 @@ class ContractorProfileUpdate {
         );
         return decoded;
       } else {
-        print('⚠️ Contractor Profile Update Error Response: $decoded');
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -256,8 +242,6 @@ class ContractorProfileUpdate {
         };
       }
     } catch (e, stack) {
-      print('❌ Exception in Contractor Profile Update: $e');
-      print(stack);
       return {
         'story': false,
         'message': 'Error verifying OTP: ${e.toString()}',
@@ -266,9 +250,10 @@ class ContractorProfileUpdate {
   }
 
   // Resend OTP for phone number update
-  Future<Map<String, dynamic>> resendPhoneSellerUpdateOtp(String userId,
-      String phone,) async {
-    log("dhfbhd $phone");
+  Future<Map<String, dynamic>> resendPhoneSellerUpdateOtp(
+    String userId,
+    String phone,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/$userId/resend-phone-update-otp'),
@@ -277,7 +262,6 @@ class ContractorProfileUpdate {
       );
 
       final decoded = jsonDecode(response.body);
-      print('📦 Resend Phone Update OTP Response: $decoded');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Save new updatePhoneToken
@@ -285,7 +269,6 @@ class ContractorProfileUpdate {
           await SecureStorage.saveUpdatePhoneToken(
             decoded['data']['updatePhoneToken'],
           );
-          print('✅ Saved new updatePhoneToken after resend');
         }
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
@@ -296,7 +279,6 @@ class ContractorProfileUpdate {
         );
         return decoded;
       } else {
-        print('⚠️ Resend OTP Error Response: $decoded');
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Failed',
@@ -309,8 +291,6 @@ class ContractorProfileUpdate {
         };
       }
     } catch (e, stack) {
-      print('❌ Exception in Resend OTP: $e');
-      print(stack);
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Failed',
         message: "Error while updating project",
@@ -323,5 +303,5 @@ class ContractorProfileUpdate {
     }
   }
 
-// Helper method for multipart image upload}
+  // Helper method for multipart image upload}
 }

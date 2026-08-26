@@ -36,8 +36,6 @@ class TopContractorsService {
 
       final uri = Uri.parse(baseUrl).replace(queryParameters: queryParameters);
 
-      debugPrint("Fetching Top Contractors: $uri");
-
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
@@ -47,9 +45,6 @@ class TopContractorsService {
           (json) => Contractor.fromJson(json),
         );
       } else {
-        debugPrint("Failed to fetch contractors: ${response.statusCode}");
-        debugPrint("Response body: ${response.body}");
-
         CustomSnackBar.show(
           Get.overlayContext!,
           message: "Failed to load contractors",
@@ -58,11 +53,9 @@ class TopContractorsService {
         throw Exception("Failed to load contractors");
       }
     } catch (e) {
-      debugPrint("Exception in fetchTopContractors: $e");
       rethrow;
     }
   }
-
 
   ///==================== Fetch Single Contractor (If Required) ====================
   Future<Contractor?> fetchContractorById(String contractorId) async {
@@ -72,18 +65,14 @@ class TopContractorsService {
         headers: await headers(),
       );
 
-      if (response.statusCode == 200 || response.statusCode ==201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
 
         final parsed = data['data'];
 
-       return Contractor.fromJson(parsed);
-      } else {
-        debugPrint("Failed to get contractor: ${response.statusCode}");
-      }
-    } catch (e) {
-      debugPrint("Exception in fetchContractorById: $e");
-    }
+        return Contractor.fromJson(parsed);
+      } else {}
+    } catch (e) {}
     return null;
   }
 
@@ -97,11 +86,9 @@ class TopContractorsService {
 
         return User.fromJson(data['data']);
       } else {
-        debugPrint("Failed to load user model: ${response.statusCode}");
         throw Exception("Failed to load user model");
       }
     } catch (e) {
-      debugPrint("Exception in fetchUserModelById: $e");
       rethrow;
     }
   }

@@ -31,7 +31,10 @@ class TrendingCityCard extends StatelessWidget {
         // ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          border: Border.all(color: ColorRes.leadGreyColor.shade500, width: 0.5),
+          border: Border.all(
+            color: ColorRes.leadGreyColor.shade500,
+            width: 0.5,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,40 +81,45 @@ class TrendingCityCard extends StatelessWidget {
                   const SizedBox(height: 6),
 
                   // Property count
-                 if(city.propertyCount>0)...[
-                   Row(
-                     children: [
-                       Icon(
-                         Icons.home_outlined,
-                         size: 16,
-                         color: ColorRes.blueGrey,
-                       ),
-                       const SizedBox(width: 6),
-                       Text(
-                         '${city.propertyCount} properties',
-                         style: TextStyle(color: ColorRes.leadGreyColor[700], fontSize: AppFontSizes.caption),
-                       ),
-                     ],
-                   ),
-                 ],
+                  if (city.propertyCount > 0) ...[
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.home_outlined,
+                          size: 16,
+                          color: ColorRes.blueGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${city.propertyCount} properties',
+                          style: TextStyle(
+                            color: ColorRes.leadGreyColor[700],
+                            fontSize: AppFontSizes.caption,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 4),
-                if(city.projectCount>0)...[
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.apartment_outlined,
-                        size: 16,
-                        color: ColorRes.blueGrey,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${city.projectCount} projects',
-                        style: TextStyle(color: ColorRes.leadGreyColor[700], fontSize: AppFontSizes.caption),
-                      ),
-                    ],
-                  ),
-                ],
-
+                  if (city.projectCount > 0) ...[
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.apartment_outlined,
+                          size: 16,
+                          color: ColorRes.blueGrey,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${city.projectCount} projects',
+                          style: TextStyle(
+                            color: ColorRes.leadGreyColor[700],
+                            fontSize: AppFontSizes.caption,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
 
                   // // Total views
                   // Row(

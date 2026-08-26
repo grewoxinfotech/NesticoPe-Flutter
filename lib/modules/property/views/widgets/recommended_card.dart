@@ -255,36 +255,36 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       Text(
                         title.displayName,
                         style: TextStyle(
-                    fontWeight: AppFontWeights.semiBold,
+                          fontWeight: AppFontWeights.semiBold,
 
-                      fontSize: AppFontSizes.body,
-                      color: ColorRes.blackShade87,
+                          fontSize: AppFontSizes.body,
+                          color: ColorRes.blackShade87,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
                       Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        size: 14,
-                        color: ColorRes.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          widget.property.address ?? "-",
-                          style: TextStyle(
-                            fontSize: AppFontSizes.caption,
-                            color: ColorRes.leadGreyColor.shade700,
+                        children: [
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: ColorRes.grey,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              widget.property.address ?? "-",
+                              style: TextStyle(
+                                fontSize: AppFontSizes.caption,
+                                color: ColorRes.leadGreyColor.shade700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
 
                       // const SizedBox(height: 6),
 
@@ -373,7 +373,7 @@ class _RecommendedCardState extends State<RecommendedCard> {
                       // ),
                       // SizedBox(height: 5),
                       //  const SizedBox(height: 10),
-                  Facilities(property: widget.property),
+                      Facilities(property: widget.property),
                       const SizedBox(width: 10),
                       Text(
                         price.displayPrice.toString() ?? '0',

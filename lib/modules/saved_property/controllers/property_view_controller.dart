@@ -60,7 +60,6 @@ class PropertyViewController extends GetxController {
       // Load first batch automatically
       // await loadNextBatch();
     } catch (e) {
-      print('Error in PropertyViewController.fetchViewedProperties: $e');
     } finally {
       isLoading.value = false;
     }

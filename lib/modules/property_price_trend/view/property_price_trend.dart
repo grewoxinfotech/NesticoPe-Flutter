@@ -398,10 +398,7 @@ class _PriceDetailsState extends State<PriceDetails> {
                                             ?.financialInfo
                                             ?.price ??
                                         0.0,
-                                    onTap:
-                                        () => print(
-                                          "Tapped on ${property.title}",
-                                        ),
+                                    onTap: () => null,
                                   ),
                                 );
                               },
@@ -537,15 +534,17 @@ class BlurredHeader extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: buildPositionedTextField(PropertyController(),context, () {
-                      Get.to(() => const CommonSearchField());
-                    }),
-
+                    child: buildPositionedTextField(
+                      PropertyController(),
+                      context,
+                      () {
+                        Get.to(() => const CommonSearchField());
+                      },
+                    ),
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      print("Mic tapped");
                       Get.to(() => const CommonSearchField());
                     },
                     child: Container(

@@ -153,7 +153,6 @@ class ResellerConversionScreen extends StatelessWidget {
 
                         CityZipcodeSelector(
                           onSelected: (city, zipcode) {
-                            print("Partner City Selection Data ${city}  ${zipcode}");
                             _cityController.text = city;
                             _zipcodeController.text = zipcode;
                           },
@@ -184,26 +183,26 @@ class ResellerConversionScreen extends StatelessWidget {
                                   controller.isLoading.value
                                       ? null
                                       : () {
-                                        if(UserHelper.isGuest){
+                                        if (UserHelper.isGuest) {
                                           Get.to(() => OtpLoginScreen());
-
-                                        }else{
-                                        if (_cityController.text.isEmpty ||
-                                            _zipcodeController.text.isEmpty) {
-                                          NesticoPeSnackBar.showAwesomeSnackbar(
-                                            title: 'Error',
-                                            message:
-                                            'Please select a city and zipcode',
-                                            contentType: ContentType.failure,
-                                          );
                                         } else {
-                                          controller.convertBuyerToReseller(
-                                            city: _cityController.text.trim(),
-                                            zipCode:
-                                            _zipcodeController.text.trim(),
-                                          );
-
-                                        }}
+                                          if (_cityController.text.isEmpty ||
+                                              _zipcodeController.text.isEmpty) {
+                                            NesticoPeSnackBar.showAwesomeSnackbar(
+                                              title: 'Error',
+                                              message:
+                                                  'Please select a city and zipcode',
+                                              contentType: ContentType.failure,
+                                            );
+                                          } else {
+                                            controller.convertBuyerToReseller(
+                                              city: _cityController.text.trim(),
+                                              zipCode:
+                                                  _zipcodeController.text
+                                                      .trim(),
+                                            );
+                                          }
+                                        }
                                       },
                               child:
                                   controller.isLoading.value

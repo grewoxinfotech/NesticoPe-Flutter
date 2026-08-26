@@ -39,7 +39,7 @@ class ContractorQuotationController
 
   Future<void> applyFilters(Map<String, String> filter) async {
     filters.assignAll(filter);
-    print("Apply Filter in Quotation Contractor Section ${filters} ");
+
     refreshList();
   }
 
@@ -196,18 +196,13 @@ class ContractorQuotationController
 
   Future<void> getQuotation(String quotationId) async {
     try {
-  
-
       final success = await ContractorInquiryService.contractorInquiryService
           .getQuotation(quotationId);
 
       // refreshList();
       // items.refresh();
       // Navigator.of(Get.context!).pop();
-
-  
     } catch (e) {
-    
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: 'An error occurred: ${e.toString()}',
@@ -417,8 +412,6 @@ class ContractorQuotationController
     //   },
     // };
 
-    AppLogger.structured("Quotation Item:", item.toMap());
-    AppLogger.structured("Quotation User:", user.user?.toJson());
     final payload = {
       "name": item.user.name,
       "email": item.user.email,
@@ -438,13 +431,9 @@ class ContractorQuotationController
       },
     };
 
-    print("Lead Payload: $payload");
-
     final response = await ContractorInquiryService.contractorInquiryService
         .convertInquiryIntoLead(payload);
     if (response) {
-      print("Check to plau ");
-
       controllerLead.items.refresh();
       controllerLead.refreshLead();
       refreshList();

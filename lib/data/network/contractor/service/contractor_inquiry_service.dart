@@ -32,7 +32,6 @@ class ContractorInquiryService {
     Map<String, String>? filters,
     required String id,
   }) async {
-    log("USer $id");
     try {
       final queryParams = {
         'page': page.toString(),
@@ -43,24 +42,19 @@ class ContractorInquiryService {
 
       final uri = Uri.parse("$_baseUrl").replace(queryParameters: queryParams);
 
-      log("Contractor Inquiry Url $uri");
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Inquiry data: $data");
 
         return PaginationResponse<ContractorInquiryItem>.fromJson(
           data,
           (json) => ContractorInquiryItem.fromMap(json),
         );
       } else {
-        print("Failed to load Review: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Review");
       }
     } catch (e) {
-      print("Exception in Review: $e");
       rethrow;
     }
   }
@@ -70,7 +64,6 @@ class ContractorInquiryService {
     Map<String, String>? filters,
     required String id,
   }) async {
-    log("USer $id");
     try {
       final queryParams = {
         'page': page.toString(),
@@ -81,24 +74,19 @@ class ContractorInquiryService {
         "$_baseUrlQutation",
       ).replace(queryParameters: queryParams);
 
-      log("Contractor Quotation Url $uri");
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Quotation data: $data");
 
         return PaginationResponse<ContractorQuotation>.fromJson(
           data,
           (json) => ContractorQuotation.fromMap(json),
         );
       } else {
-        print("Failed to load Review: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load Review");
       }
     } catch (e) {
-      print("Exception in Review: $e");
       rethrow;
     }
   }
@@ -113,7 +101,7 @@ class ContractorInquiryService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Inquiry Status Change : $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -123,7 +111,6 @@ class ContractorInquiryService {
         );
         return data['success'];
       } else {
-        print("Failed to Change Status: ${response.statusCode}");
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -131,7 +118,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Response body: ${response.body}");
+
         throw Exception("Failed to Change Status");
       }
     } catch (e) {
@@ -140,7 +127,7 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception in Status: $e");
+
       return false;
     }
   }
@@ -155,7 +142,7 @@ class ContractorInquiryService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Quotation Status Change : $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -165,8 +152,6 @@ class ContractorInquiryService {
         );
         return data['success'];
       } else {
-        print("Failed to Change Status: ${response.statusCode}");
-        print("Response body: ${response.body}");
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -182,7 +167,7 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception in Status: $e");
+
       return false;
     }
   }
@@ -196,7 +181,7 @@ class ContractorInquiryService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Inquiry Deleted : $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -207,8 +192,6 @@ class ContractorInquiryService {
 
         return data['success'];
       } else {
-        print("Failed to Delete Inquiry: ${response.statusCode}");
-        print("Response body: ${response.body}");
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -224,7 +207,7 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception in Delete Inquiry: $e");
+
       return false;
     }
   }
@@ -238,7 +221,7 @@ class ContractorInquiryService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("Contractor Quotation Deleted : $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -248,8 +231,6 @@ class ContractorInquiryService {
         );
         return data['success'];
       } else {
-        print("Failed to Delete Quotation: ${response.statusCode}");
-        print("Response body: ${response.body}");
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -265,7 +246,7 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception in Delete Quotation: $e");
+
       return false;
     }
   }
@@ -274,10 +255,6 @@ class ContractorInquiryService {
     try {
       final uri = Uri.parse('$_baseUrlQutation/$id/download-pdf');
       final response = await http.get(uri, headers: await headers());
-
-      debugPrint(
-        "Get Quotation Response: $uri - status:${response.statusCode}",
-      );
 
       final bytes = response.bodyBytes;
       final contentType = response.headers['content-type'] ?? '';
@@ -298,9 +275,7 @@ class ContractorInquiryService {
           // Try to open the file (optional)
           try {
             await OpenFilex.open(file.path);
-          } catch (e) {
-            print('Could not open PDF: $e');
-          }
+          } catch (e) {}
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Success',
             message: 'PDF downloaded',
@@ -312,7 +287,7 @@ class ContractorInquiryService {
         // If not a PDF, try to parse as JSON and show message
         final bodyString = utf8.decode(bytes);
         final data = jsonDecode(bodyString);
-        print('Contractor Quotation Response : $data');
+
         final jsonData = json.decode(bodyString);
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
@@ -321,9 +296,8 @@ class ContractorInquiryService {
         );
         return data['success'] ?? true;
       } else {
-        print("Failed to get Quotation: ${response.statusCode}");
         final bodyString = utf8.decode(bytes);
-        print("Response body: $bodyString");
+
         try {
           final jsonData = json.decode(bodyString);
           NesticoPeSnackBar.showAwesomeSnackbar(
@@ -346,27 +320,22 @@ class ContractorInquiryService {
         message: 'Something went wrong',
         contentType: ContentType.failure,
       );
-      print("Exception in getQuotation: $e");
+
       return false;
     }
   }
 
   Future<bool> convertInquiryIntoLead(Map<String, dynamic> lead) async {
     try {
-      debugPrint("Lead Data to Convert: $lead");
-      debugPrint("Lead Data JSON: ${jsonEncode(lead)}");
       final response = await http.post(
         Uri.parse(ApiConstants.leads),
         headers: await headers(),
         body: jsonEncode(lead),
       );
-      debugPrint("Checj skjdsjjd dfsdgsfd ${ApiConstants.leads} ");
-      debugPrint(
-        "Convert Inquiry Into Lead Response: ${response.statusCode} - ${response.body} ",
-      );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        print("Contractor Inquiry Convert Into Lead : $data");
+
         final jsonData = json.decode(response.body);
         // final jsonData = json.decode(response.body);
         NesticoPeSnackBar.showAwesomeSnackbar(
@@ -388,8 +357,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Failed to convert Into Lead: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         return false;
       }
     } catch (e) {
@@ -398,14 +366,13 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception Convert Into Lead $e");
+
       return false;
     }
   }
 
   Future<bool> convertInquiryQuotation(Map<String, dynamic> quotation) async {
     try {
-      print("Quotation Convert: $quotation");
       final response = await http.post(
         Uri.parse(_baseUrlQutation),
         headers: await headers(),
@@ -420,7 +387,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.success,
         );
-        print("Contractor Inquiry Send Quotation : $data");
+
         return data['success'];
       } else {
         final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
@@ -435,8 +402,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Failed to Send Quotation: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         return false;
       }
     } catch (e) {
@@ -445,14 +411,13 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception Convert Into Lead $e");
+
       return false;
     }
   }
 
   Future<bool> updateQuotation(Map<String, dynamic> quotation) async {
     try {
-      AppLogger.structured("Quotation Update:", quotation);
       final response = await http.put(
         Uri.parse('$_baseUrlQutation/${quotation['id']}'),
         headers: await headers(),
@@ -467,7 +432,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.success,
         );
-        print("Contractor Inquiry Send Quotation : $data");
+
         return data['success'];
       } else {
         final handled = await SubscriptionLimitGuard.handlePlanLimitResponse(
@@ -482,8 +447,7 @@ class ContractorInquiryService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        print("Failed to Send Quotation: ${response.statusCode}");
-        print("Response body: ${response.body}");
+
         return false;
       }
     } catch (e) {
@@ -492,7 +456,7 @@ class ContractorInquiryService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      print("Exception Convert Into Lead $e");
+
       return false;
     }
   }

@@ -95,7 +95,7 @@ class ContractorReferralController extends GetxController {
               .clamp(0, 100)
               .toInt();
       discountPercentageObs.value = percent;
-      print("Discount Percentage: $percent");
+
       return percent;
     }
     return 0;

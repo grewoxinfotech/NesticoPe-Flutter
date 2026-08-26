@@ -27,7 +27,7 @@ class ResellerSuccessStoryController
   final TextEditingController totalValueController = TextEditingController();
 
   // --- Dropdown & Slider ---
-  final List<String> statusOptions = ['draft','published'];
+  final List<String> statusOptions = ['draft', 'published'];
   RxString selectedStatus = 'draft'.obs;
 
   // ---------------- Reactive Variables ----------------
@@ -69,10 +69,9 @@ class ResellerSuccessStoryController
         resellerId: id,
         module: "contractor",
       );
-      debugPrint("📥 Fetched Success Stories: ${response.items.length}");
+
       return response;
     } catch (e) {
-      debugPrint("⚠️ Exception in fetchItems: $e");
       rethrow;
     }
   }
@@ -95,7 +94,6 @@ class ResellerSuccessStoryController
       if (success) await loadInitial();
       return success;
     } catch (e) {
-      debugPrint("❌ Create story error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -125,7 +123,6 @@ class ResellerSuccessStoryController
       }
       return success;
     } catch (e) {
-      debugPrint("❌ Update story error: $e");
       return false;
     } finally {
       isLoading.value = false;
@@ -139,9 +136,7 @@ class ResellerSuccessStoryController
         items.removeWhere((item) => item.id == id);
         items.refresh();
       }
-    } catch (e) {
-      debugPrint("❌ Delete story error: $e");
-    }
+    } catch (e) {}
   }
 
   // ====================================================
@@ -175,9 +170,7 @@ class ResellerSuccessStoryController
       rating.value = 0;
       selectedStatus.value = statusOptions.first;
       imagePath.value = null;
-    } catch (e) {
-      debugPrint("⚠️ resetForm called after dispose: $e");
-    }
+    } catch (e) {}
   }
 
   // void populateForm(ResellerSuccessItem story) {
@@ -199,8 +192,6 @@ class ResellerSuccessStoryController
   // }
 
   void populateForm(ResellerSuccessItem story) {
-    print("Populating form with story: ${story.toJson()}");
-
     titleController.text = story.title;
     descriptionController.text = story.description;
     achievementController.text = story.achievement;

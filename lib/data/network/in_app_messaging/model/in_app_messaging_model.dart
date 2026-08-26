@@ -145,7 +145,6 @@ class NotificationItem {
     );
   }
 
-
   Map<String, dynamic> toJson() => {
     'id': id,
     'created_by': createdBy,

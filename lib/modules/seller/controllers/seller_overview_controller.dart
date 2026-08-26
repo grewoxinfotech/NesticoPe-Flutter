@@ -112,21 +112,18 @@ class SellerOverviewController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    log('SellerOverviewController onInit called');
+
     _initializeData();
   }
 
   // Initialize data on controller creation
   Future<void> _initializeData() async {
-    log('_initializeData started');
     await getCreatedYearOfUser();
     await getFetchSellerApi(selectedGraphYear.value);
-    log('_initializeData completed');
   }
 
   // Refresh dashboard data
   Future<void> refreshSellerDashboard() async {
-    log('refreshSellerDashboard called');
     try {
       await getFetchSellerApi(selectedGraphYear.value);
 
@@ -136,7 +133,6 @@ class SellerOverviewController extends GetxController {
       //   contentType: ContentType.success,
       // );
     } catch (e) {
-      debugPrint('refreshSellerDashboard error: $e');
       //
       // NesticoPeSnackBar.showAwesomeSnackbar(
       //   title: 'Error',
@@ -149,20 +145,16 @@ class SellerOverviewController extends GetxController {
   // Get user creation year
   Future<void> getCreatedYearOfUser() async {
     try {
-      log('getCreatedYearOfUser started');
       final user = await SecureStorage.getUserData();
       final createdDate = user?.user?.createdAt ?? '';
 
       if (createdDate.isNotEmpty) {
         final parsedDate = DateTime.parse(createdDate);
         createdUserYear.value = parsedDate.year;
-        log('Created year of user: ${createdUserYear.value}');
       } else {
-        log('User createdAt date is empty or null');
         createdUserYear.value = DateTime.now().year; // Fallback
       }
     } catch (e) {
-      log('Error parsing createdAt date: $e');
       createdUserYear.value = DateTime.now().year; // Fallback
     }
   }
@@ -170,39 +162,26 @@ class SellerOverviewController extends GetxController {
   // Fetch seller dashboard data
   Future<void> getFetchSellerApi(int leadsYear) async {
     try {
-      log('getFetchSellerApi started with year: $leadsYear');
-
       // Set loading state
       isLoading.value = true;
-      log('isLoading set to true');
 
       // Get user data
       final user = await SecureStorage.getUserData();
       final userId = user?.user?.id;
-      log('userId: $userId');
 
       if (userId == null || userId.isEmpty) {
-        log('userId is null or empty');
         throw Exception('User ID not found');
       }
 
       // Fetch dashboard data with the correct year parameter
-      log('Calling API...');
+
       final data = await SellerDashBoardService.sellerDashBoardService
           .getSellerDashBoard(userId, leadsYear: leadsYear);
-      log(
-        'API response received: ${data != null ? "Data exists" : "Data is null"}',
-      );
 
       // Update observable data
       if (data != null) {
         overviewData.value = SellerInsightsModel.fromJson(data);
-        log(
-          "Seller Dashboard - Total Properties: ${overviewData.value?.data?.propertyMetrics?.totalProperties}",
-        );
-        log(
-          'overviewData.value is now: ${overviewData.value != null ? "NOT NULL" : "NULL"}',
-        );
+
         if (UserHelper.isSellerOwner) {
           final currentLeadCount =
               overviewData.value?.data?.leadAnalytics?.totalLeads ?? 0;
@@ -218,11 +197,8 @@ class SellerOverviewController extends GetxController {
         }
       } else {
         overviewData.value = null;
-        log('No data received from API');
       }
     } catch (e, stackTrace) {
-      log('Error fetching seller data: $e');
-      log('Stack trace: $stackTrace');
       overviewData.value = null;
 
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -233,18 +209,12 @@ class SellerOverviewController extends GetxController {
     } finally {
       // Always set loading to false
       isLoading.value = false;
-      log('isLoading set to false');
-      log(
-        'Final state - isLoading: ${isLoading.value}, overviewData: ${overviewData.value != null ? "HAS DATA" : "NULL"}',
-      );
     }
   }
 
   // Update leads year and refresh data
   Future<void> updateLeadsYear(int year) async {
-    log('updateLeadsYear called with year: $year');
     if (selectedGraphYear.value == year) {
-      log('Year is same, skipping update');
       return; // No need to update if year is the same
     }
     await getFetchSellerApi(year);
@@ -253,7 +223,6 @@ class SellerOverviewController extends GetxController {
 
   @override
   void onClose() {
-    log('SellerOverviewController onClose called');
     super.onClose();
   }
 }

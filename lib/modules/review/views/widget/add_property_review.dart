@@ -599,8 +599,6 @@ class AddReviewScreen extends StatelessWidget {
       ),
     );
 
-    log("Print the section ${data.toJson()}");
-
     try {
       final success = await controller.createReview(data);
       if (success) {

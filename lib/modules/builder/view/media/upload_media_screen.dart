@@ -11,13 +11,10 @@ import '../../../../app/constants/app_font_sizes.dart';
 import '../../controller/builder_form_controller.dart';
 
 class UploadMediaScreen extends GetView<ProjectWizardController> {
-
-
-  UploadMediaScreen({super.key,});
+  UploadMediaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1162,7 +1159,6 @@ Future<String?> generateVideoThumbnail(String videoPath) async {
       quality: 50,
     );
   } catch (e) {
-    debugPrint('Thumbnail error: $e');
     return null;
   }
 }

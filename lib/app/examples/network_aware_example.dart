@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import '../mixins/network_aware_mixin.dart';
 
 /// Example controller showing how to use NetworkAwareMixin
-/// 
+///
 /// Usage:
 /// 1. Add `with NetworkAwareMixin` to your controller
 /// 2. Override `onInternetReconnected()` to refresh your APIs
@@ -10,42 +10,36 @@ import '../mixins/network_aware_mixin.dart';
 class ExamplePropertyController extends GetxController with NetworkAwareMixin {
   final RxList<dynamic> properties = <dynamic>[].obs;
   final RxBool isLoading = false.obs;
-  
+
   @override
   void onInit() {
     super.onInit(); // IMPORTANT: Call super.onInit() to setup network listener
     loadProperties();
   }
-  
+
   /// Load properties from API
   Future<void> loadProperties() async {
     if (!hasInternet) {
-      print('❌ No internet connection');
       return;
     }
-    
+
     try {
       isLoading.value = true;
-      
+
       // Your API call here
       // final response = await PropertyService.getProperties();
       // properties.value = response.data;
-      
-      print('✅ Properties loaded successfully');
     } catch (e) {
-      print('❌ Error loading properties: $e');
     } finally {
       isLoading.value = false;
     }
   }
-  
+
   /// This method is automatically called when internet reconnects
   @override
   void onInternetReconnected() {
     super.onInternetReconnected(); // Optional: Call super to see debug logs
-    
-    print('🔄 Internet reconnected! Refreshing properties...');
-    
+
     // Refresh all your important APIs here
     loadProperties();
     // loadOtherData();
@@ -57,37 +51,32 @@ class ExamplePropertyController extends GetxController with NetworkAwareMixin {
 class ExampleDashboardController extends GetxController with NetworkAwareMixin {
   final RxList<dynamic> news = <dynamic>[].obs;
   final RxList<dynamic> trending = <dynamic>[].obs;
-  
+
   @override
   void onInit() {
     super.onInit();
     loadDashboardData();
   }
-  
+
   Future<void> loadDashboardData() async {
     if (!hasInternet) return;
-    
+
     // Load all dashboard data
-    await Future.wait([
-      loadNews(),
-      loadTrending(),
-    ]);
+    await Future.wait([loadNews(), loadTrending()]);
   }
-  
+
   Future<void> loadNews() async {
     // Your API call
-    print('📰 Loading news...');
   }
-  
+
   Future<void> loadTrending() async {
     // Your API call
-    print('🔥 Loading trending...');
   }
-  
+
   @override
   void onInternetReconnected() {
     super.onInternetReconnected();
-    print('🔄 Refreshing dashboard data...');
+
     loadDashboardData();
   }
 }

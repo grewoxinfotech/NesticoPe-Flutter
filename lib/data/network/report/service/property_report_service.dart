@@ -21,10 +21,8 @@ class PropertyReportService {
   Future<bool> createPropertyReport(PropertyReportModel report) async {
     try {
       final uri = Uri.parse(baseUrl);
-      debugPrint("Creating Property Report at: $uri");
 
       final body = jsonEncode(report.toJson());
-      debugPrint("Report Body: $body");
 
       final response = await http.post(
         uri,
@@ -32,10 +30,8 @@ class PropertyReportService {
         body: body,
       );
 
-      debugPrint("Property Report Response: ${response.body}");
       return (response.statusCode == 201 || response.statusCode == 200);
     } catch (e) {
-      debugPrint("Exception in createPropertyReport: $e");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Error",
         message: "Something went wrong while creating report",
@@ -60,25 +56,19 @@ class PropertyReportService {
         '$baseUrl',
       ).replace(queryParameters: queryParameters);
 
-      print("uri: $uri");
-
       final response = await http.get(uri, headers: await headers());
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("data: $data");
 
         return PaginationResponse<PropertyReportItem>.fromJson(
           data,
           (json) => PropertyReportItem.fromJson(json),
         );
       } else {
-        print("Failed to load property reports: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception("Failed to load property reports");
       }
     } catch (e) {
-      print("Exception in fetchPropertyReports: $e");
       rethrow; // Let the controller handle it
     }
   }

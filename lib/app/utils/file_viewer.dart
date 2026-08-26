@@ -77,8 +77,6 @@ class FileViewer {
       final file = await File(filePath).writeAsBytes(response.bodyBytes);
 
       await OpenFilex.open(file.path);
-    } catch (e) {
-      print("Error opening file: $e");
-    }
+    } catch (e) {}
   }
 }

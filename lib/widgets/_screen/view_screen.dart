@@ -27,9 +27,9 @@ class ViewScreen extends StatelessWidget {
       shrinkWrap: true,
       primary: true,
       controller: controller,
-      padding: padding ?? const EdgeInsets.only(top: AppPadding.medium,bottom: 80),
-      separatorBuilder:
-          (context, s) => AppSpacing.verticalSmall,
+      padding:
+          padding ?? const EdgeInsets.only(top: AppPadding.medium, bottom: 80),
+      separatorBuilder: (context, s) => AppSpacing.verticalSmall,
       itemBuilder: itemBuilder,
     );
   }

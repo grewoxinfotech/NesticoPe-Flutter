@@ -17,22 +17,16 @@ class OverallRatingService {
   Future<PropertyReviewResponse?> fetchOverallRating(String propertyId) async {
     try {
       final uri = Uri.parse("$baseUrl/$propertyId/stats");
-      print("Overall Rating URI: $uri");
 
       final response = await http.get(uri, headers: await headers());
-
-      print("Response Status: ${response.statusCode}");
-      print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return PropertyReviewResponse.fromJson(data);
       } else {
-        print("⚠️ Failed to load overall rating: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("❌ Exception in fetchOverallRating: $e");
       return null;
     }
   }

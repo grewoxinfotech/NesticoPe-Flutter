@@ -3,30 +3,21 @@ class BuilderTopResponseModel {
   final String? message;
   final BuilderTopData? data;
 
-  BuilderTopResponseModel({
-    this.success,
-    this.message,
-    this.data,
-  });
+  BuilderTopResponseModel({this.success, this.message, this.data});
 
   factory BuilderTopResponseModel.fromMap(Map<String, dynamic> map) {
     return BuilderTopResponseModel(
       success: map['success'],
       message: map['message'],
-      data: map['data'] != null
-          ? BuilderTopData.fromMap(map['data'])
-          : null,
+      data: map['data'] != null ? BuilderTopData.fromMap(map['data']) : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      "success": success,
-      "message": message,
-      "data": data?.toMap(),
-    };
+    return {"success": success, "message": message, "data": data?.toMap()};
   }
 }
+
 class BuilderTopData {
   final List<BuilderItem>? items;
   final int? total;
@@ -46,10 +37,12 @@ class BuilderTopData {
 
   factory BuilderTopData.fromMap(Map<String, dynamic> map) {
     return BuilderTopData(
-      items: map['items'] != null
-          ? List<BuilderItem>.from(
-              map['items'].map((x) => BuilderItem.fromMap(x)))
-          : [],
+      items:
+          map['items'] != null
+              ? List<BuilderItem>.from(
+                map['items'].map((x) => BuilderItem.fromMap(x)),
+              )
+              : [],
       total: map['total'],
       currentPage: map['currentPage'],
       totalPages: map['totalPages'],
@@ -69,6 +62,7 @@ class BuilderTopData {
     };
   }
 }
+
 class BuilderItem {
   final String? id;
   final String? createdBy;
@@ -156,21 +150,20 @@ class BuilderItem {
       upcomingCount: map['upcomingCount'],
       ongoingCount: map['ongoingCount'],
       completedCount: map['completedCount'],
-      createdAt: map['createdAt'] != null
-          ? DateTime.tryParse(map['createdAt'])
-          : null,
-      updatedAt: map['updatedAt'] != null
-          ? DateTime.tryParse(map['updatedAt'])
-          : null,
-      sellerProfile: map['sellerProfile'] != null
-          ? BuilderSellerProfile.fromMap(map['sellerProfile'])
-          : null,
-      projectStats: map['projectStats'] != null
-          ? BuilderProjectStats.fromMap(map['projectStats'])
-          : null,
+      createdAt:
+          map['createdAt'] != null ? DateTime.tryParse(map['createdAt']) : null,
+      updatedAt:
+          map['updatedAt'] != null ? DateTime.tryParse(map['updatedAt']) : null,
+      sellerProfile:
+          map['sellerProfile'] != null
+              ? BuilderSellerProfile.fromMap(map['sellerProfile'])
+              : null,
+      projectStats:
+          map['projectStats'] != null
+              ? BuilderProjectStats.fromMap(map['projectStats'])
+              : null,
       planPrice: map['planPrice'],
-      hasActivePremiumSubscription:
-          map['hasActivePremiumSubscription'],
+      hasActivePremiumSubscription: map['hasActivePremiumSubscription'],
     );
   }
 
@@ -202,11 +195,11 @@ class BuilderItem {
       "sellerProfile": sellerProfile?.toMap(),
       "projectStats": projectStats?.toMap(),
       "planPrice": planPrice,
-      "hasActivePremiumSubscription":
-          hasActivePremiumSubscription,
+      "hasActivePremiumSubscription": hasActivePremiumSubscription,
     };
   }
 }
+
 class BuilderSellerProfile {
   final String? companyName;
   final String? sellerType;
@@ -246,6 +239,7 @@ class BuilderSellerProfile {
     };
   }
 }
+
 class BuilderProjectStats {
   final int? total;
   final int? upcoming;

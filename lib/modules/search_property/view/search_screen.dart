@@ -535,7 +535,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     if (widget.initialSearchText != null &&
         widget.initialSearchText!.isNotEmpty) {
       micController.searchText.value.text = widget.initialSearchText!;
-      print('micro jsdewud ${micController.searchText.value.text}');
 
       // Call appropriate search based on isLocality
       if (widget.isLocality) {
@@ -550,7 +549,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
         );
       } else {
         if (!widget.onlySearchCity) {
-          print("jkfhweudfhuiefhwefhuif");
           controller.fetchPredictionsCity(widget.initialSearchText!);
         } else {
           controller.fetchGooglePlaces(widget.initialSearchText!);
@@ -559,9 +557,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
     }
 
     micController.searchText.value.addListener(() {
-      debugPrint(
-        'Check which is true ${widget.isLocality}  building ${widget.isSearchForBuilding}',
-      );
       // Call appropriate search based on isLocality
       if (widget.isLocality) {
         controller.fetchPredictionsLocality(
@@ -633,7 +628,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
           onPressed: () {
             Navigator.of(context).pop();
             micController.searchText.value.clear();
-            print("Search filter ${widget.selectedCity}");
           },
         ),
       ),
@@ -778,9 +772,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
             ),
             AppSpacing.verticalMedium,
             Obx(() {
-              print(
-                "Prediction LIst ${controller.predictions.map((e) => e.toJson())}",
-              );
               if (controller.isLoading.value) {
                 return const Center(child: SizedBox.shrink());
               }
@@ -824,11 +815,6 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                       ),
                   itemBuilder: (context, index) {
                     final Prediction item = controller.predictions[index];
-
-                    AppLogger.structured(
-                      "Prediction List Data ",
-                      Prediction.fromJson(item.toJson()),
-                    );
 
                     return InkWell(
                       // onTap:(widget.isNavigate)? () async {
@@ -1369,10 +1355,9 @@ Widget buildSection(
                 if (!isFromLoginSide) {
                   // log("Applied Filters: ${city.city}");
                   propertyController.fetchCreatedBy(withoutCity: false);
-                  
+
                   final filters = {"city": city.city};
 
-                  print("Applied Filters: $filters");
                   searchHistoryController.addSearchHistory({
                     'keywords': ["${city.city}"],
                   });
@@ -1424,11 +1409,9 @@ Widget buildSectionTrending(String title, List<TrendingCityData> data) {
             return TrendingCityCard(
               city: city,
               onTap: () {
-
                 propertyController.fetchCreatedBy(withoutCity: false);
                 final filters = {"city": city.city};
 
-                print("Applied Filters: $filters");
                 searchHistoryController.addSearchHistory({
                   'keywords': ['${city.city}'],
                 });

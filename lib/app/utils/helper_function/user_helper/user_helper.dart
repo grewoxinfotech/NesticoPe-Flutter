@@ -28,12 +28,7 @@ class UserHelper {
 
       _cachedIsAadharVerified = user?.user?.isAadharVerified ?? false;
       _cachedIsAadharActive = ApiConfig.isAdharActive;
-
-      print(
-        'User type initialized: ${userTypeString} (${sellerTypeStringValue})',
-      );
     } catch (e) {
-      print('Error initializing user type: $e');
       _cachedUserType = null;
       _cachedSellerType = null;
       _cachedIsAadharVerified = false;
@@ -47,15 +42,13 @@ class UserHelper {
     String? sellerType,
     bool? isAadharVerified,
   }) async {
-    _cachedIsAadharActive=ApiConfig.isAdharActive;
+    _cachedIsAadharActive = ApiConfig.isAdharActive;
     _cachedUserType = _mapRoleStringToEnum(roleString);
     _cachedSellerType = _mapSellerStringToEnum(sellerType);
 
     if (isAadharVerified != null) {
       _cachedIsAadharVerified = isAadharVerified;
     }
-
-    print('User type set: ${userTypeString} (${sellerTypeStringValue})');
   }
 
   /// Internal helpers
@@ -88,29 +81,30 @@ class UserHelper {
         return null;
     }
   }
+
   static String? getOfferUserType() {
-  switch (_cachedUserType) {
-    case UserType.reseller:
-      return "reseller";
+    switch (_cachedUserType) {
+      case UserType.reseller:
+        return "reseller";
 
-    case UserType.buyer:
-      return "buyer";
+      case UserType.buyer:
+        return "buyer";
 
-    case UserType.contractor:
-      return "contractor";
+      case UserType.contractor:
+        return "contractor";
 
-    case UserType.seller:
-      if (_cachedSellerType == SellerType.owner) {
-        return "seller-owner";
-      } else if (_cachedSellerType == SellerType.builder) {
-        return "seller-builder";
-      }
-      return "seller";
+      case UserType.seller:
+        if (_cachedSellerType == SellerType.owner) {
+          return "seller-owner";
+        } else if (_cachedSellerType == SellerType.builder) {
+          return "seller-builder";
+        }
+        return "seller";
 
-    default:
-      return null;
+      default:
+        return null;
+    }
   }
-}
 
   /// Clear on logout
   static void clearUserType() {
@@ -183,5 +177,4 @@ class UserHelper {
   static bool get isSellerBuilder =>
       _cachedUserType == UserType.seller &&
       _cachedSellerType == SellerType.builder;
-
 }

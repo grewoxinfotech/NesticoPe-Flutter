@@ -235,19 +235,17 @@ class _ReSellerPropertyShareState extends State<ReSellerPropertyShare> {
             title:
                 controller.isLoading.value ? "Generate Link" : "Generate Link",
             onTap: () {
-              print("2. Selected Property IDs: ${widget.propertyId}");
               if (widget.isMultiShare) {
                 Get.lazyPut(() => ReSellerPropertyShareController());
                 final propertyShareController =
                     Get.find<ReSellerPropertyShareController>();
 
                 // Share multiple properties
-                print("Selected Property IDs: ${widget.propertyId}");
+
                 propertyShareController.createMultiPropertyShare(
                   widget.propertyId,
                 );
               } else {
-                print("Selected Property ID: ${widget.propertyId}");
                 controller.createInterestForm(
                   propertyId: widget.propertyId.first,
                 );

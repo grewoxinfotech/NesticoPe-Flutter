@@ -581,7 +581,7 @@ class CitySelectionWidget extends StatelessWidget {
           NesticoPeTextField(
             hintText: 'Select City',
             title: "City",
-            style: style??TextStyle(),
+            style: style ?? TextStyle(),
             controller: controller,
             iconColor: iconColor,
             isRequired: isRequired,
@@ -595,7 +595,6 @@ class CitySelectionWidget extends StatelessWidget {
             onChanged: (value) async {
               if (value.isNotEmpty) {
                 await googleMapController.fetchGooglePlaces(value);
-                log("City input: $value");
               } else {
                 googleMapController.predictions.clear();
                 googleMapController.cityStateList.clear();
@@ -629,7 +628,6 @@ class CitySelectionWidget extends StatelessWidget {
             onChanged: (value) async {
               if (value.isNotEmpty) {
                 await googleMapController.fetchGooglePlaces(value);
-                log("City input: $value");
               } else {
                 googleMapController.predictions.clear();
                 googleMapController.cityStateList.clear();
@@ -838,7 +836,6 @@ class LocationSelectionWidget extends StatelessWidget {
               if (value.isNotEmpty && city.isNotEmpty) {
                 // ✅ Search for localities within the selected city
                 await googleMapController.fetchPredictionsLocality(value, city);
-                log("Location input: $value in city: $city");
               } else {
                 googleMapController.predictions.clear();
               }
@@ -882,7 +879,11 @@ class LocationSelectionWidget extends StatelessWidget {
                   }
 
                   return ListTile(
-                    leading: Icon(leadingIcon, size: 20, color: ColorRes.primary),
+                    leading: Icon(
+                      leadingIcon,
+                      size: 20,
+                      color: ColorRes.primary,
+                    ),
                     title: Text(
                       prediction.structuredFormatting?.mainText ??
                           prediction.description ??

@@ -233,7 +233,6 @@ class NotificationService {
     _wireFirebaseMessageHandlers();
 
     _isInitialized = true;
-    debugPrint('✅ Firebase notification service wired');
   }
 
   void _wireFirebaseMessageHandlers() {
@@ -252,10 +251,6 @@ class NotificationService {
     final actionUrl = message.data['action_url']?.toString();
     final propertyId = message.data['propertyId']?.toString();
     final templateKey = message.data['templateKey']?.toString();
-
-    debugPrint(
-      '🔗 [FCM] click action_url=$actionUrl propertyId=$propertyId templateKey=$templateKey',
-    );
 
     // Route mapping can be implemented here as backend action_url paths stabilize.
   }
@@ -277,14 +272,11 @@ class NotificationService {
   // }
 
   Future<void> attachGuestUser() async {
-    debugPrint('🔔 [FCM] Attaching GUEST user');
     if (!_isInitialized) {
-      debugPrint('⚠️ NotificationService not initialized yet');
       return;
     }
 
     await _syncFcmTokenToBackend(role: 'guest');
-    debugPrint('🎉 [FCM] Guest token synced');
   }
 
   /// ---------------- LOGIN ----------------
@@ -320,15 +312,11 @@ class NotificationService {
     required String role,
     Function(String playerId)? syncToBackend,
   }) async {
-    debugPrint('🔔 [FCM] Attaching LOGGED-IN user');
-    debugPrint('👤 User ID : $userId');
-    debugPrint('🎭 Role    : $role');
     final token = await _syncFcmTokenToBackend(role: role, userId: userId);
     if (token != null && token.isNotEmpty && syncToBackend != null) {
       await syncToBackend(token);
       await SecureStorage.saveNotificationToken(token);
     }
-    debugPrint('🎉 [FCM] Logged-in user token synced');
   }
 
   Future<String?> _syncFcmTokenToBackend({
@@ -361,7 +349,6 @@ class NotificationService {
       await SecureStorage.saveFcmToken(token);
       return token;
     } catch (e) {
-      debugPrint('❌ [FCM] sync token failed: $e');
       return null;
     }
   }
@@ -369,7 +356,6 @@ class NotificationService {
   /// ---------------- LOGOUT ----------------
   Future<void> resetToGuest() async {
     await attachGuestUser();
-    debugPrint('🔄 Guest token synced after logout');
   }
 
   /// ---------------- GETTERS ----------------

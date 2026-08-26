@@ -83,8 +83,8 @@ class PropertyListCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               title,
-                              style:  TextStyle(
-                                fontSize:AppFontSizes.medium,
+                              style: TextStyle(
+                                fontSize: AppFontSizes.medium,
                                 fontWeight: AppFontWeights.semiBold,
                               ),
                               maxLines: 1,
@@ -155,7 +155,7 @@ class PropertyListCard extends StatelessWidget {
                       // const SizedBox(height: 4),
                       Text(
                         location,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: AppFontSizes.bodySmall,
                           color: ColorRes.blackShade54,
                         ),
@@ -163,7 +163,7 @@ class PropertyListCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         "$roomType : $price",
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: AppFontSizes.bodySmall,
                           color: ColorRes.blackShade87,
                         ),
@@ -198,11 +198,14 @@ class PropertyListCard extends StatelessWidget {
                     children: [
                       Text(
                         "Last Added",
-                        style: TextStyle(fontSize: AppFontSizes.small, color: ColorRes.leadGreyColor[600]),
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          color: ColorRes.leadGreyColor[600],
+                        ),
                       ),
                       Text(
                         lastAddedDate,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: AppFontSizes.bodySmall,
                           fontWeight: AppFontWeights.medium,
                         ),
@@ -226,7 +229,10 @@ class PropertyListCard extends StatelessWidget {
                   // ),
                   ElevatedButton(
                     onPressed: () {},
-                    child: Text("Repost", style: TextStyle(fontSize: AppFontSizes.small)),
+                    child: Text(
+                      "Repost",
+                      style: TextStyle(fontSize: AppFontSizes.small),
+                    ),
                   ),
                 ],
               ),
@@ -259,7 +265,7 @@ class PropertyListCard extends StatelessWidget {
         text = "DELETED";
         break;
       default:
-        bgColor = ColorRes.blueGrey?? Colors.black;
+        bgColor = ColorRes.blueGrey ?? Colors.black;
         text = status.toUpperCase();
     }
 

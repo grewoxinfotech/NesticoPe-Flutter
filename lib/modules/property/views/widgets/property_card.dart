@@ -42,7 +42,7 @@ class PropertyCard extends StatefulWidget {
 
 class _PropertyCardState extends State<PropertyCard> {
   final controller = Get.find<PropertyController>();
-  final PropertyFavoriteController favoriteController = 
+  final PropertyFavoriteController favoriteController =
       Get.isRegistered<PropertyFavoriteController>()
           ? Get.find<PropertyFavoriteController>()
           : Get.put(PropertyFavoriteController(), permanent: true);
@@ -70,12 +70,13 @@ class _PropertyCardState extends State<PropertyCard> {
         // Use native Navigator to avoid unexpected Get.to format errors
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => PropertyDetailScreen(propertyId: widget.property.id),
+            builder:
+                (_) => PropertyDetailScreen(propertyId: widget.property.id),
           ),
         );
       },
       child: Container(
-      width: MediaQuery.of(context).size.width * 0.85,
+        width: MediaQuery.of(context).size.width * 0.85,
         // margin: const EdgeInsets.only(right: 12, bottom: 12),
         decoration: BoxDecoration(
           color: ColorRes.white,
@@ -85,7 +86,7 @@ class _PropertyCardState extends State<PropertyCard> {
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
               blurRadius: 2,
-             
+
               offset: const Offset(0, 3),
             ),
           ],
@@ -198,8 +199,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             child: Obx(() {
                               final inFavorites = favoriteController.favorites
                                   .contains(widget.property.id);
-                              isFavorite =
-                                  !UserHelper.isGuest && inFavorites;
+                              isFavorite = !UserHelper.isGuest && inFavorites;
                               return Icon(
                                 isFavorite
                                     ? Icons.favorite
@@ -208,7 +208,7 @@ class _PropertyCardState extends State<PropertyCard> {
                                     isFavorite
                                         ? ColorRes.error
                                         : ColorRes.primary,
-                                        
+
                                 size: 20,
                               );
                             }),
@@ -457,11 +457,10 @@ class _PropertyCardState extends State<PropertyCard> {
                       //     ),
                       //   ),
                       // ],
-
                       Expanded(
                         child: Container(
                           height: 40,
-                          
+
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 8,
@@ -471,7 +470,7 @@ class _PropertyCardState extends State<PropertyCard> {
                             color: ColorRes.primary,
                           ),
                           alignment: Alignment.center,
-                          child:  Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(

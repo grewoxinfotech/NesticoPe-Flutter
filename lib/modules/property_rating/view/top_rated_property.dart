@@ -304,7 +304,6 @@ class _RatingDetailState extends State<RatingDetail> {
                       index,
                     ) {
                       final property = widget.propertyController.items[index];
-                      print("Property: ${property.propertyDetails}");
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
@@ -331,11 +330,7 @@ class _RatingDetailState extends State<RatingDetail> {
                                   )
                                   : null,
                           showPercentage: true,
-                          onTap: () {
-                            print(
-                              "Tapped on ${int.tryParse(property.propertyDetails!.financialInfo!.pricePerSqft.toString())}",
-                            );
-                          },
+                          onTap: () {},
                         ),
                       );
                     }),

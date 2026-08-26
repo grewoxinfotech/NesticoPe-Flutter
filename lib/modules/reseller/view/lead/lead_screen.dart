@@ -1065,10 +1065,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
     leadController.currentPropertyFilterId.value = widget.entityId;
     leadController.currentModule.value = widget.module;
 
-    log(
-      "Controller Lead Project ${leadController.currentModule.value} ==================${widget.module}",
-    );
-
     /// Apply dashboard filters
     if (dashboardController.selectedLeadFilters.isNotEmpty) {
       final filterMap = LeadFilterHelper.convertFiltersToAPIFormat(
@@ -1105,7 +1101,7 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
             (widget.showActionButton)
                 ? [
                   /// Add Lead
-                /*  if (widget.isResellerFromApp) ...[
+                  /*  if (widget.isResellerFromApp) ...[
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () {
@@ -1161,68 +1157,71 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
                       );
                     },
                   ),
-              if (widget.isResellerFromApp) ...[
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'export') {
-                      if (widget.isForProject) {
-                        leadController.exportProjectToPdf(leadController.items);
-                      } else {
-                        leadController.exportToPdf(leadController.items);
-                      }
-                    } else if (value == 'import') {
-                      showImportLeadsDialog(context);
-                    } else if (value == 'add') {
-                      FocusScope.of(context).unfocus();
-                      leadController.resetForm();
-                      Get.to(
+                  if (widget.isResellerFromApp) ...[
+                    PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'export') {
+                          if (widget.isForProject) {
+                            leadController.exportProjectToPdf(
+                              leadController.items,
+                            );
+                          } else {
+                            leadController.exportToPdf(leadController.items);
+                          }
+                        } else if (value == 'import') {
+                          showImportLeadsDialog(context);
+                        } else if (value == 'add') {
+                          FocusScope.of(context).unfocus();
+                          leadController.resetForm();
+                          Get.to(
                             () => AddLeadScreen(
-                          controller: leadController,
-                          isForProject: widget.isForProject,
-                        ),
-                        binding: BindingsBuilder(() {
-                          Get.lazyPut(
+                              controller: leadController,
+                              isForProject: widget.isForProject,
+                            ),
+                            binding: BindingsBuilder(() {
+                              Get.lazyPut(
                                 () => LeadController(),
-                            tag: widget.controllerTag,
+                                tag: widget.controllerTag,
+                              );
+                            }),
                           );
-                        }),
-                      );
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'export',
-                      child: Row(
-                        children: [
-                          Icon(Icons.picture_as_pdf, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Export PDF'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'import',
-                      child: Row(
-                        children: [
-                          Icon(Icons.upload_file, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Import PDF'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'add',
-                      child: Row(
-                        children: [
-                          Icon(Icons.person, color: Colors.blue),
-                          SizedBox(width: 8),
-                          Text('Add Lead'),
-                        ],
-                      ),
+                        }
+                      },
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: 'export',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.picture_as_pdf, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text('Export PDF'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'import',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.upload_file, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text('Import PDF'),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'add',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text('Add Lead'),
+                                ],
+                              ),
+                            ),
+                          ],
                     ),
                   ],
-                ),
-              ],
                 ]
                 : null,
       ),
@@ -1576,7 +1575,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
         () => LeadDetailScreen(lead: lead, isFromLead: true, isReseller: true),
       );
     } catch (e, st) {
-      log('❌ Lead open error: $e\n$st');
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Unable to open lead',
@@ -1613,16 +1611,11 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
           project = projectController!.items.firstWhereOrNull(
             (p) => p.id == lead.propertyId,
           );
-          print("✅ Found project in existing controller");
-        } catch (e) {
-          print("⚠️ Error finding project in controller: $e");
-        }
+        } catch (e) {}
       }
 
       // If not found and we have a propertyId, fetch it
       if (project == null && lead.propertyId != null) {
-        print("🔍 Fetching project from API: ${lead.propertyId}");
-
         // Get or create a temporary controller to fetch the project
         final tempController =
             Get.isRegistered<ProjectWizardController>(tag: "temp_lead")
@@ -1637,8 +1630,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
         if (project == null) {
           throw Exception("Failed to fetch project details");
         }
-
-        print("✅ Successfully fetched project: ${project.projectName}");
       }
 
       if (project == null) {
@@ -1653,8 +1644,6 @@ class _CommonLeadScreenState extends State<CommonLeadScreen> {
         ),
       );
     } catch (e, st) {
-      log('❌ Builder lead open error: $e\n$st');
-
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Error',
         message: 'Failed to open lead details: ${e.toString()}',

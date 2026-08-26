@@ -266,7 +266,7 @@ class MouVerificationScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-           Html(data: content),
+          Html(data: content),
         ],
       ),
     );

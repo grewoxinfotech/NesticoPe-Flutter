@@ -23,16 +23,11 @@ class InterestFormService {
     try {
       final uri = Uri.parse(baseUrl);
 
-      debugPrint("➡️ Submitting Interest Form: ${uri.toString()}");
-      debugPrint("Payload: ${jsonEncode(form.toJson())}");
-
       final response = await http.post(
         uri,
         headers: await headers(),
         body: jsonEncode(form.toJson()),
       );
-
-      debugPrint("Interest Form Response: ${response.body}");
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -48,7 +43,7 @@ class InterestFormService {
             message: jsonData['message'],
             contentType: ContentType.success,
           );
-          debugPrint("✅ Interest form created with ID: $createdId");
+
           return createdId;
         } else {
           final jsonData = json.decode(response.body);
@@ -58,7 +53,7 @@ class InterestFormService {
             message: jsonData['message'],
             contentType: ContentType.failure,
           );
-          debugPrint("⚠️ Response did not contain an ID");
+
           return null;
         }
       } else {
@@ -69,7 +64,7 @@ class InterestFormService {
           message: jsonData['message'],
           contentType: ContentType.failure,
         );
-        debugPrint("❌ Failed to submit form: ${response.statusCode}");
+
         return null;
       }
     } catch (e) {
@@ -78,7 +73,7 @@ class InterestFormService {
         message: "Something went wrong",
         contentType: ContentType.failure,
       );
-      debugPrint("⚠️ Error submitting interest form: $e");
+
       return null;
     } finally {
       isSubmitting.value = false;
@@ -94,10 +89,7 @@ class InterestFormService {
         queryParameters: {"propertyId": propertyId, "resellerId": resellerId},
       );
 
-      debugPrint("🔍 Fetching Interest Form: ${uri.toString()}");
-
       final response = await http.get(uri, headers: await headers());
-      debugPrint("Interest Form Fetch Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -106,20 +98,17 @@ class InterestFormService {
           // final InterestFormModel form = InterestFormModel.fromJson(
           //   data["data"],
           // );
-          debugPrint("✅ Interest Form fetched successfully");
+
           return data
               .map((e) => InterestFormModel.fromJson(e["data"]))
               .toList();
         } else {
-          debugPrint("⚠️ No Interest Form found for given IDs");
           return null;
         }
       } else {
-        debugPrint("❌ Failed to fetch interest form: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      debugPrint("⚠️ Error fetching interest form: $e");
       return null;
     }
   }

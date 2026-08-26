@@ -110,9 +110,7 @@ Widget buildSelectedFiltersChips(
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                filterType.capitalize
-                                        .toString() ??
-                                    '',
+                                filterType.capitalize.toString() ?? '',
                                 style: TextStyle(
                                   fontSize: AppFontSizes.extraSmall,
                                   color: ColorRes.white,

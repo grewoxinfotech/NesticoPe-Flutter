@@ -31,15 +31,22 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     // 🏠 1️⃣ PROPERTY METRICS
     header('Property Metrics');
-    final propertyMetrics = Map<String, dynamic>.from(data['propertyMetrics'] ?? {});
+    final propertyMetrics = Map<String, dynamic>.from(
+      data['propertyMetrics'] ?? {},
+    );
     propertyMetrics.forEach((key, value) {
       if (value is! List && value is! Map) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔸 Views History
-    final viewsHistory = List<Map<String, dynamic>>.from(propertyMetrics['viewsHistory'] ?? []);
+    final viewsHistory = List<Map<String, dynamic>>.from(
+      propertyMetrics['viewsHistory'] ?? [],
+    );
     if (viewsHistory.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Views History')]);
@@ -53,7 +60,9 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
     }
 
     // 🔸 Property Timeline
-    final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['propertyTimeline'] ?? []);
+    final propertyTimeline = List<Map<String, dynamic>>.from(
+      propertyMetrics['propertyTimeline'] ?? [],
+    );
     if (propertyTimeline.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Properties Created')]);
@@ -68,37 +77,54 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     // 🧭 2️⃣ LEAD ANALYTICS
     header('Lead Analytics');
-    final leadAnalytics = Map<String, dynamic>.from(data['leadAnalytics'] ?? {});
+    final leadAnalytics = Map<String, dynamic>.from(
+      data['leadAnalytics'] ?? {},
+    );
     leadAnalytics.forEach((key, value) {
       if (value is! List && value is! Map) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔸 Status Breakdown
-    final statusBreakdown = Map<String, dynamic>.from(leadAnalytics['statusBreakdown'] ?? {});
+    final statusBreakdown = Map<String, dynamic>.from(
+      leadAnalytics['statusBreakdown'] ?? {},
+    );
     if (statusBreakdown.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Status Breakdown')]);
       sheet.appendRow([TextCellValue('Status'), TextCellValue('Count')]);
       statusBreakdown.forEach((k, v) {
-        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(k)),
+          TextCellValue(v.toString()),
+        ]);
       });
     }
 
     // 🔸 Source Distribution
-    final sourceDistribution = Map<String, dynamic>.from(leadAnalytics['sourceDistribution'] ?? {});
+    final sourceDistribution = Map<String, dynamic>.from(
+      leadAnalytics['sourceDistribution'] ?? {},
+    );
     if (sourceDistribution.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Source Distribution')]);
       sheet.appendRow([TextCellValue('Source'), TextCellValue('Count')]);
       sourceDistribution.forEach((k, v) {
-        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(k)),
+          TextCellValue(v.toString()),
+        ]);
       });
     }
 
     // 🔸 Leads Timeline
-    final leadsTimeline = List<Map<String, dynamic>>.from(leadAnalytics['leadsTimeline'] ?? []);
+    final leadsTimeline = List<Map<String, dynamic>>.from(
+      leadAnalytics['leadsTimeline'] ?? [],
+    );
     if (leadsTimeline.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Leads Timeline')]);
@@ -113,15 +139,22 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     // 💰 3️⃣ FINANCIAL METRICS
     header('Financial Metrics');
-    final financialMetrics = Map<String, dynamic>.from(data['financialMetrics'] ?? {});
+    final financialMetrics = Map<String, dynamic>.from(
+      data['financialMetrics'] ?? {},
+    );
     financialMetrics.forEach((key, value) {
       if (value is! List && value is! Map) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔸 Revenue History
-    final revenueHistory = List<Map<String, dynamic>>.from(financialMetrics['revenueHistory'] ?? []);
+    final revenueHistory = List<Map<String, dynamic>>.from(
+      financialMetrics['revenueHistory'] ?? [],
+    );
     if (revenueHistory.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Revenue History')]);
@@ -136,9 +169,14 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     // 🤝 4️⃣ ENGAGEMENT METRICS
     header('Engagement Metrics');
-    final engagement = Map<String, dynamic>.from(data['engagementMetrics'] ?? {});
+    final engagement = Map<String, dynamic>.from(
+      data['engagementMetrics'] ?? {},
+    );
     engagement.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // ✅ SAVE FILE
@@ -155,18 +193,14 @@ Future<void> exportSellerInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     final filePath =
         '${dir.path}/seller_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Seller Insights Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-  } catch (e, stack) {
-    print('💥 Error exporting Seller Insights: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
-
 
 Future<void> exportLeadsToExcel(List<LeadItem> leads) async {
   try {
@@ -199,7 +233,7 @@ Future<void> exportLeadsToExcel(List<LeadItem> leads) async {
         TextCellValue(lead.stage ?? ''),
         TextCellValue(_formatDate(lead.createdAt?.toIso8601String())),
         TextCellValue(lead.projectName ?? 'N/A'),
-        TextCellValue(lead.leadResellerData?.fullName?? 'N/A'),
+        TextCellValue(lead.leadResellerData?.fullName ?? 'N/A'),
       ]);
     }
 
@@ -220,18 +254,15 @@ Future<void> exportLeadsToExcel(List<LeadItem> leads) async {
     final filePath =
         '${dir.path}/leads_export_${DateTime.now().millisecondsSinceEpoch}.xlsx';
 
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Leads Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-
-  } catch (e, stack) {
-    print('💥 Error exporting Leads: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
+
 Future<void> exportProjectLeadsToExcel(List<LeadItem> leads) async {
   try {
     final excel = Excel.createExcel();
@@ -263,7 +294,7 @@ Future<void> exportProjectLeadsToExcel(List<LeadItem> leads) async {
         TextCellValue(lead.stage ?? ''),
         TextCellValue(_formatDate(lead.createdAt?.toIso8601String())),
         TextCellValue(lead.projectName ?? 'N/A'),
-        TextCellValue(lead.leadResellerData?.fullName?? 'N/A'),
+        TextCellValue(lead.leadResellerData?.fullName ?? 'N/A'),
       ]);
     }
 
@@ -284,22 +315,14 @@ Future<void> exportProjectLeadsToExcel(List<LeadItem> leads) async {
     final filePath =
         '${dir.path}/leads_export_${DateTime.now().millisecondsSinceEpoch}.xlsx';
 
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Leads Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-
-  } catch (e, stack) {
-    print('💥 Error exporting Leads: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
-
-
-
-
 
 Future<void> downloadLeadImportExample() async {
   try {
@@ -351,22 +374,18 @@ Future<void> downloadLeadImportExample() async {
 
     final filePath = '${dir.path}/lead_import_example.xlsx';
 
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Example file created: $filePath');
     await OpenFilex.open(filePath);
-
-  } catch (e, stack) {
-    print('💥 Error creating example: $e');
-    print(stack);
-  }
+  } catch (e, stack) {}
 }
 
-
-
-Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) async {
+Future<void> exportContractorInsightsToExcel(
+  Map<String, dynamic> jsonData,
+) async {
   try {
     final excel = Excel.createExcel();
     final sheet = excel['Contractor Export Data'];
@@ -386,7 +405,10 @@ Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) asyn
     header('Performance Metrics');
     final performance = Map<String, dynamic>.from(data['performance'] ?? {});
     performance.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // 🧱 2️⃣ SERVICE DISTRIBUTION
@@ -399,7 +421,9 @@ Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) asyn
       TextCellValue('Average Rating'),
     ]);
 
-    final topServices = List<Map<String, dynamic>>.from(data['services']?['topRatedServices'] ?? []);
+    final topServices = List<Map<String, dynamic>>.from(
+      data['services']?['topRatedServices'] ?? [],
+    );
     for (var s in topServices) {
       sheet.appendRow([
         TextCellValue(s['serviceName']?.toString() ?? ''),
@@ -413,10 +437,21 @@ Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) asyn
     // ⭐ 3️⃣ RATINGS DISTRIBUTION
     header('Ratings Distribution');
     sheet.appendRow([TextCellValue('Rating'), TextCellValue('Count')]);
-    final ratingDist = Map<String, dynamic>.from(data['services']?['ratingsDistribution'] ?? {});
-    const starLabels = {'5': '5 Stars', '4': '4 Stars', '3': '3 Stars', '2': '2 Stars', '1': '1 Star'};
+    final ratingDist = Map<String, dynamic>.from(
+      data['services']?['ratingsDistribution'] ?? {},
+    );
+    const starLabels = {
+      '5': '5 Stars',
+      '4': '4 Stars',
+      '3': '3 Stars',
+      '2': '2 Stars',
+      '1': '1 Star',
+    };
     for (final entry in starLabels.entries) {
-      sheet.appendRow([TextCellValue(entry.value), TextCellValue(ratingDist[entry.key]?.toString() ?? '0')]);
+      sheet.appendRow([
+        TextCellValue(entry.value),
+        TextCellValue(ratingDist[entry.key]?.toString() ?? '0'),
+      ]);
     }
 
     // 💬 4️⃣ RECENT REVIEWS
@@ -429,7 +464,9 @@ Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) asyn
       TextCellValue('Date'),
     ]);
 
-    final recentReviews = List<Map<String, dynamic>>.from(data['reviews']?['recentReviews'] ?? []);
+    final recentReviews = List<Map<String, dynamic>>.from(
+      data['reviews']?['recentReviews'] ?? [],
+    );
     for (var r in recentReviews) {
       sheet.appendRow([
         TextCellValue(r['reviewerName']?.toString() ?? ''),
@@ -473,17 +510,15 @@ Future<void> exportContractorInsightsToExcel(Map<String, dynamic> jsonData) asyn
       dir = await getApplicationDocumentsDirectory();
     }
 
-    final filePath = '${dir.path}/contractor_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final filePath =
+        '${dir.path}/contractor_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-  } catch (e, stack) {
-    print('💥 Error exporting Contractor Insights: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
 
 String _formatKey(String key) {
@@ -504,6 +539,7 @@ String _formatDate(String? iso) {
     return iso;
   }
 }
+
 Future<void> exportBuilderInsightsToExcel(Map<String, dynamic> jsonData) async {
   try {
     final excel = Excel.createExcel();
@@ -542,15 +578,22 @@ Future<void> exportBuilderInsightsToExcel(Map<String, dynamic> jsonData) async {
 
     // 🏠 1️⃣ PROPERTY METRICS
     header('Property Metrics');
-    final propertyMetrics = Map<String, dynamic>.from(data['propertyMetrics'] ?? {});
+    final propertyMetrics = Map<String, dynamic>.from(
+      data['propertyMetrics'] ?? {},
+    );
     propertyMetrics.forEach((key, value) {
       if (value is! List && value is! Map) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔹 Property Views Trend
-    final viewsHistory = List<Map<String, dynamic>>.from(propertyMetrics['viewsHistory'] ?? []);
+    final viewsHistory = List<Map<String, dynamic>>.from(
+      propertyMetrics['viewsHistory'] ?? [],
+    );
     if (viewsHistory.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Views History')]);
@@ -562,7 +605,9 @@ Future<void> exportBuilderInsightsToExcel(Map<String, dynamic> jsonData) async {
         ]);
       }
     }
-final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['propertyTimeline'] ?? []);
+    final propertyTimeline = List<Map<String, dynamic>>.from(
+      propertyMetrics['propertyTimeline'] ?? [],
+    );
     if (propertyTimeline.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Properties Created')]);
@@ -577,48 +622,70 @@ final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['proper
 
     // 🧭 2️⃣ LEAD ANALYTICS
     header('Lead Analytics');
-    final leadAnalytics = Map<String, dynamic>.from(data['leadAnalytics'] ?? {});
+    final leadAnalytics = Map<String, dynamic>.from(
+      data['leadAnalytics'] ?? {},
+    );
     leadAnalytics.forEach((key, value) {
       if (value is! List && value is! Map) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔸 Status Breakdown
-    final statusBreakdown = Map<String, dynamic>.from(leadAnalytics['statusBreakdown'] ?? {});
+    final statusBreakdown = Map<String, dynamic>.from(
+      leadAnalytics['statusBreakdown'] ?? {},
+    );
     if (statusBreakdown.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Status Breakdown')]);
       sheet.appendRow([TextCellValue('Status'), TextCellValue('Count')]);
       statusBreakdown.forEach((k, v) {
-        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(k)),
+          TextCellValue(v.toString()),
+        ]);
       });
     }
 
     // 🔸 Source Distribution
-    final sourceDistribution = Map<String, dynamic>.from(leadAnalytics['sourceDistribution'] ?? {});
+    final sourceDistribution = Map<String, dynamic>.from(
+      leadAnalytics['sourceDistribution'] ?? {},
+    );
     if (sourceDistribution.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Source Distribution')]);
       sheet.appendRow([TextCellValue('Source'), TextCellValue('Count')]);
       sourceDistribution.forEach((k, v) {
-        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(k)),
+          TextCellValue(v.toString()),
+        ]);
       });
     }
 
     // 🔸 Stage Breakdown
-    final stageBreakdown = Map<String, dynamic>.from(leadAnalytics['stageBreakdown'] ?? {});
+    final stageBreakdown = Map<String, dynamic>.from(
+      leadAnalytics['stageBreakdown'] ?? {},
+    );
     if (stageBreakdown.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Stage Breakdown')]);
       sheet.appendRow([TextCellValue('Stage'), TextCellValue('Count')]);
       stageBreakdown.forEach((k, v) {
-        sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(k)),
+          TextCellValue(v.toString()),
+        ]);
       });
     }
 
     // 🔸 Leads Timeline
-    final leadsTimeline = List<Map<String, dynamic>>.from(leadAnalytics['leadsTimeline'] ?? []);
+    final leadsTimeline = List<Map<String, dynamic>>.from(
+      leadAnalytics['leadsTimeline'] ?? [],
+    );
     if (leadsTimeline.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Leads Timeline')]);
@@ -633,15 +700,22 @@ final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['proper
 
     // 💰 3️⃣ FINANCIAL METRICS
     header('Financial Metrics');
-    final financialMetrics = Map<String, dynamic>.from(data['financialMetrics'] ?? {});
+    final financialMetrics = Map<String, dynamic>.from(
+      data['financialMetrics'] ?? {},
+    );
     financialMetrics.forEach((key, value) {
       if (value is! List) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
     // 🔹 Revenue History
-    final revenueHistory = List<Map<String, dynamic>>.from(financialMetrics['revenueHistory'] ?? []);
+    final revenueHistory = List<Map<String, dynamic>>.from(
+      financialMetrics['revenueHistory'] ?? [],
+    );
     if (revenueHistory.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Revenue History')]);
@@ -656,9 +730,14 @@ final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['proper
 
     // 🤝 4️⃣ ENGAGEMENT METRICS
     header('Engagement Metrics');
-    final engagement = Map<String, dynamic>.from(data['engagementMetrics'] ?? {});
+    final engagement = Map<String, dynamic>.from(
+      data['engagementMetrics'] ?? {},
+    );
     engagement.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // // 🎟️ 5️⃣ SUBSCRIPTION INFO
@@ -685,19 +764,20 @@ final propertyTimeline = List<Map<String, dynamic>>.from(propertyMetrics['proper
       dir = await getApplicationDocumentsDirectory();
     }
 
-    final filePath = '${dir.path}/builder_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final filePath =
+        '${dir.path}/builder_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Builder Insights Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-  } catch (e, stack) {
-    print('💥 Error exporting Builder Insights: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
-Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async {
+
+Future<void> exportResellerInsightsToExcel(
+  Map<String, dynamic> jsonData,
+) async {
   try {
     final excel = Excel.createExcel();
     final sheet = excel['Partner Export Data'];
@@ -715,13 +795,9 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
 
     // 🔹 Helper: format key name (e.g. totalDealsAmount → Total Deals Amount)
 
-
     // 🏠 1️⃣ BASIC METRICS
     header('Partner Overview');
-    sheet.appendRow([
-      TextCellValue('Metric'),
-      TextCellValue('Value'),
-    ]);
+    sheet.appendRow([TextCellValue('Metric'), TextCellValue('Value')]);
     sheet.appendRow([
       TextCellValue('Total Assigned Properties'),
       TextCellValue(data['totalAssignedProperties']?.toString() ?? '0'),
@@ -731,23 +807,37 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     header('Earnings');
     final earnings = Map<String, dynamic>.from(data['earnings'] ?? {});
     earnings.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // 📊 3️⃣ PERFORMANCE
     header('Performance Metrics');
     final performance = Map<String, dynamic>.from(data['performance'] ?? {});
     performance.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // 🏆 4️⃣ LEADERBOARD
     header('Leaderboard Top Reseller');
-    sheet.appendRow([TextCellValue('Rank'), TextCellValue('Name'), TextCellValue('Email'),
-      TextCellValue('City'), TextCellValue('Level'), TextCellValue('Total Commission'),
-      TextCellValue('Total Deals')]);
+    sheet.appendRow([
+      TextCellValue('Rank'),
+      TextCellValue('Name'),
+      TextCellValue('Email'),
+      TextCellValue('City'),
+      TextCellValue('Level'),
+      TextCellValue('Total Commission'),
+      TextCellValue('Total Deals'),
+    ]);
 
-    final topResellers = List<Map<String, dynamic>>.from(data['leaderboard']?['topResellers'] ?? []);
+    final topResellers = List<Map<String, dynamic>>.from(
+      data['leaderboard']?['topResellers'] ?? [],
+    );
     for (var r in topResellers) {
       sheet.appendRow([
         TextCellValue(r['rank']?.toString() ?? ''),
@@ -761,14 +851,18 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     }
 
     // 🏘️ 5️⃣ TOP PROPERTIES
-    final topProperties = List<Map<String, dynamic>>.from(data['leaderboard']?['topProperties'] ?? []);
+    final topProperties = List<Map<String, dynamic>>.from(
+      data['leaderboard']?['topProperties'] ?? [],
+    );
     if (topProperties.isNotEmpty) {
       gap();
       sheet.appendRow([TextCellValue('Top Properties')]);
       final keys = topProperties.first.keys.toList();
       sheet.appendRow(keys.map((k) => TextCellValue(_formatKey(k))).toList());
       for (var p in topProperties) {
-        sheet.appendRow(keys.map((k) => TextCellValue(p[k]?.toString() ?? '')).toList());
+        sheet.appendRow(
+          keys.map((k) => TextCellValue(p[k]?.toString() ?? '')).toList(),
+        );
       }
     }
 
@@ -776,7 +870,10 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     header('Daily Goals');
     final dailyGoals = Map<String, dynamic>.from(data['dailyGoals'] ?? {});
     dailyGoals.forEach((key, value) {
-      sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+      sheet.appendRow([
+        TextCellValue(_formatKey(key)),
+        TextCellValue(value.toString()),
+      ]);
     });
 
     // 🧩 7️⃣ LEVEL DETAILS
@@ -784,7 +881,10 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     final level = Map<String, dynamic>.from(data['level'] ?? {});
     level.forEach((key, value) {
       if (value is! List) {
-        sheet.appendRow([TextCellValue(_formatKey(key)), TextCellValue(value.toString())]);
+        sheet.appendRow([
+          TextCellValue(_formatKey(key)),
+          TextCellValue(value.toString()),
+        ]);
       }
     });
 
@@ -799,20 +899,26 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     }
 
     // 🌟 8️⃣ SUCCESS STORIES
-    final successStories = List<Map<String, dynamic>>.from(data['successStories'] ?? []);
+    final successStories = List<Map<String, dynamic>>.from(
+      data['successStories'] ?? [],
+    );
     if (successStories.isNotEmpty) {
       header('Success Stories');
       final keys = successStories.first.keys.toList();
       sheet.appendRow(keys.map((k) => TextCellValue(_formatKey(k))).toList());
       for (var s in successStories) {
-        sheet.appendRow(keys.map((k) => TextCellValue(s[k]?.toString() ?? '')).toList());
+        sheet.appendRow(
+          keys.map((k) => TextCellValue(s[k]?.toString() ?? '')).toList(),
+        );
       }
     }
 
     // 📈 9️⃣ LEADS TREND
     header('Leads Trend');
     sheet.appendRow([TextCellValue('Month'), TextCellValue('Leads')]);
-    final leadsTrend = List<Map<String, dynamic>>.from(data['leadsTrend'] ?? []);
+    final leadsTrend = List<Map<String, dynamic>>.from(
+      data['leadsTrend'] ?? [],
+    );
     for (var t in leadsTrend) {
       sheet.appendRow([
         TextCellValue(t['name']?.toString() ?? ''),
@@ -823,7 +929,9 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     // 💵 🔟 COMMISSION TREND
     header('Commission Trend');
     sheet.appendRow([TextCellValue('Month'), TextCellValue('Commission')]);
-    final commissionTrend = List<Map<String, dynamic>>.from(data['commissionTrend'] ?? []);
+    final commissionTrend = List<Map<String, dynamic>>.from(
+      data['commissionTrend'] ?? [],
+    );
     for (var t in commissionTrend) {
       sheet.appendRow([
         TextCellValue(t['name']?.toString() ?? ''),
@@ -836,11 +944,11 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
     if (milestones.isNotEmpty) {
       sheet.appendRow([
         TextCellValue('Total Fees Generated'),
-        TextCellValue(milestones['totalFeesGenerated']?.toString() ?? '0')
+        TextCellValue(milestones['totalFeesGenerated']?.toString() ?? '0'),
       ]);
       sheet.appendRow([
         TextCellValue('Progress (%)'),
-        TextCellValue(milestones['progress']?.toString() ?? '0')
+        TextCellValue(milestones['progress']?.toString() ?? '0'),
       ]);
 
       // ➕ Next Milestone
@@ -849,24 +957,33 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
         gap();
         sheet.appendRow([TextCellValue('Next Milestone')]);
         next.forEach((k, v) {
-          sheet.appendRow([TextCellValue(_formatKey(k)), TextCellValue(v.toString())]);
+          sheet.appendRow([
+            TextCellValue(_formatKey(k)),
+            TextCellValue(v.toString()),
+          ]);
         });
       }
 
       // 🎁 Bonuses
-      final bonuses = List<Map<String, dynamic>>.from(milestones['bonuses'] ?? []);
+      final bonuses = List<Map<String, dynamic>>.from(
+        milestones['bonuses'] ?? [],
+      );
       if (bonuses.isNotEmpty) {
         gap();
         sheet.appendRow([TextCellValue('Unlocked Bonuses')]);
         final keys = bonuses.first.keys.toList();
         sheet.appendRow(keys.map((k) => TextCellValue(_formatKey(k))).toList());
         for (var b in bonuses) {
-          sheet.appendRow(keys.map((k) => TextCellValue(b[k]?.toString() ?? '')).toList());
+          sheet.appendRow(
+            keys.map((k) => TextCellValue(b[k]?.toString() ?? '')).toList(),
+          );
         }
       }
 
       // 🎯 All Milestones
-      final all = List<Map<String, dynamic>>.from(milestones['allMilestones'] ?? []);
+      final all = List<Map<String, dynamic>>.from(
+        milestones['allMilestones'] ?? [],
+      );
       if (all.isNotEmpty) {
         gap();
         sheet.appendRow([TextCellValue('All Milestones')]);
@@ -882,7 +999,10 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
 
     // 🧾 11️⃣ OTHER DETAILS
     header('Other Details');
-    sheet.appendRow([TextCellValue('Last Updated'), TextCellValue(_formatDate(data['lastUpdated']?.toString()))]);
+    sheet.appendRow([
+      TextCellValue('Last Updated'),
+      TextCellValue(_formatDate(data['lastUpdated']?.toString())),
+    ]);
 
     // ✅ SAVE FILE
     final bytes = excel.encode();
@@ -896,16 +1016,13 @@ Future<void> exportResellerInsightsToExcel(Map<String, dynamic> jsonData) async 
       dir = await getApplicationDocumentsDirectory();
     }
 
-    final filePath = '${dir.path}/reseller_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
-    final file = File(filePath)
-      ..createSync(recursive: true)
-      ..writeAsBytesSync(bytes);
+    final filePath =
+        '${dir.path}/reseller_insights_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+    final file =
+        File(filePath)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(bytes);
 
-    print('✅ Reseller Insights Excel exported successfully: $filePath');
     await OpenFilex.open(filePath);
-  } catch (e, stack) {
-    print('💥 Error exporting Reseller Insights: $e');
-    print('📚 Stack: $stack');
-  }
+  } catch (e, stack) {}
 }
-

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 class LeadVisitData {
@@ -6,28 +5,21 @@ class LeadVisitData {
   final String? message;
   final LeadVisitResponseData? data;
 
-  LeadVisitData({
-    this.success,
-    this.message,
-    this.data,
-  });
+  LeadVisitData({this.success, this.message, this.data});
 
   factory LeadVisitData.fromMap(Map<String, dynamic> map) {
     return LeadVisitData(
       success: map['success'],
       message: map['message'],
-      data: map['data'] != null
-          ? LeadVisitResponseData.fromMap(map['data'])
-          : null,
+      data:
+          map['data'] != null
+              ? LeadVisitResponseData.fromMap(map['data'])
+              : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 
   factory LeadVisitData.fromJson(String source) =>
@@ -55,10 +47,12 @@ class LeadVisitResponseData {
 
   factory LeadVisitResponseData.fromMap(Map<String, dynamic> map) {
     return LeadVisitResponseData(
-      items: map['items'] != null
-          ? List<LeadVisitItem>.from(
-          map['items'].map((x) => LeadVisitItem.fromMap(x)))
-          : null,
+      items:
+          map['items'] != null
+              ? List<LeadVisitItem>.from(
+                map['items'].map((x) => LeadVisitItem.fromMap(x)),
+              )
+              : null,
       total: map['total'],
       currentPage: map['currentPage'],
       totalPages: map['totalPages'],
@@ -101,9 +95,9 @@ class LeadVisitItem {
   final String? createdAt;
   final String? updatedAt;
   final String? entity;
-final BuilderProject? builderProject;
-final dynamic property;
-final dynamic user;
+  final BuilderProject? builderProject;
+  final dynamic property;
+  final dynamic user;
 
   LeadVisitItem({
     this.id,
@@ -115,12 +109,12 @@ final dynamic user;
     this.visitDate,
     this.timeSlot,
     this.status,
-  
-  // ...
-  this.entity,
-  this.builderProject,
-  this.property,
-  this.user,
+
+    // ...
+    this.entity,
+    this.builderProject,
+    this.property,
+    this.user,
 
     this.notes,
     this.buyerFeedback,
@@ -154,12 +148,13 @@ final dynamic user;
       buyerAttended: map['buyerAttended'],
       sellerAttended: map['sellerAttended'],
       followUpDate: map['followUpDate'],
-        entity: map['entity'],
-    property: map['property'],
-    user: map['user'],
-    builderProject: map['builderProject'] != null
-        ? BuilderProject.fromMap(map['builderProject'])
-        : null,
+      entity: map['entity'],
+      property: map['property'],
+      user: map['user'],
+      builderProject:
+          map['builderProject'] != null
+              ? BuilderProject.fromMap(map['builderProject'])
+              : null,
       interestedLevel: map['interestedLevel'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
@@ -177,9 +172,9 @@ final dynamic user;
       'visitDate': visitDate,
       'timeSlot': timeSlot,
       'entity': entity,
-'property': property,
-'user': user,
-'builderProject': builderProject?.toMap(),
+      'property': property,
+      'user': user,
+      'builderProject': builderProject?.toMap(),
       'status': status,
       'notes': notes,
       'buyerFeedback': buyerFeedback,
@@ -195,8 +190,6 @@ final dynamic user;
     };
   }
 }
-
-
 
 class BuilderProject {
   final String? id;

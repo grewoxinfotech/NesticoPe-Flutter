@@ -17,7 +17,8 @@ class ActivateSubscriptionDialog extends StatefulWidget {
       _ActivateSubscriptionDialogState();
 }
 
-class _ActivateSubscriptionDialogState extends State<ActivateSubscriptionDialog> {
+class _ActivateSubscriptionDialogState
+    extends State<ActivateSubscriptionDialog> {
   bool _busy = false;
 
   @override

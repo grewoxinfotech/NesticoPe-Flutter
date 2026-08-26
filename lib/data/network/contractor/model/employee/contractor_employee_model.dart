@@ -13,18 +13,15 @@ class ContractorEmployeeResponse {
     return ContractorEmployeeResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null
-          ? ContractorEmployeeData.fromJson(json['data'])
-          : null,
+      data:
+          json['data'] != null
+              ? ContractorEmployeeData.fromJson(json['data'])
+              : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toJson(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toJson()};
   }
 }
 
@@ -47,9 +44,10 @@ class ContractorEmployeeData {
 
   factory ContractorEmployeeData.fromJson(Map<String, dynamic> json) {
     return ContractorEmployeeData(
-      items: (json['items'] as List?)
-          ?.map((e) => ContractorEmployeeItem.fromJson(e))
-          .toList() ??
+      items:
+          (json['items'] as List?)
+              ?.map((e) => ContractorEmployeeItem.fromJson(e))
+              .toList() ??
           [],
       total: json['total'] ?? 0,
       currentPage: json['currentPage'] ?? 1,

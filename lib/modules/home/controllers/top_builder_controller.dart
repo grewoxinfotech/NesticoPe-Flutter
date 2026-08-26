@@ -37,13 +37,9 @@ class TopBuilderController extends PaginatedController<BuilderItem> {
     final cityData = await SecureStorage.getSelectedCity();
     final response = await _service.fetchTopBuilderProfiles(
       page: page,
-      city: selectedCity.value??cityData,
+      city: selectedCity.value ?? cityData,
     );
 
-    AppLogger.structured(
-      "Top Builder Response :",
-      response.items.map((e) => e.toMap()),
-    );
     return response;
   }
 
@@ -62,7 +58,7 @@ class TopBuilderController extends PaginatedController<BuilderItem> {
   Future<ProfileSellerModel> getSellerProfileById(String sellerId) async {
     try {
       final response = await _service.fetchSellerProfileById(sellerId);
-      print("SELLER PROFILE RESPONSE: ${response.toJson()}");
+
       sellerProfile.value = response;
       return response;
     } catch (e) {

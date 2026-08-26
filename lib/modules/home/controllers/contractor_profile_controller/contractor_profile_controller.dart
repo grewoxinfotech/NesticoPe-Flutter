@@ -55,7 +55,6 @@ class TopContractorsController extends PaginatedController<Contractor> {
       );
       return response;
     } catch (e) {
-      debugPrint("Exception in fetchItems: $e");
       rethrow;
     }
   }

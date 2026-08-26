@@ -32,10 +32,13 @@ class _SellerRegistrationDetailsScreenState
   @override
   void initState() {
     super.initState();
-    _firstNameController.text = widget.initialData?['firstName']?.toString() ?? '';
-    _lastNameController.text = widget.initialData?['lastName']?.toString() ?? '';
+    _firstNameController.text =
+        widget.initialData?['firstName']?.toString() ?? '';
+    _lastNameController.text =
+        widget.initialData?['lastName']?.toString() ?? '';
     _emailController.text = widget.initialData?['email']?.toString() ?? '';
-    _passwordController.text = widget.initialData?['password']?.toString() ?? '';
+    _passwordController.text =
+        widget.initialData?['password']?.toString() ?? '';
   }
 
   Future<void> _submit() async {
@@ -67,8 +70,8 @@ class _SellerRegistrationDetailsScreenState
         message: 'Registration completed successfully!',
         contentType: ContentType.success,
       );
-        // 2️⃣ Save auth data
-    
+      // 2️⃣ Save auth data
+
       authController.navigateToUserPanel();
     } catch (e) {
       NesticoPeSnackBar.showAwesomeSnackbar(
@@ -148,19 +151,21 @@ class _SellerRegistrationDetailsScreenState
                   NesticoPeTextField(
                     controller: _firstNameController,
                     hintText: 'First Name',
-                    validator: (value) =>
-                        (value == null || value.trim().isEmpty)
-                            ? 'First name is required'
-                            : null,
+                    validator:
+                        (value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? 'First name is required'
+                                : null,
                   ),
                   const SizedBox(height: 12),
                   NesticoPeTextField(
                     controller: _lastNameController,
                     hintText: 'Last Name',
-                    validator: (value) =>
-                        (value == null || value.trim().isEmpty)
-                            ? 'Last name is required'
-                            : null,
+                    validator:
+                        (value) =>
+                            (value == null || value.trim().isEmpty)
+                                ? 'Last name is required'
+                                : null,
                   ),
                   const SizedBox(height: 12),
                   NesticoPeTextField(
@@ -175,9 +180,10 @@ class _SellerRegistrationDetailsScreenState
                     hintText: 'Password',
                     obscureText: _obscurePassword,
                     suffixIcon: IconButton(
-                      onPressed: () => setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      }),
+                      onPressed:
+                          () => setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          }),
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off_outlined
@@ -186,10 +192,11 @@ class _SellerRegistrationDetailsScreenState
                         size: 18,
                       ),
                     ),
-                    validator: (value) =>
-                        (value == null || value.trim().length < 6)
-                            ? 'Password must be at least 6 characters'
-                            : null,
+                    validator:
+                        (value) =>
+                            (value == null || value.trim().length < 6)
+                                ? 'Password must be at least 6 characters'
+                                : null,
                   ),
                   const SizedBox(height: 24),
                   NesticoPeButton(

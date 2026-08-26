@@ -15,7 +15,8 @@ class ContractorProjectPhotosScreen extends StatefulWidget {
 
   const ContractorProjectPhotosScreen({
     super.key,
-    required this.project, required this.projectId,
+    required this.project,
+    required this.projectId,
   });
 
   @override
@@ -25,7 +26,8 @@ class ContractorProjectPhotosScreen extends StatefulWidget {
 
 class _ContractorProjectPhotosScreenState
     extends State<ContractorProjectPhotosScreen> {
-  final ContractorProjectController controller=Get.find<ContractorProjectController>();
+  final ContractorProjectController controller =
+      Get.find<ContractorProjectController>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,58 +40,55 @@ class _ContractorProjectPhotosScreenState
         backgroundColor: ColorRes.surface,
         elevation: 0.5,
       ),
-      body: Obx(
-        () {
-          final project = controller.items.firstWhereOrNull(
-                (p) => p.id == widget.projectId,
-          );
-          if (project == null) {
-            return Center(child: Text('Project not found'));
-          }
-          return  SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildPhotoSection(
-                  title: "Before Photos",
-                  key: "beforePhotos",
-                  photos: project?.meta.beforePhoto??<ContractorProjectPhoto>[],
-                  onUpload: () {
-                    setState(() {
-                    /*  controller.pickAndUploadPhotos(widget.projectId, 'before_photos',project.meta.beforePhoto.length);*/
-                      controller.  showImagePickerOptions(
-                        context,
-                        projectId: widget.projectId,
-                        key: "before_photos",
-                        imageLength: project.meta.beforePhoto.length,
-                      );
-                    });
-                  },
-                ),
-                /*  const SizedBox(height: 24),*/
-                _buildPhotoSection(
-                    title: "After Photos",
-                    key: "afterPhotos",
-                    photos:project.meta.afterPhoto,
-                    onUpload: () {
-                      setState(() {
-                        controller.  showImagePickerOptions(
-                          context,
-                          projectId: widget.projectId,
-                          key: "after_photos",
-                          imageLength: project.meta.afterPhoto.length,
-                        );
-                        // controller.pickAndUploadPhotos(widget.projectId, 'after_photos',project.meta.afterPhoto.length);
-                      });
-                    }
-                ),
-              ],
-            ),
-          );
+      body: Obx(() {
+        final project = controller.items.firstWhereOrNull(
+          (p) => p.id == widget.projectId,
+        );
+        if (project == null) {
+          return Center(child: Text('Project not found'));
         }
-
-      ),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPhotoSection(
+                title: "Before Photos",
+                key: "beforePhotos",
+                photos: project?.meta.beforePhoto ?? <ContractorProjectPhoto>[],
+                onUpload: () {
+                  setState(() {
+                    /*  controller.pickAndUploadPhotos(widget.projectId, 'before_photos',project.meta.beforePhoto.length);*/
+                    controller.showImagePickerOptions(
+                      context,
+                      projectId: widget.projectId,
+                      key: "before_photos",
+                      imageLength: project.meta.beforePhoto.length,
+                    );
+                  });
+                },
+              ),
+              /*  const SizedBox(height: 24),*/
+              _buildPhotoSection(
+                title: "After Photos",
+                key: "afterPhotos",
+                photos: project.meta.afterPhoto,
+                onUpload: () {
+                  setState(() {
+                    controller.showImagePickerOptions(
+                      context,
+                      projectId: widget.projectId,
+                      key: "after_photos",
+                      imageLength: project.meta.afterPhoto.length,
+                    );
+                    // controller.pickAndUploadPhotos(widget.projectId, 'after_photos',project.meta.afterPhoto.length);
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -100,74 +99,80 @@ class _ContractorProjectPhotosScreenState
     required String key,
   }) {
     return StatefulBuilder(
-builder: (context, setState) =>
-    Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      builder:
+          (context, setState) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$title (${photos.length}/3)',
-                style: TextStyle(
-                  fontSize: AppFontSizes.medium,
-                  fontWeight: AppFontWeights.semiBold,
-                  color: ColorRes.textColor,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '$title (${photos.length}/3)',
+                    style: TextStyle(
+                      fontSize: AppFontSizes.medium,
+                      fontWeight: AppFontWeights.semiBold,
+                      color: ColorRes.textColor,
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: onUpload,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorRes.primary, // your theme color
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 2,
+                    ),
+                    icon: const Icon(
+                      Icons.upload,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      "Upload",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: AppFontWeights.medium,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              ElevatedButton.icon(
-                onPressed: onUpload,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorRes.primary, // your theme color
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+              const SizedBox(height: 8),
+              if (photos.isEmpty)
+                Container(
+                  height: 120,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: ColorRes.leadGreyColor.shade100,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  child: Text(
+                    "No photos uploaded",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.small,
+                      fontWeight: AppFontWeights.medium,
+                      color: ColorRes.textColor,
+                    ),
                   ),
-                  elevation: 2,
-                ),
-                icon: const Icon(Icons.upload, size: 18, color: Colors.white),
-                label: const Text(
-                  "Upload",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: AppFontWeights.medium,
-                  ),
-                ),
-              ),
+                )
+              else
+                _buildPhotoGrid(photos, key, widget.projectId),
             ],
           ),
-          const SizedBox(height: 8),
-          if (photos.isEmpty)
-            Container(
-              height: 120,
-              width: double.infinity,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: ColorRes.leadGreyColor.shade100,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                "No photos uploaded",
-                style: TextStyle(
-                  fontSize: AppFontSizes.small,
-                  fontWeight: AppFontWeights.medium,
-                  color: ColorRes.textColor,
-                ),
-              ),
-            )
-          else
-            _buildPhotoGrid(photos,
-                key,
-                widget.projectId),
-        ],
-      ),
     );
   }
 
-  Widget _buildPhotoGrid(List<ContractorProjectPhoto> photos, String key, String projectId) {
+  Widget _buildPhotoGrid(
+    List<ContractorProjectPhoto> photos,
+    String key,
+    String projectId,
+  ) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -195,13 +200,15 @@ builder: (context, setState) =>
                   return Shimmer.fromColors(
                     baseColor: Colors.grey.shade300,
                     highlightColor: Colors.grey.shade100,
-                    child: Container(
-                      color: Colors.grey.shade300,
-                    ),
+                    child: Container(color: Colors.grey.shade300),
                   );
                 },
-                errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                errorBuilder:
+                    (context, error, stackTrace) => const Icon(
+                      Icons.broken_image,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
               ),
             ),
 
@@ -218,11 +225,7 @@ builder: (context, setState) =>
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                    size: 18,
-                  ),
+                  child: const Icon(Icons.delete, color: Colors.red, size: 18),
                 ),
               ),
             ),
@@ -231,11 +234,12 @@ builder: (context, setState) =>
       },
     );
   }
+
   Future<void> _confirmDelete(
-      ContractorProjectPhoto photo,
-      String projectId,
-      String key,
-      ) async {
+    ContractorProjectPhoto photo,
+    String projectId,
+    String key,
+  ) async {
     final confirm = await Get.dialog<bool>(
       AlertDialog(
         backgroundColor: ColorRes.white,
@@ -256,11 +260,10 @@ builder: (context, setState) =>
 
     if (confirm != true) return;
 
-    await controller. deleteProjectPhoto(
+    await controller.deleteProjectPhoto(
       projectId: projectId,
       photoId: photo.uid,
       key: key,
     );
   }
-
 }

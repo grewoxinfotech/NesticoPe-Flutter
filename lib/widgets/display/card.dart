@@ -55,15 +55,14 @@ class NesticoPeCard extends StatelessWidget {
         border: border,
         backgroundBlendMode: backgroundBlendMode,
         boxShadow:
-        boxShadow ??
+            boxShadow ??
             [
               BoxShadow(
-                  color: ColorRes.blackShade12,
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: Offset(0,10)
-              )
-
+                color: ColorRes.blackShade12,
+                spreadRadius: 0,
+                blurRadius: 10,
+                offset: Offset(0, 10),
+              ),
             ],
       ),
       child: child,

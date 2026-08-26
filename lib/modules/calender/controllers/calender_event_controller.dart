@@ -43,11 +43,7 @@ class CalenderEventController extends PaginatedController<CalenderEventModel> {
       if (categories.isNotEmpty && selectedCategory.value == null) {
         selectedCategory.value = categories.first;
       }
-
-      print("Loaded Categories: ${categories.length}");
-    } catch (e) {
-      print("Error loading categories: $e");
-    }
+    } catch (e) {}
   }
 
   /// Pagination fetch
@@ -85,7 +81,6 @@ class CalenderEventController extends PaginatedController<CalenderEventModel> {
 
       return response;
     } catch (e) {
-      print("Exception in fetchItems: $e");
       rethrow;
     } finally {
       isLoading.value = false;
@@ -111,7 +106,7 @@ class CalenderEventController extends PaginatedController<CalenderEventModel> {
   /// Delete Event
   Future<void> deleteEvent(String id) async {
     final deleted = await _service.deleteEvent(id);
-    if(deleted){
+    if (deleted) {
       // final jsonData = json.decode(response.body);
       // final jsonData = json.decode(response.body);
       NesticoPeSnackBar.showAwesomeSnackbar(

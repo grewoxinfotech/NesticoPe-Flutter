@@ -10,11 +10,15 @@ import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:nesticope_app/data/network/user/service/notification_sync_service.dart';
 import 'package:nesticope_app/modules/property/views/property_detail_screen.dart';
 import 'package:nesticope_app/modules/builder/view/project_detail/project_detail.dart';
+import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
+import 'package:nesticope_app/modules/reseller/view/lead_overview/lead_detail.dart';
+import 'package:nesticope_app/modules/seller/view/widget/property_overview_seller.dart';
+import 'package:nesticope_app/modules/subscription/views/my_subscription_screen.dart';
+import 'package:nesticope_app/data/network/property/models/property_model.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Keep this function top-level; avoid touching UI here.
-  debugPrint('🔔 [FCM bg] ${message.messageId}');
 }
 
 class FCMNotificationService {
@@ -52,7 +56,7 @@ class FCMNotificationService {
       // Still keep token refresh for later (it will fire after a token exists).
       FirebaseMessaging.instance.onTokenRefresh.listen((t) {
         _token = t;
-        debugPrint('🔁 [FCM] token refreshed: $t');
+
         if (t.isNotEmpty) {
           unawaited(SecureStorage.saveFcmToken(t));
         }
@@ -77,13 +81,12 @@ class FCMNotificationService {
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         final payload = response.payload;
+
         if (payload != null && payload.isNotEmpty) {
           try {
             final Map<String, dynamic> data = jsonDecode(payload);
             _handleNotificationTap(data);
-          } catch (e) {
-            debugPrint('❌ Error parsing local notification tap payload: $e');
-          }
+          } catch (e) {}
         }
       },
     );
@@ -91,7 +94,7 @@ class FCMNotificationService {
     // 3) Android channel
     await _local
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin
+          AndroidFlutterLocalNotificationsPlugin
         >()
         ?.createNotificationChannel(_channel);
 
@@ -103,20 +106,19 @@ class FCMNotificationService {
 
     // 6) App in background and opened via notification click
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('🔔 [FCM onMessageOpenedApp] ${message.messageId}');
       _handleNotificationTap(message.data);
     });
 
     // 7) App terminated/closed and opened via notification click
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
       if (message != null) {
-        debugPrint('🔔 [FCM getInitialMessage] ${message.messageId}');
         _handleNotificationTap(message.data);
-      }
+      } else {}
     });
 
     _initialized = true;
-    debugPrint('✅ FCMNotificationService initialized');
   }
 
   Future<void> requestPermissionAndFetchToken() async {
@@ -125,8 +127,6 @@ class FCMNotificationService {
       badge: true,
       sound: true,
     );
-
-    debugPrint('🔔 Notification permission: ${settings.authorizationStatus}');
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       String? apnsToken;
@@ -141,31 +141,28 @@ class FCMNotificationService {
         await Future.delayed(const Duration(seconds: 1));
       }
 
-      debugPrint('🍎 APNS Token: $apnsToken');
-
       if (apnsToken == null) {
-        debugPrint('❌ APNS token not available yet');
         return;
       }
     }
 
     _token = await FirebaseMessaging.instance.getToken();
-    debugPrint('🪪 [FCM] token: $_token');
+
     if (_token != null && _token!.isNotEmpty) {
       await SecureStorage.saveFcmToken(_token!);
       try {
         await NotificationSyncService.instance.syncToBackend(
           deviceToken: _token!,
         );
-      } catch (e) {
-        debugPrint('❌ [FCM] sync token failed: $e');
-      }
+      } catch (e) {}
     }
   }
 
   Future<void> _onMessage(RemoteMessage message) async {
     final notification = message.notification;
-    if (notification == null) return;
+    if (notification == null) {
+      return;
+    }
 
     await _local.show(
       notification.hashCode,
@@ -197,7 +194,6 @@ class FCMNotificationService {
   void checkAndHandlePendingNotification() {
     isAppFullyInitialized = true;
     if (pendingNotificationData != null) {
-      debugPrint('🔔 [FCM] Processing pending notification tap: $pendingNotificationData');
       final data = pendingNotificationData!;
       pendingNotificationData = null;
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -208,78 +204,128 @@ class FCMNotificationService {
 
   void _handleNotificationTap(Map<String, dynamic> data) {
     if (!isAppFullyInitialized) {
-      debugPrint('🔔 [FCM Tap] App not fully initialized yet. Saving payload as pending: $data');
       pendingNotificationData = data;
       return;
     }
 
-    debugPrint('🔔 [FCM Tap] Deep link triggered with payload data: $data');
-    
-    String? type = data['type']?.toString() ?? data['related_type']?.toString();
-    String? propertyId = data['propertyId']?.toString() ?? data['property_id']?.toString();
-    String? projectId = data['projectId']?.toString() ?? data['project_id']?.toString();
+    final String? typeVal = data['type']?.toString();
+    final String? relatedTypeVal = data['related_type']?.toString();
+    final String? templateKeyVal = data['templateKey']?.toString();
     final String? relatedId = data['related_id']?.toString();
+    final String? actionUrl = data['action_url']?.toString();
 
-    if (type != null) {
-      final normalizedType = type.trim().toLowerCase();
-      if (normalizedType == 'project' && relatedId != null && relatedId.isNotEmpty) {
-        projectId = relatedId;
-      } else if (normalizedType == 'property' && relatedId != null && relatedId.isNotEmpty) {
-        propertyId = relatedId;
+    bool isProject = false;
+    bool isProperty = false;
+    bool isSubscription = false;
+
+    // 1) Classify based on related_type
+    if (relatedTypeVal != null) {
+      final normRelated = relatedTypeVal.trim().toLowerCase();
+
+      if (normRelated == 'project') {
+        isProject = true;
+      } else if (normRelated == 'property') {
+        isProperty = true;
       }
     }
 
-    // Fallback: parse action_url if type/ids are still null
-    if (type == null || (projectId == null && propertyId == null)) {
-      final String? actionUrl = data['action_url']?.toString();
-      if (actionUrl != null && actionUrl.isNotEmpty) {
-        try {
-          final uri = Uri.tryParse(actionUrl);
-          if (uri != null) {
-            final pathSegments = uri.pathSegments;
-            if (pathSegments.length >= 2) {
-              final segment0 = pathSegments[0].toLowerCase();
-              final segment1 = pathSegments[1];
-              if (segment0 == 'project') {
-                type ??= 'PROJECT';
-                projectId ??= segment1;
-              } else if (segment0 == 'property') {
-                type ??= 'PROPERTY';
-                propertyId ??= segment1;
-              }
+    // 2) Classify based on type or templateKey
+    final String? checkType = typeVal ?? templateKeyVal;
+    if (checkType != null) {
+      final normType = checkType.trim().toLowerCase();
+
+      if (normType.contains('project')) {
+        isProject = true;
+      } else if (normType.contains('property') ||
+          normType.contains('inquiry') ||
+          normType.contains('price')) {
+        isProperty = true;
+      } else if (normType.contains('subscription') ||
+          normType.contains('plan')) {
+        isSubscription = true;
+      }
+    }
+
+    // 3) Classify and extract IDs using action_url path segments
+    String? urlProjectId;
+    String? urlPropertyId;
+    if (actionUrl != null && actionUrl.isNotEmpty) {
+      try {
+        final uri = Uri.tryParse(actionUrl);
+
+        if (uri != null) {
+          final pathSegments = uri.pathSegments;
+
+          if (pathSegments.length >= 2) {
+            final segment0 = pathSegments[0].toLowerCase();
+            final segment1 = pathSegments[1];
+
+            if (segment0 == 'project') {
+              isProject = true;
+              urlProjectId = segment1;
+            } else if (segment0 == 'property') {
+              isProperty = true;
+              urlPropertyId = segment1;
             }
           }
-        } catch (e) {
-          debugPrint('❌ Error parsing action_url: $e');
         }
+      } catch (e) {}
+    }
+
+    // 4) Resolve IDs
+    String? propertyId =
+        data['propertyId']?.toString() ??
+        data['property_id']?.toString() ??
+        urlPropertyId;
+
+    String? projectId =
+        data['projectId']?.toString() ??
+        data['project_id']?.toString() ??
+        urlProjectId;
+
+    if (isProject && (projectId == null || projectId.isEmpty)) {
+      projectId = relatedId;
+    }
+    if (isProperty && (propertyId == null || propertyId.isEmpty)) {
+      propertyId = relatedId;
+    }
+
+    // 5) Perform role-based routing
+
+    if (isProject && projectId != null && projectId.isNotEmpty) {
+      if (UserHelper.isReseller) {
+        Get.to(
+          () => ProjectDetailsScreen(projectId: projectId, isBuilder: true),
+        );
+      } else if (UserHelper.isSellerBuilder) {
+        Get.to(
+          () => ProjectDetailsScreen(projectId: projectId, isBuilder: true),
+        );
+      } else {
+        Get.to(
+          () => ProjectDetailsScreen(projectId: projectId, isBuilder: false),
+        );
       }
-    }
-
-    if (type == null) return;
-
-    switch (type.toUpperCase()) {
-      case 'PROJECT':
-      case 'PROJECT_LISTED':
-      case 'PROJECT_APPROVED':
-      case 'PROJECT_REJECTED':
-      case 'PROJECT_ASSIGNED':
-        if (projectId != null && projectId.isNotEmpty) {
-          Get.to(() => ProjectDetailsScreen(projectId: projectId));
-        }
-        break;
-
-      case 'PROPERTY':
-      case 'PROPERTY_LISTED':
-      case 'PROPERTY_APPROVED':
-      case 'PROPERTY_REJECTED':
-      case 'INQUIRY_RECEIVED':
-      case 'PRICE_UPDATED':
-      case 'PRICE_DROPPED':
-      case 'PROPERTY_ASSIGNED':
-        if (propertyId != null && propertyId.isNotEmpty) {
-          Get.to(() => PropertyDetailScreen(propertyId: propertyId));
-        }
-        break;
-    }
+    } else if (isProperty && propertyId != null && propertyId.isNotEmpty) {
+      if (UserHelper.isReseller) {
+        Get.to(
+          () => LeadDetailScreen(
+            property: Items(id: propertyId),
+            isReseller: true,
+          ),
+        );
+      } else if (UserHelper.isSeller) {
+        Get.to(
+          () => PropertyOverviewSellerScreen(
+            propertyId: propertyId!,
+            onDelete: () {},
+          ),
+        );
+      } else {
+        Get.to(() => PropertyDetailScreen(propertyId: propertyId));
+      }
+    } else if (isSubscription) {
+      Get.to(() => const MySubscriptionScreen());
+    } else {}
   }
 }

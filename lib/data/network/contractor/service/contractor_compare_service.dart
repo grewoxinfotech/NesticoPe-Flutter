@@ -15,16 +15,15 @@ class ContractorCompareService {
     return await ApiConstants.getHeaders();
   }
 
-  Future<Map<String,dynamic>> getContractorById(String id) async {
+  Future<Map<String, dynamic>> getContractorById(String id) async {
     try {
-      log("Compare Contractor $id");
       final response = await http.get(
         Uri.parse('$_baseUrl/$id'),
         headers: await header(),
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         // avoid logging full payload to reduce log spam and potential jank
-        final data=jsonDecode(response.body);
+        final data = jsonDecode(response.body);
         return data;
       }
       return {};

@@ -77,7 +77,6 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
               );
 
               if (result != null) {
-                log("Selected Filters → $result");
                 if (result != null) {
                   selectedFilters.value = result;
                   controller.applyFilters(result);
@@ -89,7 +88,10 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
             icon: const Icon(Icons.filter_list, color: ColorRes.primary),
             label: const Text(
               "Filter",
-              style: TextStyle(color: ColorRes.primary, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: ColorRes.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -146,7 +148,9 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: ColorRes.primary,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -208,7 +212,6 @@ class _ContractorProjectScreenState extends State<ContractorProjectScreen> {
                                     );
                                   },
                                   onChangeStatus: () {
-                                    log("Data of String ${project.toJson()}");
                                     controller.populatedProjectData(project);
                                     showStatusDialog(
                                       context,
@@ -768,9 +771,6 @@ void showStatusDialog(
                                 .toList(),
                         onChanged: (val) {
                           controller.setValue(controller.changeStatus, val);
-                          log(
-                            "Contractor_status ${controller.changeStatus.value}",
-                          );
                         },
                         darkText: true,
                       );
@@ -883,12 +883,6 @@ void showStatusDialog(
                                   controller.selectedDate!.minute,
                                 ).toIso8601String()
                                 : null;
-
-                        log("Deadline to send → $deadlineIso");
-                        log("Display date → ${controller.txtTime.text}");
-
-                        log("Deadline to send → $deadlineIso");
-                        log("Display date → ${controller.txtTime.text}");
 
                         // Example of passing to API
                         // controller.updateTheStatusAndStage(

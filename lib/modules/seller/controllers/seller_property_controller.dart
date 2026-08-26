@@ -94,15 +94,11 @@ class SellerListedPropertyController extends PaginatedController<Items> {
   Future<PaginationResponse<Items>> fetchItems(int page) async {
     filters['created_by'] = sellerId.value;
 
-
-    
-
     final response = await _service.fetchProperties(
       page: page,
       filters: filters,
-      
     );
-    print("response of seller property: ${response.meta.toJson()}");
+
     return response;
   }
 

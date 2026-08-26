@@ -20,8 +20,6 @@
 //
 //     return ResellerInsightsModel(
 
-
-
 //       success: json['success'] ?? false,
 
 //       message: json['message'] ?? '',
@@ -1043,8 +1041,11 @@ class ResellerInsightsModel {
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'success': success, 'message': message, 'data': data.toJson()};
+  Map<String, dynamic> toJson() => {
+    'success': success,
+    'message': message,
+    'data': data.toJson(),
+  };
 
   static ResellerInsightsModel fromRawJson(String str) =>
       ResellerInsightsModel.fromJson(json.decode(str));
@@ -1087,18 +1088,22 @@ class ResellerData {
       leaderboard: Leaderboard.fromJson(json['leaderboard'] ?? {}),
       dailyGoals: DailyGoals.fromJson(json['dailyGoals'] ?? {}),
       level: Level.fromJson(json['level'] ?? {}),
-      successStories: (json['successStories'] as List<dynamic>? ?? [])
-          .map((e) => SuccessStory.fromJson(e))
-          .toList(),
-      leadsTrend: (json['leadsTrend'] as List<dynamic>? ?? [])
-          .map((e) => LeadsTrend.fromJson(e))
-          .toList(),
-      commissionTrend: (json['commissionTrend'] as List<dynamic>? ?? [])
-          .map((e) => CommissionTrend.fromJson(e))
-          .toList(),
-      milestones: json['milestones'] != null
-          ? Milestones.fromJson(json['milestones'])
-          : null,
+      successStories:
+          (json['successStories'] as List<dynamic>? ?? [])
+              .map((e) => SuccessStory.fromJson(e))
+              .toList(),
+      leadsTrend:
+          (json['leadsTrend'] as List<dynamic>? ?? [])
+              .map((e) => LeadsTrend.fromJson(e))
+              .toList(),
+      commissionTrend:
+          (json['commissionTrend'] as List<dynamic>? ?? [])
+              .map((e) => CommissionTrend.fromJson(e))
+              .toList(),
+      milestones:
+          json['milestones'] != null
+              ? Milestones.fromJson(json['milestones'])
+              : null,
       lastUpdated: json['lastUpdated'] ?? '',
     );
   }
@@ -1126,10 +1131,9 @@ class Earnings {
   final num monthlyBonus;
   final num currentMonthCommission;
   final num previousMonthCommission;
-    final num propertyCommission;
+  final num propertyCommission;
   final num projectCommission;
   final num potentialCommission;
-
 
   Earnings({
     required this.totalCommission,
@@ -1140,20 +1144,24 @@ class Earnings {
     required this.previousMonthCommission,
     required this.projectCommission,
     required this.propertyCommission,
-    required this.potentialCommission
+    required this.potentialCommission,
   });
 
   factory Earnings.fromJson(Map<String, dynamic> json) {
     return Earnings(
       totalCommission: json['totalCommission'] ?? 0,
-      paidCommission: (json['paidCommission'] is String)
-          ? num.tryParse(json['paidCommission']) ?? 0
-          : json['paidCommission'] ?? 0,
-          projectCommission:json['projectCommission'] ?? 0 ,
-          propertyCommission:json['propertyCommission'] ?? 0 ,
-      unpaidCommission:(json['unpaidCommission'] is String)? num.tryParse(json['unpaidCommission']) ?? 0: json['unpaidCommission'] ?? 0,
+      paidCommission:
+          (json['paidCommission'] is String)
+              ? num.tryParse(json['paidCommission']) ?? 0
+              : json['paidCommission'] ?? 0,
+      projectCommission: json['projectCommission'] ?? 0,
+      propertyCommission: json['propertyCommission'] ?? 0,
+      unpaidCommission:
+          (json['unpaidCommission'] is String)
+              ? num.tryParse(json['unpaidCommission']) ?? 0
+              : json['unpaidCommission'] ?? 0,
       monthlyBonus: json['monthlyBonus'] ?? 0,
-potentialCommission: json['potentialCommission']??0,
+      potentialCommission: json['potentialCommission'] ?? 0,
       currentMonthCommission: json['currentMonthCommission'] ?? 0,
       previousMonthCommission: json['previousMonthCommission'] ?? 0,
     );
@@ -1164,10 +1172,10 @@ potentialCommission: json['potentialCommission']??0,
     'paidCommission': paidCommission,
     'unpaidCommission': unpaidCommission,
     'monthlyBonus': monthlyBonus,
-    'propertyCommission':propertyCommission,
-    'projectCommission':projectCommission,
+    'propertyCommission': propertyCommission,
+    'projectCommission': projectCommission,
     'currentMonthCommission': currentMonthCommission,
-    'potentialCommission':potentialCommission,
+    'potentialCommission': potentialCommission,
     'previousMonthCommission': previousMonthCommission,
   };
 }
@@ -1221,13 +1229,15 @@ class Leaderboard {
 
   factory Leaderboard.fromJson(Map<String, dynamic> json) {
     return Leaderboard(
-      topResellers: (json['topResellers'] as List<dynamic>? ?? [])
-          .map((e) => TopReseller.fromJson(e))
-          .toList(),
+      topResellers:
+          (json['topResellers'] as List<dynamic>? ?? [])
+              .map((e) => TopReseller.fromJson(e))
+              .toList(),
       currentRank: json['currentRank'] ?? 0,
-      topProperties: (json['topProperties'] as List<dynamic>? ?? [])
-          .map((e) => TopProperty.fromJson(e))
-          .toList(),
+      topProperties:
+          (json['topProperties'] as List<dynamic>? ?? [])
+              .map((e) => TopProperty.fromJson(e))
+              .toList(),
     );
   }
 
@@ -1411,7 +1421,9 @@ class Level {
       currentLevelIcon: json['currentLevelIcon'] ?? '',
       commissionRate: json['commissionRate'] ?? 0,
       benefits:
-      (json['benefits'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+          (json['benefits'] as List<dynamic>? ?? [])
+              .map((e) => e.toString())
+              .toList(),
       totalCommissionEarned: json['totalCommissionEarned'] ?? 0,
       totalClosedDeals: json['totalClosedDeals'] ?? 0,
       nextLevelName: json['nextLevelName'] ?? '',
@@ -1536,10 +1548,11 @@ class CommissionTrend {
 
   CommissionTrend({required this.name, required this.commission});
 
-  factory CommissionTrend.fromJson(Map<String, dynamic> json) => CommissionTrend(
-    name: json['name'] ?? '',
-    commission: json['commission'] ?? 0,
-  );
+  factory CommissionTrend.fromJson(Map<String, dynamic> json) =>
+      CommissionTrend(
+        name: json['name'] ?? '',
+        commission: json['commission'] ?? 0,
+      );
 
   Map<String, dynamic> toJson() => {'name': name, 'commission': commission};
 }
@@ -1563,16 +1576,19 @@ class Milestones {
   factory Milestones.fromJson(Map<String, dynamic> json) {
     return Milestones(
       totalFeesGenerated: json['totalFeesGenerated'] ?? 0,
-      bonuses: (json['bonuses'] as List<dynamic>? ?? [])
-          .map((e) => Bonus.fromJson(e))
-          .toList(),
-      nextMilestone: json['nextMilestone'] != null
-          ? MilestoneItem.fromJson(json['nextMilestone'])
-          : null,
+      bonuses:
+          (json['bonuses'] as List<dynamic>? ?? [])
+              .map((e) => Bonus.fromJson(e))
+              .toList(),
+      nextMilestone:
+          json['nextMilestone'] != null
+              ? MilestoneItem.fromJson(json['nextMilestone'])
+              : null,
       progress: json['progress'] ?? 0,
-      allMilestones: (json['allMilestones'] as List<dynamic>? ?? [])
-          .map((e) => MilestoneItem.fromJson(e))
-          .toList(),
+      allMilestones:
+          (json['allMilestones'] as List<dynamic>? ?? [])
+              .map((e) => MilestoneItem.fromJson(e))
+              .toList(),
     );
   }
 
@@ -1652,10 +1668,7 @@ class Meta {
   final String triggeredAt;
   final num totalCommissionsAtTime;
 
-  Meta({
-    required this.triggeredAt,
-    required this.totalCommissionsAtTime,
-  });
+  Meta({required this.triggeredAt, required this.totalCommissionsAtTime});
 
   factory Meta.fromJson(Map<String, dynamic> json) {
     return Meta(
@@ -1674,18 +1687,11 @@ class MilestoneItem {
   final num limit;
   final String gift;
 
-  MilestoneItem({
-    required this.limit,
-    required this.gift,
-  });
+  MilestoneItem({required this.limit, required this.gift});
 
   factory MilestoneItem.fromJson(Map<String, dynamic> json) {
-    return MilestoneItem(
-      limit: json['limit'] ?? 0,
-      gift: json['gift'] ?? '',
-    );
+    return MilestoneItem(limit: json['limit'] ?? 0, gift: json['gift'] ?? '');
   }
 
   Map<String, dynamic> toJson() => {'limit': limit, 'gift': gift};
 }
-

@@ -5,26 +5,19 @@ class ContractorLeadResponse {
   String? message;
   ContractorLeadData? data;
 
-  ContractorLeadResponse({
-    this.success,
-    this.message,
-    this.data,
-  });
+  ContractorLeadResponse({this.success, this.message, this.data});
 
   factory ContractorLeadResponse.fromMap(Map<String, dynamic> map) {
     return ContractorLeadResponse(
       success: map['success'],
       message: map['message'],
-      data: map['data'] != null ? ContractorLeadData.fromMap(map['data']) : null,
+      data:
+          map['data'] != null ? ContractorLeadData.fromMap(map['data']) : null,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.toMap(),
-    };
+    return {'success': success, 'message': message, 'data': data?.toMap()};
   }
 
   factory ContractorLeadResponse.fromJson(String source) =>
@@ -52,11 +45,12 @@ class ContractorLeadData {
 
   factory ContractorLeadData.fromMap(Map<String, dynamic> map) {
     return ContractorLeadData(
-      items: map['items'] != null
-          ? List<ContractorLeadItem>.from(
-        map['items'].map((x) => ContractorLeadItem.fromMap(x)),
-      )
-          : [],
+      items:
+          map['items'] != null
+              ? List<ContractorLeadItem>.from(
+                map['items'].map((x) => ContractorLeadItem.fromMap(x)),
+              )
+              : [],
       total: map['total'],
       currentPage: map['currentPage'],
       totalPages: map['totalPages'],
@@ -110,11 +104,13 @@ class ContractorLeadItem {
       status: map['status'],
       stage: map['stage'],
       createdAt:
-      map['createdAt'] != null ? DateTime.tryParse(map['createdAt']) : null,
-      customFields: map['customFields'] != null
-          ? ContractorLeadCustomFields.fromMap(
-          Map<String, dynamic>.from(map['customFields']))
-          : null,
+          map['createdAt'] != null ? DateTime.tryParse(map['createdAt']) : null,
+      customFields:
+          map['customFields'] != null
+              ? ContractorLeadCustomFields.fromMap(
+                Map<String, dynamic>.from(map['customFields']),
+              )
+              : null,
     );
   }
 
@@ -162,9 +158,10 @@ class ContractorLeadCustomFields {
       contractorUsername: map['contractorUsername'],
       serviceDescription: map['serviceDescription'],
       quotationId: map['quotationId'],
-      quotationPrice: map['quotationPrice'] is int
-          ? map['quotationPrice']
-          : int.tryParse(map['quotationPrice']?.toString() ?? ''),
+      quotationPrice:
+          map['quotationPrice'] is int
+              ? map['quotationPrice']
+              : int.tryParse(map['quotationPrice']?.toString() ?? ''),
       isConvertedToProject: map['isConvertedToProject'],
     );
   }
@@ -182,4 +179,3 @@ class ContractorLeadCustomFields {
     };
   }
 }
-

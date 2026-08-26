@@ -926,7 +926,6 @@ class DashboardController extends GetxController {
       // Monthly mode
       selectedWeek.value = "";
       month = dfMonth.format(now);
-      log("📅 Period Info → Mode: Monthly | Month: $month");
     } else {
       // Weekly mode
       if (selectedPeriod.value.isNotEmpty) {
@@ -936,11 +935,9 @@ class DashboardController extends GetxController {
           final adjusted = DateTime(now.year, startDate.month, startDate.day);
           selectedWeek.value = DateFormat('yyyy-MM-dd').format(adjusted);
           week = selectedWeek.value;
-          log("📅 Period Info → Mode: Weekly | Week: $week");
         } catch (e) {
           selectedWeek.value = "";
           week = "";
-          log("⚠️ Error parsing week range: $e");
         }
       } else {
         selectedWeek.value = "";
@@ -987,10 +984,6 @@ class DashboardController extends GetxController {
           month: month,
         );
 
-    log(
-      "🏙 API Call → city=${city ?? selectedCity.value}, period=$period, week=$week, month=$month",
-    );
-
     resellerCityWiseLeaderBoard.value = ResellerLeaderboardCitywise.fromJson(
       data,
     );
@@ -1007,7 +1000,7 @@ class DashboardController extends GetxController {
     final data =
         await ResellerDashboardService.resellerDashboardService
             .fetchCityOfReseller();
-    log("Controller Side to fetch from api ${data} ");
+
     resellerAllCity.value = ResellerCityLeaderBoardAllCities.fromJson(data);
   }
 
@@ -1035,24 +1028,14 @@ class DashboardController extends GetxController {
     );
 
     // 🧩 Log for debugging
-    if (kDebugMode) {
-      debugPrint('📊 buyerPriceRange called');
-      debugPrint(
-        '   ▶ Original values: start=${value.start}, end=${value.end}',
-      );
-      debugPrint('   ▶ Clamped with bounds: lower=$lower, upper=$upper');
-      debugPrint('   ▶ Result: start=$clampedStart, end=$clampedEnd');
-      debugPrint('   ▶ priceRangeSeller: ${priceRangeSeller.value}');
-    }
+    if (kDebugMode) {}
   }
 
   Map<String, dynamic> priceRange(double min, double max) {
     final rangeMap = {'min': min.toInt(), 'max': max.toInt()};
 
     // 🧩 Log the computed range
-    if (kDebugMode) {
-      debugPrint('💰 priceRange() → $rangeMap');
-    }
+    if (kDebugMode) {}
 
     return rangeMap;
   }
@@ -1090,12 +1073,7 @@ class DashboardController extends GetxController {
     final currentLeadCount =
         resellerInsightsModel.value?.data.performance.totalLeads ?? 0;
     showRedDot.value = await SecureStorage.hasNewResellerLead(currentLeadCount);
-    if (kDebugMode) {
-      debugPrint(
-        "Reseller Dashboard: assigned=${resellerInsightsModel.value?.data.totalAssignedProperties ?? 0}, "
-        "topProperties=${resellerInsightsModel.value?.data.leaderboard.topProperties.length ?? 0}",
-      );
-    }
+    if (kDebugMode) {}
 
     return resellerInsightsModel;
   }
@@ -1119,13 +1097,8 @@ class DashboardController extends GetxController {
       try {
         final parsedDate = DateTime.parse(createdDate);
         createdUserYear.value = parsedDate.year;
-        log('Created year of user: ${createdUserYear.value}');
-      } catch (e) {
-        log('Error parsing createdAt date: $e');
-      }
-    } else {
-      log('User createdAt date is empty or null');
-    }
+      } catch (e) {}
+    } else {}
   }
 
   Future<void> deleteStory(String id) async {
@@ -1140,7 +1113,6 @@ class DashboardController extends GetxController {
         await fetchResellerDashboardDataFromApi();
       }
     } catch (e) {
-      debugPrint("❌ Delete story error: $e");
     } finally {
       // Always reset loading state, even if an error occurs
       deleteSuccessStory.value = false;
@@ -1154,7 +1126,6 @@ class DashboardController extends GetxController {
       dummyReferral.value = data;
       if (dummyReferral.value != null) isGenerated.value = true;
     } catch (e) {
-      print(e);
     } finally {
       isLoading.value = false;
     }
@@ -1186,24 +1157,10 @@ class DashboardController extends GetxController {
   }
 
   void getPropertyType() {
-    if (kDebugMode) {
-      debugPrint('🔍 Running getPropertyType...');
-      debugPrint('======================================');
-      debugPrint('📊 Total properties: ${propertyController.items.length}');
-      debugPrint('🧩 Active filters:');
-      debugPrint('  • Category: "${resellerPropertyCategory.value}"');
-      debugPrint('  • Listing: "${resellerListingType.value}"');
-      debugPrint('  • Furnishing: "${resellerFurnishingType.value}"');
-      debugPrint('  • Verified: "${resellerVerified.value}"');
-      debugPrint('  • State: "${resellerSelectedState.value}"');
-      debugPrint('  • City: "${resellerSelectedCity.value}"');
-      debugPrint('======================================\n');
-    }
+    if (kDebugMode) {}
     final matchFurnishing = matchFurnishType(resellerFurnishingType.value);
 
-    if (kDebugMode) {
-      debugPrint('  • City: "${matchFurnishing}"');
-    }
+    if (kDebugMode) {}
   }
 
   String matchFurnishType(String filterValue) {
@@ -1458,8 +1415,6 @@ class DashboardController extends GetxController {
     for (var f in filterList) {
       mergedFilters.addAll(f); // combine key-value pairs
     }
-
-    print('Merged Filters: $mergedFilters');
 
     leadController.applyFilters(mergedFilters);
   }
@@ -1828,12 +1783,10 @@ class DashboardController extends GetxController {
         _updatePriceRange(); // ✅ This sets min/max prices
         applyFilters(); // ✅ This applies initial filters
         isLoading.value = false;
-        print('✅ Loaded ${_allProducts.length} products');
       });
     } catch (e) {
       error.value = 'Failed to load products';
       isLoading.value = false;
-      print('❌ Error loading products: $e');
     }
   }
 
@@ -2099,10 +2052,6 @@ class DashboardController extends GetxController {
       maxPrice.value = max;
       filterMinPrice.value = min;
       filterMaxPrice.value = max;
-
-      print(
-        '💰 Price range: ${min.toStringAsFixed(0)} - ${max.toStringAsFixed(0)}',
-      );
     }
   }
 
@@ -2253,11 +2202,6 @@ class DashboardController extends GetxController {
   // }
 
   void applyFilters() {
-    print('\n🔍 === APPLYING FILTERS ===');
-    print('Search: "${searchQuery.value}"');
-    print('Categories: $selectedProductCategories');
-    print('Price: ${filterMinPrice.value} - ${filterMaxPrice.value}');
-
     List<ResellerLeadOverview> filtered =
         _allProducts.where((property) {
           final custom = property.customFields;
@@ -2294,23 +2238,12 @@ class DashboardController extends GetxController {
               propertyPrice <= filterMaxPrice.value;
 
           // Debug
-          if (!matchesSearch && searchQuery.value.isNotEmpty) {
-            print('❌ Search miss: ${property.name}');
-          }
-          if (!matchesCategory && selectedProductCategories.isNotEmpty) {
-            print('❌ Category miss: ${property.name} (type: $propertyType)');
-          }
-          if (!matchesPrice) {
-            print(
-              '❌ Price miss: ${property.name} (₹${propertyPrice.toStringAsFixed(0)})',
-            );
-          }
+          if (!matchesSearch && searchQuery.value.isNotEmpty) {}
+          if (!matchesCategory && selectedProductCategories.isNotEmpty) {}
+          if (!matchesPrice) {}
 
           return matchesSearch && matchesCategory && matchesPrice;
         }).toList();
-
-    print('✅ Filtered: ${filtered.length}/${_allProducts.length} properties');
-    print('=========================\n');
 
     filteredProducts.assignAll(filtered);
     applySorting();
@@ -2354,7 +2287,6 @@ class DashboardController extends GetxController {
     }
 
     filteredProducts.assignAll(sorted);
-    print('🔄 Sorted by: ${sortOption.value}');
   }
 
   // void applySorting() {
@@ -2400,16 +2332,13 @@ class DashboardController extends GetxController {
   void updatePriceRange(double min, double max) {
     filterMinPrice.value = min;
     filterMaxPrice.value = max;
-    print('💰 Price range updated: $min - $max');
   }
 
   void updateSortOption(SortOption option) {
     sortOption.value = option;
-    print('📊 Sort updated: $option');
   }
 
   void clearFilters() {
-    print('🧹 Clearing all filters');
     searchQuery.value = '';
     selectedProductCategories.clear();
     filterMinPrice.value = minPrice.value; // ✅ Use actual min

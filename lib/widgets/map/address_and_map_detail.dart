@@ -28,12 +28,11 @@ class AddressAndMapDetails extends StatelessWidget {
     if (zipCode?.isNotEmpty ?? false) buffer.write(", ${zipCode}");
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
-           Icon(Icons.location_on_outlined, size: 16,color: ColorRes.primary,),
+          Icon(Icons.location_on_outlined, size: 16, color: ColorRes.primary),
           const SizedBox(width: 8),
 
           // Address Text

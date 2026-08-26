@@ -270,7 +270,6 @@ class SocketController extends GetxController {
       },
       onError: (error) {
         connectionError.value = 'Socket error: $error';
-        print('❌ Socket stream error: $error');
       },
     );
   }
@@ -299,9 +298,7 @@ class SocketController extends GetxController {
 
       final message = ChatMessage.fromJson(data['message']);
       handleMessage(message);
-    } catch (e) {
-      print("❌ Error parsing new message: $e");
-    }
+    } catch (e) {}
   }
 
   void handleMessage(ChatMessage message) {
@@ -332,7 +329,6 @@ class SocketController extends GetxController {
         messages.addAll(parsed);
       }
     } catch (e) {
-      print("❌ Error parsing initial chat: $e");
     } finally {
       isLoading.value = false;
     }
@@ -372,7 +368,6 @@ class SocketController extends GetxController {
   }
 
   void disconnect() {
-    print("❌ Disconnecting socket...");
     _socketService.disconnect();
     cleanAll();
   }

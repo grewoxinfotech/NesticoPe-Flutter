@@ -716,13 +716,16 @@ class NesticoPeCardWithText extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(AppRadius.mediumLarge), boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.04),
-          blurRadius: 2,
-          offset: const Offset(2, 3),
-        ),
-      ]),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 2,
+            offset: const Offset(2, 3),
+          ),
+        ],
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.mediumLarge),
         child: Stack(

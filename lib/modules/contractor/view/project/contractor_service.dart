@@ -317,13 +317,12 @@ class ContractorService extends StatefulWidget {
 }
 
 class _ContractorServiceState extends State<ContractorService> {
-  final contractorDashboardController = Get.find<ContractorDashboardController>();
+  final contractorDashboardController =
+      Get.find<ContractorDashboardController>();
   final controller = Get.find<ContractorMyServiceController>();
 
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       backgroundColor: ColorRes.background,
       appBar: AppBar(
@@ -353,7 +352,8 @@ class _ContractorServiceState extends State<ContractorService> {
             return IconButton(
               icon: Icon(
                 Icons.add_circle_outline_rounded,
-                color: showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
+                color:
+                    showDisabledStyle ? Colors.grey.shade400 : ColorRes.primary,
                 size: 28,
               ),
               onPressed: () async {
@@ -362,12 +362,13 @@ class _ContractorServiceState extends State<ContractorService> {
                 if (UserHelper.isContractor) {
                   if (showDisabledStyle) {
                     await contractorDashboardController.showUpgradePlanDialog(
-                      title: activePlan ? 'Limit Reached' : 'Active plan required',
+                      title:
+                          activePlan ? 'Limit Reached' : 'Active plan required',
                       message:
                           activePlan
                               ? 'Limit Reached, please upgrade your plan.'
                               : 'You do not have an active subscription. Please activate a plan to continue.',
-                              buttonText: activePlan?'Upgrade Plan':'Buy Plan'
+                      buttonText: activePlan ? 'Upgrade Plan' : 'Buy Plan',
                     );
                     return;
                   }
@@ -642,19 +643,19 @@ class _ServiceCardState extends State<ServiceCard> {
     return GestureDetector(
       onTap: () => setState(() => expanded = !expanded),
       child: Padding(
-  padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: 12),
         child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-         boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-            ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -671,7 +672,7 @@ class _ServiceCardState extends State<ServiceCard> {
                               " ",
                             ) ??
                             '',
-        
+
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,
@@ -715,9 +716,9 @@ class _ServiceCardState extends State<ServiceCard> {
                     _buildStatusBadge(widget.item.isActive, (value) {}),
                   ],
                 ),
-        
+
                 const SizedBox(height: 8),
-        
+
                 if (widget.item.serviceImage != null &&
                     widget.item.serviceImage!.isNotEmpty)
                   Column(
@@ -729,7 +730,9 @@ class _ServiceCardState extends State<ServiceCard> {
                           itemCount: widget.item.serviceImage!.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
@@ -749,7 +752,8 @@ class _ServiceCardState extends State<ServiceCard> {
                                         (context, url) => Container(
                                           height: 180,
                                           width: double.infinity,
-                                          color: ColorRes.leadGreyColor.shade200,
+                                          color:
+                                              ColorRes.leadGreyColor.shade200,
                                           child: const Center(
                                             child: CircularProgressIndicator(),
                                           ),
@@ -758,7 +762,8 @@ class _ServiceCardState extends State<ServiceCard> {
                                         (context, url, error) => Container(
                                           height: 180,
                                           width: double.infinity,
-                                          color: ColorRes.leadGreyColor.shade200,
+                                          color:
+                                              ColorRes.leadGreyColor.shade200,
                                           child: const Icon(
                                             Icons.error,
                                             color: Colors.red,
@@ -789,7 +794,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       const SizedBox(height: 12),
                     ],
                   ),
-        
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -801,7 +806,7 @@ class _ServiceCardState extends State<ServiceCard> {
                         fontWeight: AppFontWeights.medium,
                       ),
                     ),
-        
+
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -857,7 +862,7 @@ class _ServiceCardState extends State<ServiceCard> {
                     ),
                   );
                 }),
-        
+
                 /// Expanded Section
                 if (expanded) ...[
                   const SizedBox(height: 8),
@@ -885,8 +890,9 @@ class _ServiceCardState extends State<ServiceCard> {
                             onPressed: () {
                               widget.controller.clearForm();
                               Get.to(
-                                () =>
-                                    AddServiceScreen(serviceToEdit: widget.item),
+                                () => AddServiceScreen(
+                                  serviceToEdit: widget.item,
+                                ),
                               );
                             },
                           ),
@@ -919,7 +925,9 @@ class _ServiceCardState extends State<ServiceCard> {
                                     actions: [
                                       TextButton(
                                         onPressed: () {
-                                          Navigator.pop(context); // close dialog
+                                          Navigator.pop(
+                                            context,
+                                          ); // close dialog
                                         },
                                         child: const Text("No"),
                                       ),
@@ -947,7 +955,7 @@ class _ServiceCardState extends State<ServiceCard> {
                     ],
                   ),
                   const SizedBox(height: 12),
-        
+
                   /// Range + Advance
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -971,7 +979,10 @@ class _ServiceCardState extends State<ServiceCard> {
                         meta.billingType?.toUpperCase().split("_").join(" ") ??
                             '',
                       ),
-                      _infoTile("Advance", "${meta.advanceRequiredPercentage}%"),
+                      _infoTile(
+                        "Advance",
+                        "${meta.advanceRequiredPercentage}%",
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -1006,7 +1017,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       ),
                     ),
                   ),
-        
+
                   if (meta.works != null && meta.works!.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1031,13 +1042,18 @@ class _ServiceCardState extends State<ServiceCard> {
                           decoration: BoxDecoration(
                             color: ColorRes.background,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: ColorRes.border, width: 1),
+                            border: Border.all(
+                              color: ColorRes.border,
+                              width: 1,
+                            ),
                           ),
                           child: Text(
                             meta.works!
                                 .map(
                                   (work) =>
-                                      work.replaceAll('_', ' ').capitalizeFirst ??
+                                      work
+                                          .replaceAll('_', ' ')
+                                          .capitalizeFirst ??
                                       work,
                                 )
                                 .join(', '),
@@ -1052,12 +1068,12 @@ class _ServiceCardState extends State<ServiceCard> {
                       ],
                     ),
                   const SizedBox(height: 16),
-        
+
                   if (hasAnyMetaData) ...[
                     ...metaSections
                         .take(showAllMeta ? metaSections.length : 2)
                         .toList(),
-        
+
                     if (metaSections.length > 2)
                       Center(
                         child: TextButton.icon(
@@ -1075,7 +1091,7 @@ class _ServiceCardState extends State<ServiceCard> {
                         ),
                       ),
                   ],
-        
+
                   if ([
                     meta.threeDDesign,
                     meta.modularKitchen,
@@ -1117,7 +1133,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       ],
                     ),
                   ],
-        
+
                   if ((meta.provideMaterials ?? false) ||
                       (meta.equipmentProvided ?? false) ||
                       (meta.insuranceAvailable ?? false)) ...[
@@ -1144,7 +1160,7 @@ class _ServiceCardState extends State<ServiceCard> {
                       ],
                     ),
                   ],
-        
+
                   const SizedBox(height: 16),
                   Text(
                     "Payment Methods",
@@ -1169,7 +1185,7 @@ class _ServiceCardState extends State<ServiceCard> {
                             .toList() ??
                         [],
                   ),
-        
+
                   const SizedBox(height: 16),
                   Text(
                     "Description",

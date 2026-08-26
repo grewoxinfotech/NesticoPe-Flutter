@@ -234,18 +234,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password)) score++;
 
     if (score <= 1) {
-      return _PasswordStrength('WEAK', 0.25,  ColorRes.error);
+      return _PasswordStrength('WEAK', 0.25, ColorRes.error);
     }
 
     if (score == 2) {
-      return _PasswordStrength('FAIR', 0.5, 
-       ColorRes.warning);
+      return _PasswordStrength('FAIR', 0.5, ColorRes.warning);
     }
     if (score == 3) {
-      return _PasswordStrength('GOOD', 0.75,  ColorRes.primary);
+      return _PasswordStrength('GOOD', 0.75, ColorRes.primary);
     }
 
-    return _PasswordStrength('STRONG', 1.0,  ColorRes.success);
+    return _PasswordStrength('STRONG', 1.0, ColorRes.success);
   }
 
   @override
@@ -262,14 +261,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           icon: const Icon(Icons.arrow_back, color: ColorRes.primary),
           onPressed: () => Get.back(),
         ),
-         titleSpacing: 0,
-          title: Image.asset(
-            'assets/images/Nestico-Pe_Logo-svg.png',
-            height: 48,
-            width: 150,
-            alignment: Alignment.centerLeft,
-            fit: BoxFit.cover,
-          ),
+        titleSpacing: 0,
+        title: Image.asset(
+          'assets/images/Nestico-Pe_Logo-svg.png',
+          height: 48,
+          width: 150,
+          alignment: Alignment.centerLeft,
+          fit: BoxFit.cover,
+        ),
       ),
 
       // Bottom nav bar
@@ -294,7 +293,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       //     ),
       //   ),
       // ),
-
       body: Container(
         height: double.infinity,
         decoration: const BoxDecoration(
@@ -317,7 +315,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   // mainAxisSize: MainAxisSize.min,
                   children: [
-        // Left-aligned title
+                    // Left-aligned title
                     Center(
                       child: Container(
                         width: 72,
@@ -345,9 +343,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ),
                     ),
-              
+
                     const SizedBox(height: 8),
-              
+
                     // Subtitle
                     Center(
                       child: Text(
@@ -361,9 +359,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ),
                     ),
-              
+
                     const SizedBox(height: 32),
-              
+
                     // NEW PASSWORD label
                     // Text(
                     //   'NEW PASSWORD',
@@ -375,7 +373,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     //   ),
                     // ),
                     // const SizedBox(height: 8),
-              
+
                     // New Password field — reactive for strength
                     ValueListenableBuilder<TextEditingValue>(
                       valueListenable: authController.newPasswordController,
@@ -422,7 +420,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 return null;
                               },
                             ),
-              
+
                             // Strength bar
                             if (value.text.isNotEmpty) ...[
                               const SizedBox(height: 8),
@@ -447,9 +445,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                             height: 3,
                                             decoration: BoxDecoration(
                                               color: strength.color,
-                                              borderRadius: BorderRadius.circular(
-                                                4,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                           ),
                                         ),
@@ -493,9 +490,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         );
                       },
                     ),
-              
+
                     const SizedBox(height: 20),
-              
+
                     // CONFIRM PASSWORD label
                     // Text(
                     //   'CONFIRM PASSWORD',
@@ -541,9 +538,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         return null;
                       },
                     ),
-              
+
                     const SizedBox(height: 32),
-              
+
                     // Reset Password button
                     NesticoPeButton(
                       title: 'Reset Password',
@@ -554,9 +551,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       },
                       height: 52,
                     ),
-              
+
                     const SizedBox(height: 24),
-              
+
                     // Having trouble? Contact Support
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -568,7 +565,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             color: Colors.grey.shade600,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.5,
-              
+
                             // height: 1.55,
                           ),
                         ),
@@ -587,7 +584,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ],
                     ),
-              
+
                     const SizedBox(height: 16),
                   ],
                 ),

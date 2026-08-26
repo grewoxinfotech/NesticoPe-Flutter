@@ -171,7 +171,6 @@ class FinalCalloutConfig {
 }
 
 class ListingIntroScreen extends StatelessWidget {
-  
   final ListingIntroConfig config;
   final bool isBulletPoint;
   final String planTitle;
@@ -530,8 +529,6 @@ class _BecomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("check any thing missing ${role}");
-
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -573,7 +570,6 @@ class _BecomeSection extends StatelessWidget {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () async {
-              debugPrint('onPressed: Button pressed');
               if (UserHelper.isGuest) {
                 if (role == Roles.sellerOwner.name) {
                   Navigator.of(context).pop();
@@ -659,22 +655,14 @@ class _BecomeSection extends StatelessWidget {
                 // );
                 // return;
               } else {
-                debugPrint('onPressed: User is not guest');
                 final userId = await SecureStorage.getClientId() ?? '';
-                debugPrint('onPressed: User ID: $userId');
-                debugPrint('onPressed: Checking existing inquiry via API');
+
                 final already = await _checkExistingInquiryViaApi(
                   userId,
                   role ?? '',
                 );
-                debugPrint(
-                  'onPressed: Existing inquiry via API result: $already',
-                );
 
                 if (already) {
-                  debugPrint(
-                    'onPressed: Existing inquiry found, showing Thank You dialog',
-                  );
                   await Get.dialog(
                     const SignUpSubscriptionScreen(
                       title: 'Thank You',
@@ -687,9 +675,6 @@ class _BecomeSection extends StatelessWidget {
                   return;
                 }
                 try {
-                  debugPrint(
-                    'onPressed: No existing inquiry found, proceeding with new inquiry',
-                  );
                   final type =
                       role == Roles.reseller.name
                           ? 'reseller'
@@ -698,7 +683,7 @@ class _BecomeSection extends StatelessWidget {
                               : (role == Roles.sellerBuilder.name
                                   ? 'builder'
                                   : 'seller'));
-                  debugPrint('onPressed: Non-guest - Inquiry type: $type');
+
                   final user = await SecureStorage.getUserData();
                   final name =
                       '${user?.user?.firstName ?? ''} ${user?.user?.lastName ?? ''}'
@@ -709,17 +694,12 @@ class _BecomeSection extends StatelessWidget {
                               .trim();
                   final email = user?.user?.email ?? '';
                   final phone = user?.user?.phone ?? '';
-                  debugPrint(
-                    'onPressed: Non-guest - User details: Name=$name, Email=$email, Phone=$phone',
-                  );
+
                   // final alreadyLocal = await SecureStorage.hasGeneralInquirySubmission(
                   //   type: type,
                   //   userId: userId,
                   // );
 
-                  debugPrint(
-                    'onPressed: Non-guest - Submitting new general inquiry via API',
-                  );
                   final res = await http.post(
                     Uri.parse(ApiConstants.generalInquiry),
                     headers: await ApiConstants.getHeaders(),
@@ -735,21 +715,10 @@ class _BecomeSection extends StatelessWidget {
                       },
                     }),
                   );
-                  debugPrint(
-                    'onPressed: Non-guest - General inquiry API response status: ${res.statusCode}',
-                  );
+
                   if ((res.statusCode == 200 || res.statusCode == 201)) {}
+                } catch (e) {}
 
-                  debugPrint(
-                    'onPressed: Non-guest - Subscription inquiry saved to SecureStorage',
-                  );
-                } catch (e) {
-                  debugPrint(
-                    'onPressed: Non-guest - Error during inquiry submission: $e',
-                  );
-                }
-
-                debugPrint('onPressed: Showing final Thank You dialog');
                 await Get.dialog(
                   const SignUpSubscriptionScreen(
                     title: 'Thank You',
@@ -787,22 +756,15 @@ class _BecomeSection extends StatelessWidget {
 void _noop(String a, String b, String c) {}
 
 Future<bool> _checkExistingInquiryViaApi(String userId, String role) async {
-  debugPrint(
-    '_checkExistingInquiryViaApi: Checking for existing inquiry for userId: $userId, role: $role',
-  );
   try {
     final uri = Uri.parse(ApiConstants.userInquiry(userId));
-    debugPrint('_checkExistingInquiryViaApi: API URL: $uri');
+
     final headers = await ApiConstants.getHeaders();
     final res = await http.get(uri, headers: headers);
-    debugPrint(
-      '_checkExistingInquiryViaApi: API response status: ${res.statusCode}',
-    );
-    debugPrint('_checkExistingInquiryViaApi: API response body: ${res.body}');
 
     if (res.statusCode == 200 || res.statusCode == 201) {
       final decoded = jsonDecode(res.body);
-      debugPrint('_checkExistingInquiryViaApi: Decoded API response: $decoded');
+
       if (decoded['success'] == true && decoded['data'] != null) {
         final items = (decoded['data']['items'] as List?) ?? [];
         final exists = items.any((item) {
@@ -812,17 +774,11 @@ Future<bool> _checkExistingInquiryViaApi(String userId, String role) async {
           final t = (meta['type'] ?? '').toString();
           return u == userId && t == role;
         });
-        debugPrint(
-          '_checkExistingInquiryViaApi: Inquiry exists for userId $userId and role $role: $exists',
-        );
+
         return exists;
       }
     }
-  } catch (e) {
-    debugPrint(
-      '❌ _checkExistingInquiryViaApi: Error checking existing inquiry via API: $e',
-    );
-  }
+  } catch (e) {}
   return false;
 }
 
@@ -2119,7 +2075,7 @@ class _ReviewsSectionState extends State<_ReviewsSection> {
               ),
 
               const SizedBox(height: 6),
-//hfjn hdjen hduh jdijsn hdub hdujnbbbnnnnn   hdysehb shydhb tehgs hdysbvb bchb 
+              //hfjn hdjen hduh jdijsn hdub hdujnbbbnnnnn   hdysehb shydhb tehgs hdysbvb bchb
               Text(
                 widget.newEntityType == 'seller'
                     ? 'Real success stories from homeowners who sold faster with NesticoPe'
@@ -2327,20 +2283,21 @@ class _ReviewCard extends StatelessWidget {
                                 color: ColorRes.primary,
                               ),
                             ),
-                             Text(
-                  _formatDate(DateTime.tryParse(review.createdAt.toString())),
-                  style: TextStyle(
-                    fontSize: AppFontSizes.extraSmall,
-                    fontWeight: AppFontWeights.medium,
-                    color: ColorRes.leadGreyColor.shade600,
-                  ),
-                ),
+                            Text(
+                              _formatDate(
+                                DateTime.tryParse(review.createdAt.toString()),
+                              ),
+                              style: TextStyle(
+                                fontSize: AppFontSizes.extraSmall,
+                                fontWeight: AppFontWeights.medium,
+                                color: ColorRes.leadGreyColor.shade600,
+                              ),
+                            ),
                           ],
                         ),
                     ],
                   ),
                 ),
-               
               ],
             ),
           ],
@@ -2466,13 +2423,13 @@ class _PartnerProgramSection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: ColorRes.white,
                 borderRadius: BorderRadius.circular(AppRadius.large),
-                 boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2675,7 +2632,7 @@ class _PremiumProjectCarouselState extends State<_PremiumProjectCarousel> {
                 return GestureDetector(
                   onTap:
                       () =>
-                          Get.to(() => ProjectDetailsScreen(projectItem: data, )),
+                          Get.to(() => ProjectDetailsScreen(projectItem: data)),
                   child: BuilderProjectCard(
                     forHome: true,
                     project: data,

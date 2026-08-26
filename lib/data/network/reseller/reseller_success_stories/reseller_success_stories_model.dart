@@ -17,10 +17,12 @@ class ResellerSuccessData {
 
   factory ResellerSuccessData.fromJson(Map<String, dynamic> json) =>
       ResellerSuccessData(
-        items: json["items"] == null
-            ? []
-            : List<ResellerSuccessItem>.from(
-            json["items"].map((x) => ResellerSuccessItem.fromJson(x))),
+        items:
+            json["items"] == null
+                ? []
+                : List<ResellerSuccessItem>.from(
+                  json["items"].map((x) => ResellerSuccessItem.fromJson(x)),
+                ),
         total: json["total"] ?? 0,
         currentPage: json["currentPage"] ?? 1,
         totalPages: json["totalPages"] ?? 1,
@@ -84,20 +86,18 @@ class ResellerSuccessItem {
         title: json["title"] ?? "",
         description: json["description"] ?? "",
         achievement: json["achievement"] ?? "",
-        monthYear:
-        DateTime.tryParse(json["monthYear"] ?? "") ?? DateTime.now(),
+        monthYear: DateTime.tryParse(json["monthYear"] ?? "") ?? DateTime.now(),
         totalDeals: json["totalDeals"] ?? 0,
         totalValue: json["totalValue"]?.toString() ?? "0",
         rating: json["rating"] ?? 0,
         image: json["image"],
         status: json["status"] ?? "",
-        createdAt:
-        DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
-        updatedAt:
-        DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now(),
-        reseller: json["reseller"] != null
-            ? ResellerInfo.fromJson(json["reseller"])
-            : null,
+        createdAt: DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now(),
+        reseller:
+            json["reseller"] != null
+                ? ResellerInfo.fromJson(json["reseller"])
+                : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -144,4 +144,3 @@ class ResellerInfo {
     "userType": userType,
   };
 }
-

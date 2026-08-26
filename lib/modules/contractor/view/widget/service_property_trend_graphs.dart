@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:nesticope_app/app/constants/color_res.dart';
@@ -18,10 +17,12 @@ class ServiceDistributionPieGraph extends StatefulWidget {
   });
 
   @override
-  State<ServiceDistributionPieGraph> createState() => _ServiceDistributionPieGraphState();
+  State<ServiceDistributionPieGraph> createState() =>
+      _ServiceDistributionPieGraphState();
 }
 
-class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGraph> {
+class _ServiceDistributionPieGraphState
+    extends State<ServiceDistributionPieGraph> {
   int touchedIndex = -1;
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,16 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
       {
         "value": active,
         "color": ColorRes.green.shade600,
-        "title": active == 0 ? "" : "${(active / total * 100).toStringAsFixed(0)}%",
+        "title":
+            active == 0 ? "" : "${(active / total * 100).toStringAsFixed(0)}%",
       },
       {
         "value": rejected,
         "color": ColorRes.error,
-        "title": rejected == 0 ? "" : "${(rejected / total * 100).toStringAsFixed(0)}%",
+        "title":
+            rejected == 0
+                ? ""
+                : "${(rejected / total * 100).toStringAsFixed(0)}%",
       },
     ];
 
@@ -63,7 +68,6 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
         final isTouched = i == touchedIndex;
         final radius = isTouched ? 60.0 : 50.0;
         final fontSize = isTouched ? 18.0 : 14.0;
-
 
         return PieChartSectionData(
           value: sections[i]["value"] as double,
@@ -100,7 +104,9 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
                           return;
                         }
                         touchedIndex =
-                            pieTouchResponse.touchedSection!.touchedSectionIndex;
+                            pieTouchResponse
+                                .touchedSection!
+                                .touchedSectionIndex;
                       });
                     },
                   ),
@@ -120,7 +126,11 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
                   "Active Services",
                   active.toInt().toString(),
                 ),
-                _legendItem(ColorRes.error, "Inactive Services", rejected.toInt().toString()),
+                _legendItem(
+                  ColorRes.error,
+                  "Inactive Services",
+                  rejected.toInt().toString(),
+                ),
               ],
             ),
 
@@ -147,12 +157,15 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
               const SizedBox(width: 5),
               Text(
                 title,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
           Text(
-            Formatter.formatNumber(num.tryParse(score)??0),
+            Formatter.formatNumber(num.tryParse(score) ?? 0),
             style: TextStyle(
               fontSize: 14,
               color: color,
@@ -164,8 +177,3 @@ class _ServiceDistributionPieGraphState extends State<ServiceDistributionPieGrap
     );
   }
 }
-
-
-
-
-

@@ -297,9 +297,6 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                                   .toList(),
                           onChanged: (val) {
                             controller.setValue(controller.inquiryStatus, val);
-                            log(
-                              "Contractor_status ${controller.inquiryStatus.value}",
-                            );
                           },
                           darkText: true,
                         );
@@ -403,7 +400,6 @@ class _ContractorInquiryFilterState extends State<ContractorInquiryFilter> {
                         onPressed: () {
                           final filters = _buildFilterResult();
 
-                          log("Applied Filters: $filters");
                           Get.back(result: filters);
                         },
                         style: ElevatedButton.styleFrom(

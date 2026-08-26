@@ -24,12 +24,7 @@ class NesticoPeAppLogo extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: heroTag != null
-          ? Hero(
-        tag: heroTag!,
-        child: logo,
-      )
-          : logo,
+      child: heroTag != null ? Hero(tag: heroTag!, child: logo) : logo,
     );
   }
 }

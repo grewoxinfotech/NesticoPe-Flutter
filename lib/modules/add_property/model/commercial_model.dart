@@ -99,7 +99,9 @@ class CommercialPropertyModel {
   });
 
   /// Factory to build model from controller
-  factory CommercialPropertyModel.fromController(CreatePropertyController controller) {
+  factory CommercialPropertyModel.fromController(
+    CreatePropertyController controller,
+  ) {
     return CommercialPropertyModel(
       buildingName: controller.commercial_rent_building_Name.text,
       localityName: controller.commercial_rent_Loaclity_Name.text,
@@ -132,13 +134,16 @@ class CommercialPropertyModel {
       amenities: controller.selectedCommercialAmenities.toList(),
 
       /// Photos
-      photos: controller.selectedImages
-          .map((img) => PhotoImageModel(
-        path: img.path,
-        label: img.label,
-        isCover: img.isCover,
-      ))
-          .toList(),
+      photos:
+          controller.selectedImages
+              .map(
+                (img) => PhotoImageModel(
+                  path: img.path,
+                  label: img.label,
+                  isCover: img.isCover,
+                ),
+              )
+              .toList(),
     );
   }
 

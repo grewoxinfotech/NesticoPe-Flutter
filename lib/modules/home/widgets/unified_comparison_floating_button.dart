@@ -293,9 +293,7 @@ class UnifiedComparisonFloatingButton extends StatelessWidget {
                   } else if (isContractorComparison) {
                     Get.to(() => const ContractorComparisonScreen());
                   }
-                } catch (e) {
-                  print('Error navigating to comparison: $e');
-                }
+                } catch (e) {}
               }
             },
             borderRadius: BorderRadius.circular(16),

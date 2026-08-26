@@ -1,8 +1,4 @@
-
-
-// OLD CODE START HERE ================================================ // 
-
-
+// OLD CODE START HERE ================================================ //
 
 // import 'package:flutter/material.dart';
 // import 'package:get/state_manager.dart';
@@ -214,26 +210,19 @@ class ContractorProjectMilestoneController
 
   /// Initialize form for editing existing milestone
   void initializeForEdit(ProjectMilestone milestone) {
-    log("=== INITIALIZING EDIT MODE FOR MILESTONE ===");
-    log("Incoming milestone data: ${milestone.toJson()}");
-
     // Set edit mode
     isEditMode.value = true;
     editingMilestoneId.value = milestone.id ?? '';
-    log("isEditMode: ${isEditMode.value}");
-    log("editingMilestoneId: ${editingMilestoneId.value}");
+
     milestoneAmount.value =
         double.tryParse(milestone.milestoneAmount ?? '0') ?? 0.0;
     // Populate title and description
     titleController.text = milestone.title ?? '';
     descriptionController.text = milestone.description ?? '';
-    log("titleController: ${titleController.text}");
-    log("descriptionController: ${descriptionController.text}");
 
     // Milestone type
     selectedMileStoneType.value =
         milestone.milestoneType?.capitalize.toString() ?? 'Percentage';
-    log("selectedMileStoneType: ${selectedMileStoneType.value}");
 
     // Handle amount fields based on type
     if (milestone.milestoneType?.capitalize.toString() == 'Percentage') {
@@ -244,24 +233,15 @@ class ContractorProjectMilestoneController
       percentageController.clear();
     }
 
-    log("percentageController: ${percentageController.text}");
-    log("fixedController: ${fixedController.text}");
-
     // Dates
     startDate.value = milestone.startDate;
     endDate.value = milestone.endDate;
     completionDate.value = milestone.completionDate;
-    log("startDate: ${startDate.value}");
-    log("endDate: ${endDate.value}");
-    log("completionDate: ${completionDate.value}");
 
     // Work status
     selectedWorkStatus.value =
         milestone.workStatus?.replaceAll("_", " ").capitalize.toString() ??
         'Not Started';
-    log("selectedWorkStatus: ${selectedWorkStatus.value}");
-
-    log("=== MILESTONE INITIALIZATION COMPLETE ===");
   }
 
   // void initializeForEdit(ProjectMilestone milestone) {
@@ -359,14 +339,12 @@ class ContractorProjectMilestoneController
       );
 
       final result = await _service.createMilestone(milestone);
-      log("Creating Milestone: ${milestone.toJson()}");
-      print('Result: $result');
 
       if (result) {
         Future.delayed(const Duration(milliseconds: 300), () {
           Get.back(result: true);
         });
-        print('Milestone created successfully');
+
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Success',
           message: 'Milestone created successfully',

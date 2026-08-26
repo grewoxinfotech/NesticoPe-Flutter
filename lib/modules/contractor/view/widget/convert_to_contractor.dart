@@ -17,7 +17,6 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("jsdfhudsf=============================================Contractor");
     Get.lazyPut(() => AuthController());
     final controller = Get.find<AuthController>();
     final List<String> options = [
@@ -168,9 +167,6 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                           fillColor: ColorRes.white,
 
                           onCitySelected: (selectedCity) {
-                            print(
-                              "✅ Selected city: ${selectedCity.description}",
-                            );
                             controller.selectedCityZ.text =
                                 selectedCity.description ?? '';
                             controller.setCity(controller.selectedCityZ.text);
@@ -216,7 +212,9 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                                               ? null
                                               : () {
                                                 if (UserHelper.isGuest) {
-                                                  Get.to(() => OtpLoginScreen());
+                                                  Get.to(
+                                                    () => OtpLoginScreen(),
+                                                  );
                                                 } else {
                                                   controller
                                                       .convertBuyerToContractor(
@@ -342,7 +340,7 @@ class ConvertToContractorConversionScreen extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: "Login here",
-                                  
+
                                   style: TextStyle(
                                     fontFamily: 'Exo',
                                     color: ColorRes.primary,

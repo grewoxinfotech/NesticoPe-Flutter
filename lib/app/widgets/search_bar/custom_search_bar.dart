@@ -23,7 +23,9 @@ class CustomSearchAppBar extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: ColorRes.leadGreyColor.shade100,
                       borderRadius: BorderRadius.circular(AppRadius.medium),
-                      border: Border.all(color: ColorRes.leadGreyColor.shade300),
+                      border: Border.all(
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
                     ),
                     child: const TextField(
                       decoration: InputDecoration(

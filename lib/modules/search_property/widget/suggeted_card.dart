@@ -37,7 +37,10 @@ class SuggestionCardList extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.medium),
-          border: Border.all(color: ColorRes.leadGreyColor.shade500, width: 0.5),
+          border: Border.all(
+            color: ColorRes.leadGreyColor.shade500,
+            width: 0.5,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

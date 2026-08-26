@@ -72,7 +72,6 @@ class _LeadCardWidgetState extends State<LeadCardWidget> {
   Widget build(BuildContext context) {
     final cardPadding = widget.isCompact ? 12.0 : 16.0;
 
-    debugPrint("check project leads ${widget.lead.toJson()}");
     // Get financial info and listing type from matching property
     // final matchingFinancialInfo = _getMatchingPropertyFinancialInfo();
     // final matchingListingType = _getMatchingPropertyListingType();

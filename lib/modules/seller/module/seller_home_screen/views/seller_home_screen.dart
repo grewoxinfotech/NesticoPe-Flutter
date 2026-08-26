@@ -1123,8 +1123,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           overviewController.selectedGraphYear.value,
         ),
         builder: (context, snapshot) {
-          log('FutureBuilder state → ${snapshot.connectionState}');
-
           // =============================
           // LOADING
           // =============================
@@ -1326,7 +1324,6 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
               }).toList(),
           onChanged: (value) {
             if (value != null) {
-              log('Dropdown changed to: $value');
               overviewController.updateLeadsYear(value);
             }
           },
@@ -1778,9 +1775,7 @@ class AddOnsForBuyer extends StatelessWidget {
               description: addon['description'],
               price: addon['price'],
               isPopular: addon['isPopular'] ?? false,
-              onTap: () {
-                print('${addon['title']} added!');
-              },
+              onTap: () {},
             ),
           );
         },
@@ -2420,9 +2415,7 @@ class PricingWidgetDemo extends StatelessWidget {
     return PricingComparisonWidget(
       plans: plans,
       primaryColor: ColorRes.primary,
-      onPlanSelected: (plan) {
-        print('Selected: ${plan.name}');
-      },
+      onPlanSelected: (plan) {},
     );
   }
 }

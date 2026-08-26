@@ -49,7 +49,7 @@ class Referral_Service {
       );
 
       final decoded = json.decode(response.body);
-      AppLogger.structured('Fetch Refreal Service Response',decoded);
+
       if (response.statusCode == 200) {
         return ReferralModel.fromJson(decoded);
       } else {
@@ -60,7 +60,6 @@ class Referral_Service {
     }
   }
 
-
   Future<bool> generateReferCode() async {
     try {
       final response = await http.post(
@@ -70,15 +69,14 @@ class Referral_Service {
 
       if (response.statusCode == 200) {
         final result = json.decode(response.body);
-        print(result);
+
         return true;
       } else {
         final result = json.decode(response.body);
-        print('result  $result');
+
         return false;
       }
     } on Exception catch (e) {
-      print('dhuchdyuchsuy $e');
       return false;
     }
   }

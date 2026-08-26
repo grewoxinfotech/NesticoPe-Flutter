@@ -11,11 +11,13 @@ class ContactService {
     return await ApiConstants.getHeaders();
   }
 
-  Future<List<ContactItem>> fetchContacts({int page = 1, int limit = 10}) async {
-    final uri = Uri.parse(baseUrl).replace(queryParameters: {
-      'page': page.toString(),
-      'limit': limit.toString(),
-    });
+  Future<List<ContactItem>> fetchContacts({
+    int page = 1,
+    int limit = 10,
+  }) async {
+    final uri = Uri.parse(baseUrl).replace(
+      queryParameters: {'page': page.toString(), 'limit': limit.toString()},
+    );
     final res = await http.get(uri, headers: await headers());
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
@@ -30,10 +32,9 @@ class ContactService {
     int page = 1,
     int limit = 10,
   }) async {
-    final uri = Uri.parse(baseUrl).replace(queryParameters: {
-      'page': page.toString(),
-      'limit': limit.toString(),
-    });
+    final uri = Uri.parse(baseUrl).replace(
+      queryParameters: {'page': page.toString(), 'limit': limit.toString()},
+    );
     final res = await http.get(uri, headers: await headers());
     final data = jsonDecode(res.body);
     return PaginationResponse<ContactItem>.fromJson(
