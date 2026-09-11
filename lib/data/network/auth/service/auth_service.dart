@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../app/constants/api_constants.dart';
 import 'package:nesticope_app/data/database/secure_storage_service.dart';
 import 'package:get/get.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 
 import '../../../../services/notification_service.dart';
 import '../../../../widgets/messages/snack_bar.dart';
@@ -347,11 +348,21 @@ class AuthService {
         ...data,
       };
 
+      AppLogger.structured("Reseller Register Request Payload", {
+        "url": uri.toString(),
+        "payload": payload,
+      });
+
       final response = await http.post(
         uri,
         headers: await ApiConstants.getHeadersWithoutToken(),
         body: jsonEncode(payload),
       );
+
+      AppLogger.structured("Reseller Register Response", {
+        "statusCode": response.statusCode,
+        "body": response.body,
+      });
 
       final responseData = jsonDecode(response.body);
 
@@ -362,7 +373,11 @@ class AuthService {
           responseData['message'] ?? 'Partner registration failed',
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.structured("Reseller Register Exception", {
+        "error": e.toString(),
+        "stackTrace": stackTrace.toString(),
+      });
       rethrow;
     }
   }
@@ -483,21 +498,48 @@ class AuthService {
     required String city,
     required String zipCode,
   }) async {
-    final user = await SecureStorage.getUserData();
-    final userId = user?.user?.id ?? '';
+    try {
+      final user = await SecureStorage.getUserData();
+      final userId = user?.user?.id ?? '';
+      final url = '${ApiConstants.convertToReseller}/$userId';
+      final payload = {'city': city, "zipCode": zipCode};
 
-    final response = await http.post(
-      Uri.parse('${ApiConstants.convertToReseller}/$userId'),
-      headers: await headers(),
-      body: jsonEncode({'city': city, "zipCode": zipCode}),
-    );
+      AppLogger.structured("Convert Buyer to Reseller Request Payload", {
+        "url": url,
+        "userId": userId,
+        "payload": payload,
+      });
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200 && data['success'] == true) {
-      await generateResellerCertificate(data['data']['certificateData']);
-      return true;
-    } else {
-      throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
+      if (userId.isEmpty) {
+        throw Exception("User ID is missing. Please log in again.");
+      }
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: await headers(),
+        body: jsonEncode(payload),
+      );
+
+      AppLogger.structured("Convert Buyer to Reseller Response", {
+        "statusCode": response.statusCode,
+        "body": response.body,
+      });
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['success'] == true) {
+        if (data['data'] != null && data['data']['certificateData'] != null) {
+          await generateResellerCertificate(data['data']['certificateData']);
+        }
+        return true;
+      } else {
+        throw Exception(data["message"] ?? "Failed to convert buyer to reseller");
+      }
+    } catch (e, stackTrace) {
+      AppLogger.structured("Convert Buyer to Reseller Exception", {
+        "error": e.toString(),
+        "stackTrace": stackTrace.toString(),
+      });
+      rethrow;
     }
   }
 

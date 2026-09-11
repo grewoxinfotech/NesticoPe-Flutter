@@ -522,60 +522,52 @@ class CommonSearchField extends StatefulWidget {
 }
 
 class _CommonSearchFieldState extends State<CommonSearchField> {
-  // final MicController micController = Get.find<MicController>();
   final MicController micController = Get.put(MicController());
-  final GoogleMapSearchController controller =
-      Get.find<GoogleMapSearchController>(tag: 'city');
+  late GoogleMapSearchController controller;
 
-  //final trendingArea=Get.put(HomeFeedController());
+  void _performSearch(String text) {
+    if (text.trim().isEmpty) {
+      controller.predictions.clear();
+      return;
+    }
+    if (widget.isLocality) {
+      controller.fetchPredictionsLocality(
+        text,
+        widget.selectedCity ?? '',
+      );
+    } else if (widget.isSearchForBuilding) {
+      controller.fetchBuildingsAndSocieties(
+        text,
+        widget.selectedCity ?? '',
+      );
+    } else {
+      if (!widget.onlySearchCity) {
+        controller.fetchPredictionsCity(text);
+      } else {
+        controller.fetchGooglePlaces(text);
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    if (Get.isRegistered<GoogleMapSearchController>(tag: 'city')) {
+      controller = Get.find<GoogleMapSearchController>(tag: 'city');
+    } else if (Get.isRegistered<GoogleMapSearchController>()) {
+      controller = Get.find<GoogleMapSearchController>();
+    } else {
+      controller = Get.put(GoogleMapSearchController());
+    }
+
     if (widget.initialSearchText != null &&
         widget.initialSearchText!.isNotEmpty) {
       micController.searchText.value.text = widget.initialSearchText!;
-
-      // Call appropriate search based on isLocality
-      if (widget.isLocality) {
-        controller.fetchPredictionsLocality(
-          widget.initialSearchText!,
-          widget.selectedCity ?? '',
-        );
-      } else if (widget.isSearchForBuilding) {
-        controller.fetchBuildingsAndSocieties(
-          widget.initialSearchText!,
-          widget.selectedCity ?? '',
-        );
-      } else {
-        if (!widget.onlySearchCity) {
-          controller.fetchPredictionsCity(widget.initialSearchText!);
-        } else {
-          controller.fetchGooglePlaces(widget.initialSearchText!);
-        }
-      }
+      _performSearch(widget.initialSearchText!);
     }
 
     micController.searchText.value.addListener(() {
-      // Call appropriate search based on isLocality
-      if (widget.isLocality) {
-        controller.fetchPredictionsLocality(
-          micController.searchText.value.text,
-          widget.selectedCity ?? '',
-        );
-      } else if (widget.isSearchForBuilding) {
-        controller.fetchBuildingsAndSocieties(
-          micController.searchText.value.text,
-          widget.selectedCity ?? '',
-        );
-      } else {
-        if (!widget.onlySearchCity) {
-          controller.fetchPredictionsCity(micController.searchText.value.text);
-        } else {
-          controller.fetchGooglePlaces(micController.searchText.value.text);
-        }
-        // controller.fetchPredictionsCity(micController.searchText.value.text);
-      }
+      _performSearch(micController.searchText.value.text);
     });
   }
 
@@ -704,6 +696,7 @@ class _CommonSearchFieldState extends State<CommonSearchField> {
                           ),
                         ),
                         controller: micController.searchText.value,
+                        onChanged: (val) => _performSearch(val),
                         // hintText:
                         //     widget.isLocality && widget.selectedCity != null
                         //         ? 'Search locality in ${widget.selectedCity}...'

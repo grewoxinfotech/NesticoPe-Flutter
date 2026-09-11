@@ -75,18 +75,18 @@ class RentPriceDetail extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 16),
-              Text(
-                "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
-              ),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Platform Fees",
-                Icons.currency_rupee_outlined,
-                controller.platformFees,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
+              // const SizedBox(height: 16),
+              // Text(
+              //   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+              // ),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Platform Fees",
+              //   Icons.currency_rupee_outlined,
+              //   controller.platformFees,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
 
               // const SizedBox(height: 16),
               // const Text("Broker Commission (2%) of Platform Fees"),
@@ -303,18 +303,18 @@ class RentPriceDetail extends StatelessWidget {
                 isPhoneKey: true,
               ),
 
-              const SizedBox(height: 16),
-              Text(
-                "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
-              ),
-              const SizedBox(height: 8),
-              buildTextField(
-                "Platform Fees",
-                Icons.currency_rupee_outlined,
-                controller.platformFees,
-                isPhoneKey: true,
-                isEnable: false,
-              ),
+              // const SizedBox(height: 16),
+              // Text(
+              //   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+              // ),
+              // const SizedBox(height: 8),
+              // buildTextField(
+              //   "Platform Fees",
+              //   Icons.currency_rupee_outlined,
+              //   controller.platformFees,
+              //   isPhoneKey: true,
+              //   isEnable: false,
+              // ),
 
               // const SizedBox(height: 16),
               // const Text("Broker Commission (2%) of Platform Fees"),
@@ -892,18 +892,18 @@ class RentPriceDetail extends StatelessWidget {
 
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
-                ),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // Text(
+                //   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                // ),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),
@@ -1192,18 +1192,18 @@ class RentPriceDetail extends StatelessWidget {
                   controller.bookingAmount,
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
-                ),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // Text(
+                //   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                // ),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),
@@ -1432,18 +1432,18 @@ class RentPriceDetail extends StatelessWidget {
                   controller.bookingAmount,
                   isPhoneKey: true,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
-                ),
-                const SizedBox(height: 8),
-                buildTextField(
-                  "Platform Fees",
-                  Icons.currency_rupee_outlined,
-                  controller.platformFees,
-                  isPhoneKey: true,
-                  isEnable: false,
-                ),
+                // const SizedBox(height: 16),
+                // Text(
+                //   "Platform Fees (${getPlatformFeePercentage(platformFeeController).toStringAsFixed(0)}%)",
+                // ),
+                // const SizedBox(height: 8),
+                // buildTextField(
+                //   "Platform Fees",
+                //   Icons.currency_rupee_outlined,
+                //   controller.platformFees,
+                //   isPhoneKey: true,
+                //   isEnable: false,
+                // ),
 
                 // const SizedBox(height: 16),
                 // const Text("Broker Commission (2%) of Platform Fees"),

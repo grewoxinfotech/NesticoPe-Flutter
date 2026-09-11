@@ -49,6 +49,7 @@
 // }
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:nesticope_app/app/care/pagination/models/pagination_models.dart';
 
 class AppLogger {
@@ -131,6 +132,9 @@ class AppLogger {
     const int chunkSize = 800;
     for (int i = 0; i < text.length; i += chunkSize) {
       final end = (i + chunkSize < text.length) ? i + chunkSize : text.length;
+      final chunk = text.substring(i, end);
+      print(chunk);
+      log(chunk);
     }
   }
 }

@@ -110,15 +110,15 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                           selectedColor: ColorRes.primary,
                           backgroundColor:
                               isSelected
-                                  ? ColorRes.primary.withOpacity(0.1)
-                                  : ColorRes.grey.withOpacity(0.1),
+                                  ? ColorRes.primary.withValues(alpha: 0.1)
+                                  : ColorRes.grey.withValues(alpha: 0.1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                             side: BorderSide(
                               color:
                                   isSelected
                                       ? ColorRes.primary
-                                      : ColorRes.grey.withOpacity(0.1),
+                                      : ColorRes.grey.withValues(alpha: 0.1),
                             ),
                           ),
                           onSelected: (_) {
@@ -310,18 +310,7 @@ class StepBasicInfo extends GetView<ProjectWizardController> {
                   color: ColorRes.primary,
                 ),
 
-                validator: (value) {
-                  final reraId = value?.trim() ?? '';
-                  if (reraId.isEmpty) return null;
-
-                  final isValid = RegExp(
-                    r'^RERA\d+$',
-                  ).hasMatch(reraId.toUpperCase());
-                  if (!isValid) {
-                    return "Enter valid RERA ID (e.g. RERA24563563)";
-                  }
-                  return null;
-                },
+                validator: (value) => null,
                 onSaved:
                     (v) =>
                         controller.project.update((x) => x!.reraId = v!.trim()),
@@ -489,8 +478,9 @@ class _CommonDatePickerFieldState extends State<_CommonDatePickerField> {
           controller: _controller,
           validator: (_) {
             if (_selectedDate == null) return 'Required date';
-            if (widget.extraValidator != null)
+            if (widget.extraValidator != null) {
               return widget.extraValidator!(_selectedDate);
+            }
             return null;
           },
         ),

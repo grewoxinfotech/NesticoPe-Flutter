@@ -45,6 +45,9 @@ import 'package:path_provider/path_provider.dart';
 import '../../../app/utils/helper_function/user_helper/user_helper.dart';
 import '../../../widgets/messages/snack_bar.dart';
 import '../../dashboard/views/seller_dashboard_screen.dart';
+import '../../builder/view/builder_main_screen.dart';
+import '../../contractor/view/contractor_main.dart';
+import '../../reseller/view/property_reseller.dart';
 import '../../seller/module/seller_home_screen/views/seller_home_screen.dart';
 import '../model/add_property_model.dart';
 import '../model/commercial_model.dart';
@@ -1650,81 +1653,117 @@ class CreatePropertyController extends GetxController {
   }
 
   /// CRUD Property Operations
-  /// Eidt
+  void _navigateToRoleDashboard() {
+    if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.builder) {
+      Get.offAll(() => const BuilderMainScreen());
+    } else if (UserHelper.userType == UserType.seller &&
+        UserHelper.sellerType == SellerType.owner) {
+      Get.offAll(() => const SellerDashboardScreen());
+    } else if (UserHelper.userType == UserType.reseller) {
+      Get.offAll(() => const MainNavigationScreen());
+    } else if (UserHelper.userType == UserType.contractor) {
+      Get.offAll(() => ContractorMainScreen());
+    } else {
+      Get.offAll(() => const DashboardScreen());
+    }
+  }
+
+  /// CRUD Property Operations
+  /// Edit
   Future<void> updateProperty(String propertyId) async {
     try {
       isLoading.value = true;
-      final subtypeSection = rent_propertyType.value.toLowerCase();
+      final subtypeSection = rent_propertyType.value.trim().toLowerCase();
 
-      final type = propertyType.value.toLowerCase();
-      final action = lookingTo.value.toLowerCase();
-      final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
+      final type = propertyType.value.trim().toLowerCase();
+      final action = lookingTo.value.trim().toLowerCase();
+      final subtype = selectedIndex.value.trim().toLowerCase(); // For commercial cases
 
       if (type.isEmpty || action.isEmpty) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Selection Required",
+          message: "Please select property type and option",
+          contentType: ContentType.failure,
+        );
         return;
       }
 
       bool success = false;
 
-      if (type == "residential") {
-        switch (action) {
-          case "rent":
-            success = await _addPropertyResidentialRent(
+      if (type.contains("residential")) {
+        if (action.contains("rent")) {
+          success = await _addPropertyResidentialRent(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+        } else if (action.contains("sell") || action.contains("buy")) {
+          if ((subtypeSection == "plot") ||
+              (subtypeSection == "agricultural land")) {
+            success = await _addPropertyResidentialSellPlot(
               isEdit: true,
               propertyId: propertyId,
             );
-            break;
-          /*   case "sell":
+          } else {
             success = await _addPropertyResidentialSell(
               isEdit: true,
               propertyId: propertyId,
             );
-            break;*/
-          case "sell":
-            if ((subtypeSection == "plot") ||
-                (subtypeSection == "agricultural land")) {
-              success = await _addPropertyResidentialSellPlot(
-                isEdit: true,
-                propertyId: propertyId,
-              );
-            } else {
-              success = await _addPropertyResidentialSell(
-                isEdit: true,
-                propertyId: propertyId,
-              );
-            }
-            break;
-          case "pg/co-living":
-            success = await _addPropertyResidentialPg(
-              isEdit: true,
-              propertyId: propertyId,
-            );
-            break;
-          default:
+          }
+        } else if (action.contains("pg") || action.contains("co-living")) {
+          success = await _addPropertyResidentialPg(
+            isEdit: true,
+            propertyId: propertyId,
+          );
+        } else {
+          success = await _addPropertyResidentialSell(
+            isEdit: true,
+            propertyId: propertyId,
+          );
         }
-      } else if (type == "commercial") {
-        switch (action) {
-          case "rent":
-            success = await _editPropertyCommercialRent(
-              subtype,
-              isEdit: true,
-              propertyId: propertyId,
-            );
-            break;
-          case "sell":
-            success = await _editPropertyCommercialSell(
-              subtype,
-              isEdit: true,
-              propertyId: propertyId,
-            );
-            break;
-          default:
+      } else if (type.contains("commercial")) {
+        if (action.contains("rent")) {
+          success = await _editPropertyCommercialRent(
+            subtype,
+            isEdit: true,
+            propertyId: propertyId,
+          );
+        } else if (action.contains("sell") || action.contains("buy")) {
+          success = await _editPropertyCommercialSell(
+            subtype,
+            isEdit: true,
+            propertyId: propertyId,
+          );
+        } else {
+          success = await _editPropertyCommercialSell(
+            subtype,
+            isEdit: true,
+            propertyId: propertyId,
+          );
         }
-      } else {}
+      } else {
+        success = await _addPropertyResidentialSell(
+          isEdit: true,
+          propertyId: propertyId,
+        );
+      }
+
       if (success) {
-        Get.offAll(() => SellerDashboardScreen());
-      } else {}
-    } catch (e) {
+        _navigateToRoleDashboard();
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Update Failed",
+          message: "Failed to update property. Please try again.",
+          contentType: ContentType.failure,
+        );
+      }
+    } catch (e, s) {
+      log('Error updating property: $e', error: e, stackTrace: s);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: e.toString().replaceAll("Exception: ", ""),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -1735,53 +1774,67 @@ class CreatePropertyController extends GetxController {
     try {
       isLoading.value = true;
 
-      final subtypeSection = rent_propertyType.value.toLowerCase();
+      final subtypeSection = rent_propertyType.value.trim().toLowerCase();
 
-      final type = propertyType.value.toLowerCase();
-      final action = lookingTo.value.toLowerCase();
+      final type = propertyType.value.trim().toLowerCase();
+      final action = lookingTo.value.trim().toLowerCase();
 
-      final subtype = selectedIndex.value.toLowerCase(); // For commercial cases
+      final subtype = selectedIndex.value.trim().toLowerCase(); // For commercial cases
 
       if (type.isEmpty || action.isEmpty) {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Selection Required",
+          message: "Please select property type and option",
+          contentType: ContentType.failure,
+        );
         return;
       }
 
       bool success = false;
 
-      if (type == "residential") {
-        switch (action) {
-          case "rent":
-            success = await _addPropertyResidentialRent();
-            break;
-          case "sell":
-            if ((subtypeSection == "plot") ||
-                (subtypeSection == "agricultural land")) {
-              success = await _addPropertyResidentialSellPlot();
-            } else {
-              success = await _addPropertyResidentialSell();
-            }
-            break;
+      if (type.contains("residential")) {
+        if (action.contains("rent")) {
+          success = await _addPropertyResidentialRent();
+        } else if (action.contains("sell") || action.contains("buy")) {
+          if ((subtypeSection == "plot") ||
+              (subtypeSection == "agricultural land")) {
+            success = await _addPropertyResidentialSellPlot();
+          } else {
+            success = await _addPropertyResidentialSell();
+          }
+        } else if (action.contains("pg") || action.contains("co-living")) {
+          success = await _addPropertyResidentialPg();
+        } else {
+          success = await _addPropertyResidentialSell();
+        }
+      } else if (type.contains("commercial")) {
+        if (action.contains("rent")) {
+          success = await _addPropertyCommercialRent(subtype);
+        } else if (action.contains("sell") || action.contains("buy")) {
+          success = await _addPropertyCommercialSell(subtype);
+        } else {
+          success = await _addPropertyCommercialSell(subtype);
+        }
+      } else {
+        success = await _addPropertyResidentialSell();
+      }
 
-          case "pg/co-living":
-            success = await _addPropertyResidentialPg();
-            break;
-          default:
-        }
-      } else if (type == "commercial") {
-        switch (action) {
-          case "rent":
-            success = await _addPropertyCommercialRent(subtype);
-            break;
-          case "sell":
-            success = await _addPropertyCommercialSell(subtype);
-            break;
-          default:
-        }
-      } else {}
       if (success) {
-        Get.offAll(() => SellerDashboardScreen());
-      } else {}
+        _navigateToRoleDashboard();
+      } else {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: "Submission Failed",
+          message: "Failed to create property. Please try again.",
+          contentType: ContentType.failure,
+        );
+      }
     } catch (e, s) {
+      log('Error creating property: $e', error: e, stackTrace: s);
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: "Error",
+        message: e.toString().replaceAll("Exception: ", ""),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }

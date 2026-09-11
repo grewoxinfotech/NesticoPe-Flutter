@@ -20,7 +20,7 @@ class SelectAccountTypeScreen extends StatelessWidget {
       case UserRole.seller:
         return 'Seller';
       case UserRole.reseller:
-        return 'Reseller';
+        return 'Partner';
       case UserRole.contractor:
         return 'Contractor';
     }

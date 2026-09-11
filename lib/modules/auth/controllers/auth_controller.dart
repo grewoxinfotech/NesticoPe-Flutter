@@ -19,6 +19,7 @@ import 'package:nesticope_app/modules/saved_property/controllers/property_favori
 import 'package:nesticope_app/modules/profile/controllers/buyer_profiledata.dart';
 import 'package:nesticope_app/widgets/messages/snack_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:nesticope_app/utils/logger/app_logger.dart';
 import '../../../data/network/user/service/notification_sync_service.dart';
 import '../../../services/notification_service.dart';
 import '../../dashboard/views/dashboard_screen.dart';
@@ -322,6 +323,11 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      AppLogger.structured("Reseller Registration Attempt", {
+        "phone": phone,
+        "referralCode": referralCode,
+        "data": data,
+      });
 
       final response = await authService.resellerRegister(
         userType: "reseller",
@@ -330,7 +336,7 @@ class AuthController extends GetxController {
         // referCode: referralCode,
       );
 
-      if (response['success'] == true && response['data']['token'] != null) {
+      if (response['success'] == true && response['data'] != null && response['data']['token'] != null) {
         final token = response['data']['token'];
         await SecureStorage.saveToken(token);
 
@@ -355,8 +361,18 @@ class AuthController extends GetxController {
           response['message'] ?? 'Registration failed - no token received',
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('Reseller Registration Error: $e', error: e, stackTrace: stackTrace);
+      AppLogger.structured('Reseller Registration Error', {
+        'error': e.toString(),
+        'stackTrace': stackTrace.toString(),
+      });
       errorMessage.value = e.toString();
+      NesticoPeSnackBar.showAwesomeSnackbar(
+        title: 'Registration Failed',
+        message: e.toString().replaceAll('Exception: ', ''),
+        contentType: ContentType.failure,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -734,6 +750,10 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
+      AppLogger.structured("Converting Buyer to Reseller Attempt", {
+        "city": city,
+        "zipCode": zipCode,
+      });
       final user = await authService.convertBuyerToReseller(
         city: city,
         zipCode: zipCode,
@@ -747,11 +767,16 @@ class AuthController extends GetxController {
           contentType: ContentType.failure,
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      log('Error converting buyer to reseller: $e', error: e, stackTrace: stackTrace);
+      AppLogger.structured('Convert Buyer to Reseller Error', {
+        'error': e.toString(),
+        'stackTrace': stackTrace.toString(),
+      });
       errorMessage.value = e.toString();
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: "Conversion Failed",
-        message: e.toString(),
+        message: e.toString().replaceAll('Exception: ', ''),
         contentType: ContentType.failure,
       );
     } finally {

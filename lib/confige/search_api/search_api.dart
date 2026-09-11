@@ -115,24 +115,27 @@ class GoogleMapApi {
     String? cityFilter, // optional city name for filtering
   }) async {
     await ApiConfig.ensureMapKey();
-    // Build components parameter
+    if (input.trim().isEmpty) {
+      return {'status': 'OK', 'predictions': []};
+    }
     String components = 'country:in';
 
     final uri = Uri.parse(
-      '$baseUrl?input=$input&types=$types&components=$components&key=${ApiConfig.mapkey}',
+      '$baseUrl?input=${Uri.encodeComponent(input)}&types=$types&components=$components&key=${ApiConfig.mapkey}',
     );
 
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      if (data['status'] == 'OK') {
+      if (data['status'] == 'OK' || data['status'] == 'ZERO_RESULTS') {
         return data;
       } else {
-        throw Exception('API Error: ${data['status']}');
+        log('GoogleMapApi status: ${data['status']} error_message: ${data['error_message']}');
+        return {'status': data['status'], 'predictions': []};
       }
     } else {
-      throw Exception('Failed to fetch data');
+      return {'status': 'ERROR', 'predictions': []};
     }
   }
 

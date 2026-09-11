@@ -78,7 +78,11 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
               isLoading: _controller.isLoading.value,
               prefixIcon: Icons.location_city,
               onSearchChanged: (val) {
-                if (val.length > 2) _controller.fetchPredictionsCity(val);
+                if (val.isNotEmpty) {
+                  _controller.fetchPredictionsCity(val);
+                } else {
+                  _controller.predictions.clear();
+                }
               },
               onChanged: (prediction) => _onCitySelected(prediction),
               titleStyle: TextStyle(
@@ -154,8 +158,9 @@ class _CityZipcodeSelectorState extends State<CityZipcodeSelector> {
                       );
                       _isZipcodeValid.value = valid;
                       _zipErrorText.value = valid ? "" : "Invalid Zip";
-                      if (valid)
+                      if (valid) {
                         widget.onSelected?.call(_selectedCity.value, val);
+                      }
                     }
                   },
                 ),

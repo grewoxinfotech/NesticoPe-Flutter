@@ -22,7 +22,7 @@ class ResellerConversionScreen extends StatelessWidget {
     Get.lazyPut(() => AuthController());
     final controller = Get.find<AuthController>();
     final List<String> options = [
-      "Your account will be converted to a reseller account",
+      "Your account will be converted to a partner account",
       "Your application will be sent for admin approval",
       "You'll receive email notification about your approval status",
       "Once approved, you can start promoting properties",
@@ -135,7 +135,7 @@ class ResellerConversionScreen extends StatelessWidget {
 
                         // Subtitle
                         Text(
-                          "You're just one step away from becoming a property reseller!",
+                          "You're just one step away from becoming a property partner!",
                           style: TextStyle(
                             fontFamily: 'Exo',
                             color: ColorRes.blackShade54,

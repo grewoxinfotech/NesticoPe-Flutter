@@ -551,46 +551,60 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   // ─────────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: Colors.white,
-      // Custom app bar to match screenshot
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+    final bool canPop = Navigator.of(context).canPop();
+    return PopScope(
+      canPop: canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Get.offAll(() => const DashboardScreen());
+      },
+      child: Scaffold(
+        // backgroundColor: Colors.white,
+        // Custom app bar to match screenshot
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
 
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Icon(Icons.arrow_back, color: ColorRes.primary),
-        ),
-        // centerTitle: true,
-        titleSpacing: 0,
-        title: Image.asset(
-          'assets/images/Nestico-Pe_Logo-svg.png',
-          height: 48,
-          width: 150,
-          alignment: Alignment.centerLeft,
-          fit: BoxFit.cover,
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: ColorRes.white, // dark navy background
-          image: DecorationImage(
-            image: AssetImage('assets/images/apartment1.png'),
+          leading: GestureDetector(
+            onTap: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                Get.offAll(() => const DashboardScreen());
+              }
+            },
+            child: Icon(Icons.arrow_back, color: ColorRes.primary),
+          ),
+          // centerTitle: true,
+          titleSpacing: 0,
+          title: Image.asset(
+            'assets/images/Nestico-Pe_Logo-svg.png',
+            height: 48,
+            width: 150,
+            alignment: Alignment.centerLeft,
             fit: BoxFit.cover,
-            repeat: ImageRepeat.repeat,
-            opacity: 0.08,
           ),
         ),
-        child: SafeArea(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 350),
-            transitionBuilder:
-                (child, anim) => FadeTransition(opacity: anim, child: child),
-            child:
-                _otpSent
-                    ? _buildOtpScreen(key: const ValueKey('otp'))
-                    : _buildPhoneScreen(key: const ValueKey('phone')),
+        body: Container(
+          decoration: const BoxDecoration(
+            color: ColorRes.white, // dark navy background
+            image: DecorationImage(
+              image: AssetImage('assets/images/apartment1.png'),
+              fit: BoxFit.cover,
+              repeat: ImageRepeat.repeat,
+              opacity: 0.08,
+            ),
+          ),
+          child: SafeArea(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              transitionBuilder:
+                  (child, anim) => FadeTransition(opacity: anim, child: child),
+              child:
+                  _otpSent
+                      ? _buildOtpScreen(key: const ValueKey('otp'))
+                      : _buildPhoneScreen(key: const ValueKey('phone')),
+            ),
           ),
         ),
       ),
@@ -1440,46 +1454,60 @@ class _OtpLoginAsPartnerScreenState extends State<OtpLoginAsPartnerScreen> {
   // ─────────────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: Colors.white,
-      // Custom app bar to match screenshot
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+    final bool canPop = Navigator.of(context).canPop();
+    return PopScope(
+      canPop: canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Get.offAll(() => const DashboardScreen());
+      },
+      child: Scaffold(
+        // backgroundColor: Colors.white,
+        // Custom app bar to match screenshot
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
 
-        leading: GestureDetector(
-          onTap: () => Navigator.of(context).pop(),
-          child: Icon(Icons.arrow_back, color: ColorRes.primary),
-        ),
-        // centerTitle: true,
-        titleSpacing: 0,
-        title: Image.asset(
-          'assets/images/Nestico-Pe_Logo-svg.png',
-          height: 48,
-          width: 150,
-          alignment: Alignment.centerLeft,
-          fit: BoxFit.cover,
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: ColorRes.white, // dark navy background
-          image: DecorationImage(
-            image: AssetImage('assets/images/apartment1.png'),
+          leading: GestureDetector(
+            onTap: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                Get.offAll(() => const DashboardScreen());
+              }
+            },
+            child: Icon(Icons.arrow_back, color: ColorRes.primary),
+          ),
+          // centerTitle: true,
+          titleSpacing: 0,
+          title: Image.asset(
+            'assets/images/Nestico-Pe_Logo-svg.png',
+            height: 48,
+            width: 150,
+            alignment: Alignment.centerLeft,
             fit: BoxFit.cover,
-            repeat: ImageRepeat.repeat,
-            opacity: 0.08,
           ),
         ),
-        child: SafeArea(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 350),
-            transitionBuilder:
-                (child, anim) => FadeTransition(opacity: anim, child: child),
-            child:
-                _otpSent
-                    ? _buildOtpScreen(key: const ValueKey('otp'))
-                    : _buildPhoneScreen(key: const ValueKey('phone')),
+        body: Container(
+          decoration: const BoxDecoration(
+            color: ColorRes.white, // dark navy background
+            image: DecorationImage(
+              image: AssetImage('assets/images/apartment1.png'),
+              fit: BoxFit.cover,
+              repeat: ImageRepeat.repeat,
+              opacity: 0.08,
+            ),
+          ),
+          child: SafeArea(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              transitionBuilder:
+                  (child, anim) => FadeTransition(opacity: anim, child: child),
+              child:
+                  _otpSent
+                      ? _buildOtpScreen(key: const ValueKey('otp'))
+                      : _buildPhoneScreen(key: const ValueKey('phone')),
+            ),
           ),
         ),
       ),

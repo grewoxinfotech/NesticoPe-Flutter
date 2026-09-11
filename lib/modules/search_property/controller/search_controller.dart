@@ -173,7 +173,13 @@ class GoogleMapSearchController extends GetxController {
   }
 
   Future<void> fetchGooglePlaces(String city) async {
+    if (city.trim().isEmpty) {
+      predictions.clear();
+      cityStateList.clear();
+      return;
+    }
     try {
+      isLoading.value = true;
       final response = await GoogleMapApi.instance.searchCities(city);
 
       if (response != null) {
@@ -189,6 +195,8 @@ class GoogleMapSearchController extends GetxController {
       }
     } catch (e) {
       predictions.clear();
+    } finally {
+      isLoading.value = false;
     }
   }
 

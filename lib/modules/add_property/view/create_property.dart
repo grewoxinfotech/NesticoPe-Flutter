@@ -528,16 +528,6 @@ class CreatePropertyScreen extends StatelessWidget {
                                 return;
                               }
 
-                              // Check for minimum 1 document
-                              if (controller.documentList.value.isEmpty) {
-                                NesticoPeSnackBar.showAwesomeSnackbar(
-                                  title: 'Required',
-                                  message:
-                                      'Please upload at least 1 property document',
-                                  contentType: ContentType.failure,
-                                );
-                                return;
-                              }
                             }
 
                             // BHK validation
