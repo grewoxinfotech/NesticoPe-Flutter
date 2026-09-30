@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:nesticope_app/app/utils/helper_function/user_helper/user_helper.dart';
@@ -146,7 +145,7 @@ class TruecallerService {
         case TcSdkCallbackResult.failure:
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Login Failed',
-            message: '${callback.error?.message ?? 'Truecaller login failed'}',
+            message: callback.error?.message ?? 'Truecaller login failed',
             contentType: ContentType.failure,
           );
           completer.complete(null);
@@ -194,7 +193,18 @@ class TruecallerService {
       if (!completer.isCompleted) completer.complete(null);
     }
 
-    final result = await completer.future;
+    final result = await completer.future.timeout(
+      const Duration(seconds: 12),
+      onTimeout: () {
+        NesticoPeSnackBar.showAwesomeSnackbar(
+          title: 'Request Timeout',
+          message:
+              'Truecaller app did not respond. Please ensure Truecaller is active or try again.',
+          contentType: ContentType.warning,
+        );
+        return null;
+      },
+    );
     if (result != null) {
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Login Ready',

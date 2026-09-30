@@ -289,6 +289,7 @@ class CreatePropertyController extends GetxController {
         "Price Details",
         "Photos",
         "Advanced Details",
+        "Additional Details",
         "Amenities",
         "Verify",
       ];
@@ -300,6 +301,7 @@ class CreatePropertyController extends GetxController {
         "Price Details",
         "Photos",
         "Advanced Details",
+        "Additional Details",
         "Amenities",
         "Verify",
       ];

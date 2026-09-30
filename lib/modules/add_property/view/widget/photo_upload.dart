@@ -785,7 +785,7 @@ class PhotoUpload extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildBuilderDefaultHeaderText('Property Documents'),
+                    buildBuilderDefaultHeaderText('Property Documents (Optional)'),
                     Text(
                       'Max 5 files • PDF, DOC, DOCX',
                       style: TextStyle(
@@ -842,7 +842,7 @@ class PhotoUpload extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Mandatory Documents for Property',
+                        'Optional Documents for Property',
                         style: TextStyle(
                           fontSize: AppFontSizes.medium,
                           fontWeight: AppFontWeights.semiBold,

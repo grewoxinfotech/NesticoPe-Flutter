@@ -374,7 +374,11 @@ class RentPriceDetail extends StatelessWidget {
               // -------------------- PAST 5 YEARS PRICES --------------------
               // -------------------- PAST 5 YEARS PRICES --------------------
               const SizedBox(height: 24),
-              buildSectionTitle("Past 5 Years Prices (Required)"),
+              buildSectionTitle(
+                "Past 5 Years Price History (Required)",
+                subtitle:
+                    "Enter the past 5 years property prices to track price trends and market appreciation history.",
+              ),
               const SizedBox(height: 8),
 
               // Responsive grid layout
@@ -416,7 +420,11 @@ class RentPriceDetail extends StatelessWidget {
               // -------------------- FUTURE 5 YEARS PRICES --------------------
               // -------------------- FUTURE 5 YEARS PRICES --------------------
               const SizedBox(height: 12),
-              buildSectionTitle("Future 5 Years Prices (Optional)"),
+              buildSectionTitle(
+                "Future 5 Years Price Projection (Optional)",
+                subtitle:
+                    "Enter expected future 5 years property price projections based on market growth and location potential.",
+              ),
               const SizedBox(height: 8),
 
               Column(
@@ -1262,7 +1270,11 @@ class RentPriceDetail extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 24),
-                buildSectionTitle("Past 5 Years Prices (Required)"),
+                buildSectionTitle(
+                  "Past 5 Years Price History (Required)",
+                  subtitle:
+                      "Enter the past 5 years property prices to track price trends and market appreciation history.",
+                ),
                 const SizedBox(height: 8),
 
                 // Responsive grid layout
@@ -1304,7 +1316,11 @@ class RentPriceDetail extends StatelessWidget {
                 // -------------------- FUTURE 5 YEARS PRICES --------------------
                 // -------------------- FUTURE 5 YEARS PRICES --------------------
                 const SizedBox(height: 12),
-                buildSectionTitle("Future 5 Years Prices (Optional)"),
+                buildSectionTitle(
+                  "Future 5 Years Price Projection (Optional)",
+                  subtitle:
+                      "Enter expected future 5 years property price projections based on market growth and location potential.",
+                ),
                 const SizedBox(height: 8),
 
                 Column(
@@ -1501,7 +1517,11 @@ class RentPriceDetail extends StatelessWidget {
                           : const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 24),
-                buildSectionTitle("Past 5 Years Prices (Required)"),
+                buildSectionTitle(
+                  "Past 5 Years Price History (Required)",
+                  subtitle:
+                      "Enter the past 5 years property prices to track price trends and market appreciation history.",
+                ),
                 const SizedBox(height: 8),
 
                 // Responsive grid layout
@@ -1543,7 +1563,11 @@ class RentPriceDetail extends StatelessWidget {
                 // -------------------- FUTURE 5 YEARS PRICES --------------------
                 // -------------------- FUTURE 5 YEARS PRICES --------------------
                 const SizedBox(height: 12),
-                buildSectionTitle("Future 5 Years Prices (Optional)"),
+                buildSectionTitle(
+                  "Future 5 Years Price Projection (Optional)",
+                  subtitle:
+                      "Enter expected future 5 years property price projections based on market growth and location potential.",
+                ),
                 const SizedBox(height: 8),
 
                 Column(

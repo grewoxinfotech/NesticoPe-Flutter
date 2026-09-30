@@ -13,6 +13,7 @@ import 'package:nesticope_app/modules/add_property/payloads/edit_property/load_e
 import 'package:nesticope_app/modules/add_property/view/widget/basic_detail.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/photo_upload.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/post_property.dart';
+import 'package:nesticope_app/modules/add_property/view/widget/rent/additional_detail.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/rent/advance_detail.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/rent/amenities.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/rent/price_detail.dart';
@@ -310,10 +311,15 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 formKey: currentFormKey,
                                               );
                                             case 5:
+                                              return RentAdditionalDetail(
+                                                controller: controller,
+                                                formKey: currentFormKey,
+                                              );
+                                            case 6:
                                               return RentAmenities(
                                                 controller: controller,
                                               );
-                                            case 6:
+                                            case 7:
                                               return ReviewPropertyScreen(
                                                 controller: controller,
                                               );
@@ -1276,11 +1282,41 @@ Widget buildRoomChoice({
   );
 }
 
-Widget buildSectionTitle(String title) {
+Widget buildSectionTitle(
+  String title, {
+  String? subtitle,
+  String? tooltipMessage,
+}) {
+  final String? helperText = subtitle ?? tooltipMessage;
+  if (helperText != null && helperText.isNotEmpty) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            fontSize: AppFontSizes.small,
+            fontWeight: AppFontWeights.semiBold,
+            color: ColorRes.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          helperText,
+          style: TextStyle(
+            fontSize: AppFontSizes.bodySmall,
+            color: ColorRes.leadGreyColor.shade600,
+            fontWeight: AppFontWeights.regular,
+          ),
+        ),
+      ],
+    );
+  }
   return Text(
     title,
     textAlign: TextAlign.left,
-    style: TextStyle(
+    style: const TextStyle(
       fontSize: AppFontSizes.small,
       fontWeight: AppFontWeights.semiBold,
       color: ColorRes.textSecondary,

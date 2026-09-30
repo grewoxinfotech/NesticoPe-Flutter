@@ -375,29 +375,76 @@ class PostProperty extends StatelessWidget {
                       const SizedBox(height: 16),
                       buildSectionTitle('Furnishing'),
                       SizedBox(height: 8),
-                      Obx(
-                        () => Wrap(
-                          runSpacing: 12,
-                          spacing: 12,
+                      Obx(() {
+                        final selectedValue = furnishingList.contains(controller.furnishingType.value)
+                            ? controller.furnishingType.value
+                            : null;
 
-                          children:
-                              furnishingList
-                                  .map(
-                                    (type) => buildChoice(
-                                      title: type,
-                                      selected:
-                                          controller.furnishingType.value ==
-                                          type,
-                                      onTap:
-                                          () => controller.setValue(
-                                            controller.furnishingType,
-                                            type,
-                                          ),
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                      ),
+                        return DropdownButtonFormField<String>(
+                          initialValue: selectedValue,
+                          isExpanded: true,
+                          hint: const Text(
+                            "Select Furnishing",
+                            style: TextStyle(
+                              fontSize: AppFontSizes.bodySmall,
+                              color: ColorRes.textSecondary,
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: ColorRes.leadGreyColor,
+                          ),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            filled: true,
+                            fillColor: ColorRes.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: ColorRes.leadGreyColor.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: ColorRes.leadGreyColor.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: ColorRes.primary,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                          dropdownColor: ColorRes.white,
+                          style: const TextStyle(
+                            fontSize: AppFontSizes.bodySmall,
+                            color: ColorRes.black,
+                            fontWeight: AppFontWeights.medium,
+                          ),
+                          items: furnishingList
+                              .map(
+                                (type) => DropdownMenuItem<String>(
+                                  value: type,
+                                  child: Text(type),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              controller.setValue(
+                                controller.furnishingType,
+                                value,
+                              );
+                            }
+                          },
+                        );
+                      }),
                       const SizedBox(height: 16),
 
                       // Meal Available
@@ -982,68 +1029,83 @@ class PostProperty extends StatelessWidget {
               SizedBox(height: 20),
               buildSectionTitle("Property Type"),
               SizedBox(height: 12),
-              Obx(
-                () =>
-                    (controller.lookingTo.value == "Rent")
-                        ? SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            spacing: 12,
-                            children:
-                                propertyType
-                                    .map(
-                                      (type) => buildChoice(
-                                        title: type,
-                                        selected:
-                                            controller
-                                                .rent_propertyType
-                                                .value ==
-                                            type,
-                                        onTap: () {
-                                          controller.setValue(
-                                            controller.rent_propertyType,
-                                            type,
-                                          );
-                                          controller
-                                                  .showPropertyTypeError
-                                                  .value =
-                                              false; // Hide error on selection
-                                        },
-                                      ),
-                                    )
-                                    .toList(),
-                          ),
-                        )
-                        : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            spacing: 12,
-                            children:
-                                sellPropertyType
-                                    .map(
-                                      (type) => buildChoice(
-                                        title: type,
-                                        selected:
-                                            controller
-                                                .rent_propertyType
-                                                .value ==
-                                            type,
-                                        onTap: () {
-                                          controller.setValue(
-                                            controller.rent_propertyType,
-                                            type,
-                                          );
-                                          controller
-                                                  .showPropertyTypeError
-                                                  .value =
-                                              false; // Hide error on selection
-                                        },
-                                      ),
-                                    )
-                                    .toList(),
-                          ),
+              Obx(() {
+                final currentList = controller.lookingTo.value == "Rent"
+                    ? propertyType
+                    : sellPropertyType;
+                final selectedValue = currentList.contains(controller.rent_propertyType.value)
+                    ? controller.rent_propertyType.value
+                    : null;
+
+                return DropdownButtonFormField<String>(
+                  initialValue: selectedValue,
+                  isExpanded: true,
+                  hint: const Text(
+                    "Select Property Type",
+                    style: TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      color: ColorRes.textSecondary,
+                    ),
+                  ),
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: ColorRes.leadGreyColor,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    filled: true,
+                    fillColor: ColorRes.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: ColorRes.leadGreyColor.shade300,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: ColorRes.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  dropdownColor: ColorRes.white,
+                  style: const TextStyle(
+                    fontSize: AppFontSizes.bodySmall,
+                    color: ColorRes.black,
+                    fontWeight: AppFontWeights.medium,
+                  ),
+                  items: currentList
+                      .map(
+                        (type) => DropdownMenuItem<String>(
+                          value: type,
+                          child: Text(type),
                         ),
-              ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      controller.setValue(
+                        controller.rent_propertyType,
+                        value,
+                      );
+                      if (value == 'Independent House') {
+                        controller.commercial_rent_building_Name.clear();
+                      }
+                      controller.showPropertyTypeError.value = false;
+                    }
+                  },
+                );
+              }),
 
               if (controller.lookingTo.value == 'Rent' &&
                   controller.propertyType.value == 'Residential') ...[
@@ -1095,57 +1157,59 @@ class PostProperty extends StatelessWidget {
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
                 ),
-                const Text('Building'),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Building / Project / Society',
-                  Icons.apartment_outlined,
-                  controller.commercial_rent_building_Name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              isSearchForBuilding: true,
-                              selectedCity: controller.cityController.text,
-                              initialSearchText:
-                                  controller.commercial_rent_building_Name.text,
-                              hintText: 'Building / Project / Society',
-                            ),
-                      ),
-                    );
+                if (controller.rent_propertyType.value != 'Independent House') ...[
+                  const Text('Building'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Building / Project / Society',
+                    Icons.apartment_outlined,
+                    controller.commercial_rent_building_Name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter building name';
+                      }
+                      return null;
+                    },
+                    onTap: () async {
+                      Prediction selectedCity = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => CommonSearchField(
+                                onCitySelected: (city) {
+                                  Navigator.pop(context, city);
+                                },
+                                isFromAddProperty: true,
+                                isSearchForBuilding: true,
+                                selectedCity: controller.cityController.text,
+                                initialSearchText:
+                                    controller.commercial_rent_building_Name.text,
+                                hintText: 'Building / Project / Society',
+                              ),
+                        ),
+                      );
 
-                    controller.commercial_rent_building_Name.text =
-                        selectedCity.structuredFormatting?.mainText ??
-                        selectedCity.description ??
-                        '';
+                      controller.commercial_rent_building_Name.text =
+                          selectedCity.structuredFormatting?.mainText ??
+                          selectedCity.description ??
+                          '';
 
-                    if (controller
-                        .commercial_rent_building_Name
-                        .text
-                        .isNotEmpty) {
-                      controller.localityController.text =
-                          selectedCity.structuredFormatting?.secondaryText ??
-                          '';
-                      controller.sell_rent_Address.text =
-                          selectedCity.structuredFormatting?.secondaryText ??
-                          '';
-                    }
-                  },
-                  isEnable: false,
-                ),
-                SizedBox(height: 16),
+                      if (controller
+                          .commercial_rent_building_Name
+                          .text
+                          .isNotEmpty) {
+                        controller.localityController.text =
+                            selectedCity.structuredFormatting?.secondaryText ??
+                            '';
+                        controller.sell_rent_Address.text =
+                            selectedCity.structuredFormatting?.secondaryText ??
+                            '';
+                      }
+                    },
+                    isEnable: false,
+                  ),
+                  SizedBox(height: 16),
+                ],
                 const Text('Locality'),
                 SizedBox(height: 8),
                 buildTextField(
@@ -1337,57 +1401,59 @@ class PostProperty extends StatelessWidget {
                           )
                           : SizedBox.shrink(),
                 ),
-                SizedBox(height: 16),
-                const Text('Building'),
-                SizedBox(height: 8),
-                buildTextField(
-                  'Building / Project / Society',
-                  Icons.apartment_outlined,
-                  controller.commercial_rent_building_Name,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter building name';
-                    }
-                    return null;
-                  },
-                  onTap: () async {
-                    Prediction selectedCity = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => CommonSearchField(
-                              onCitySelected: (city) {
-                                Navigator.pop(context, city);
-                              },
-                              isFromAddProperty: true,
-                              isSearchForBuilding: true,
-                              selectedCity: controller.cityController.text,
-                              initialSearchText:
-                                  controller.commercial_rent_building_Name.text,
-                              hintText: 'Building / Project / Society',
-                            ),
-                      ),
-                    );
+                if (controller.rent_propertyType.value != 'Independent House') ...[
+                  SizedBox(height: 16),
+                  const Text('Building'),
+                  SizedBox(height: 8),
+                  buildTextField(
+                    'Building / Project / Society',
+                    Icons.apartment_outlined,
+                    controller.commercial_rent_building_Name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter building name';
+                      }
+                      return null;
+                    },
+                    onTap: () async {
+                      Prediction selectedCity = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => CommonSearchField(
+                                onCitySelected: (city) {
+                                  Navigator.pop(context, city);
+                                },
+                                isFromAddProperty: true,
+                                isSearchForBuilding: true,
+                                selectedCity: controller.cityController.text,
+                                initialSearchText:
+                                    controller.commercial_rent_building_Name.text,
+                                hintText: 'Building / Project / Society',
+                              ),
+                        ),
+                      );
 
-                    controller.commercial_rent_building_Name.text =
-                        selectedCity.structuredFormatting?.mainText ??
-                        selectedCity.description ??
-                        '';
+                      controller.commercial_rent_building_Name.text =
+                          selectedCity.structuredFormatting?.mainText ??
+                          selectedCity.description ??
+                          '';
 
-                    if (controller
-                        .commercial_rent_building_Name
-                        .text
-                        .isNotEmpty) {
-                      controller.localityController.text =
-                          selectedCity.structuredFormatting?.secondaryText ??
-                          '';
-                      controller.sell_rent_Address.text =
-                          selectedCity.structuredFormatting?.secondaryText ??
-                          '';
-                    }
-                  },
-                  isEnable: false,
-                ),
+                      if (controller
+                          .commercial_rent_building_Name
+                          .text
+                          .isNotEmpty) {
+                        controller.localityController.text =
+                            selectedCity.structuredFormatting?.secondaryText ??
+                            '';
+                        controller.sell_rent_Address.text =
+                            selectedCity.structuredFormatting?.secondaryText ??
+                            '';
+                      }
+                    },
+                    isEnable: false,
+                  ),
+                ],
                 SizedBox(height: 16),
 
                 const Text('Locality'),
@@ -1821,29 +1887,76 @@ class PostProperty extends StatelessWidget {
                 SizedBox(height: 16),
                 buildSectionTitle('Furnishing'),
                 SizedBox(height: 8),
-                Obx(
-                  () => SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      spacing: 12,
-                      children:
-                          furnishingList
-                              .map(
-                                (type) => buildChoice(
-                                  title: type,
-                                  selected:
-                                      controller.furnishingType.value == type,
-                                  onTap:
-                                      () => controller.setValue(
-                                        controller.furnishingType,
-                                        type,
-                                      ),
-                                ),
-                              )
-                              .toList(),
+                Obx(() {
+                  final selectedValue = furnishingList.contains(controller.furnishingType.value)
+                      ? controller.furnishingType.value
+                      : null;
+
+                  return DropdownButtonFormField<String>(
+                    initialValue: selectedValue,
+                    isExpanded: true,
+                    hint: const Text(
+                      "Select Furnishing",
+                      style: TextStyle(
+                        fontSize: AppFontSizes.bodySmall,
+                        color: ColorRes.textSecondary,
+                      ),
                     ),
-                  ),
-                ),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: ColorRes.leadGreyColor,
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      filled: true,
+                      fillColor: ColorRes.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: ColorRes.leadGreyColor.shade300,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: ColorRes.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    dropdownColor: ColorRes.white,
+                    style: const TextStyle(
+                      fontSize: AppFontSizes.bodySmall,
+                      color: ColorRes.black,
+                      fontWeight: AppFontWeights.medium,
+                    ),
+                    items: furnishingList
+                        .map(
+                          (type) => DropdownMenuItem<String>(
+                            value: type,
+                            child: Text(type),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.setValue(
+                          controller.furnishingType,
+                          value,
+                        );
+                      }
+                    },
+                  );
+                }),
               ],
             ],
           ),
