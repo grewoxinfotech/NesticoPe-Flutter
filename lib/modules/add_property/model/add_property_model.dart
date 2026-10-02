@@ -610,7 +610,7 @@ class FinancialInfo {
     if (lockInPeriod != null) data['lock_in_period'] = lockInPeriod;
     if (noticePeriod != null) data['notice_period'] = noticePeriod;
     if (negotiable != null) data['negotiable'] = negotiable;
-    if (maintenanceCharges != null && maintenanceCharges != 0.0)
+    if (maintenanceCharges != null)
       data['maintenance_charges'] = maintenanceCharges;
     if (parkingCharges != null && parkingCharges != 0.0)
       data['parking_charges'] = parkingCharges;

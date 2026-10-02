@@ -36,30 +36,40 @@ class RentAdditionalDetail extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-
-            // 1. Facing
-            buildSectionTitle("Facing"),
+            // Future 5 Years Price Projection
+            buildSectionTitle(
+              "Future 5 Years Price Projection (Optional)",
+              subtitle:
+                  "Enter expected future 5 years property price projections based on market growth and location potential.",
+            ),
             const SizedBox(height: 8),
-            Obx(
-              () => Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children:
-                    sell_rent_facing.map((option) {
-                      return buildChoice(
-                        title: option,
-                        selected: controller.rent_facing.value == option,
-                        onTap: () {
-                          controller.setValue(controller.rent_facing, option);
-                        },
-                      );
-                    }).toList(),
-              ),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: List.generate(5, (index) {
+                int year = DateTime.now().year + (index + 1);
+                return SizedBox(
+                  width: (MediaQuery.of(context).size.width - 45) / 2,
+                  child: buildTextField(
+                    "$year",
+                    Icons.currency_rupee_outlined,
+                    controller.futurePrices[index],
+                    isPhoneKey: true,
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        if (int.tryParse(value) == null) {
+                          return 'Enter a valid number';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                );
+              }),
             ),
             const SizedBox(height: 16),
 
-            // 2. Address
+            // 1. Address
             buildSectionTitle("Address"),
             const SizedBox(height: 8),
             buildTextField(

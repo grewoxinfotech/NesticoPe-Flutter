@@ -289,7 +289,6 @@ class CreatePropertyController extends GetxController {
         "Price Details",
         "Photos",
         "Advanced Details",
-        "Additional Details",
         "Amenities",
         "Verify",
       ];
@@ -301,7 +300,6 @@ class CreatePropertyController extends GetxController {
         "Price Details",
         "Photos",
         "Advanced Details",
-        "Additional Details",
         "Amenities",
         "Verify",
       ];
@@ -524,6 +522,7 @@ class CreatePropertyController extends GetxController {
   var mealAvailableList = <String>[].obs;
   var editingIndex = (-1).obs;
   var stepperSelectedIndex = 0.obs;
+  final isAdditionalDetailsExpanded = false.obs;
   var bestSuitedList = <String>[].obs;
   var rent_Legal = <String>[].obs;
   var sell_Brokerage = <String>[].obs;
@@ -2932,12 +2931,15 @@ class CreatePropertyController extends GetxController {
                           : null,
                   platformFees: double.tryParse(platformFees.text.trim()),
                   maintenanceCharges:
-                      rent_maintenanceChargeType.value.toLowerCase() ==
-                              "separate"
-                          ? double.tryParse(
-                            sell_rent_Maintenance_Charges.text.trim(),
-                          )
-                          : null,
+                      (rent_propertyType.value.toLowerCase() == 'plot' ||
+                              rent_propertyType.value.toLowerCase() == 'agricultural land' ||
+                              rent_propertyType.value.toLowerCase() == 'independent house' ||
+                              selectedIndex.value.toLowerCase() == 'plot' ||
+                              selectedIndex.value.toLowerCase() == 'independent house')
+                          ? 0.0
+                          : (rent_maintenanceChargeType.value.toLowerCase() == "separate"
+                              ? (double.tryParse(sell_rent_Maintenance_Charges.text.trim()) ?? 0.0)
+                              : 0.0),
                   brokerNegotiable:
                       brokerageChargeNegotiable.value.toLowerCase() == 'yes'
                           ? true
@@ -3180,12 +3182,15 @@ class CreatePropertyController extends GetxController {
                   ),
                   platformFees: double.tryParse(platformFees.text.trim()),
                   maintenanceCharges:
-                      rent_maintenanceChargeType.value.toLowerCase() ==
-                              "separate"
-                          ? double.tryParse(
-                            sell_rent_Maintenance_Charges.text.trim(),
-                          )
-                          : null,
+                      (rent_propertyType.value.toLowerCase() == 'plot' ||
+                              rent_propertyType.value.toLowerCase() == 'agricultural land' ||
+                              rent_propertyType.value.toLowerCase() == 'independent house' ||
+                              selectedIndex.value.toLowerCase() == 'plot' ||
+                              selectedIndex.value.toLowerCase() == 'independent house')
+                          ? 0.0
+                          : (rent_maintenanceChargeType.value.toLowerCase() == "separate"
+                              ? (double.tryParse(sell_rent_Maintenance_Charges.text.trim()) ?? 0.0)
+                              : 0.0),
                   brokerNegotiable:
                       brokerageChargeNegotiable.value.toLowerCase() == 'yes'
                           ? true
@@ -3474,11 +3479,15 @@ class CreatePropertyController extends GetxController {
                           : false,
 
                   maintenanceCharges:
-                      sell_rent_Maintenance_Charges.text.trim().isNotEmpty
-                          ? double.tryParse(
-                            sell_rent_Maintenance_Charges.text.trim(),
-                          )
-                          : null,
+                      (rent_propertyType.value.toLowerCase() == 'plot' ||
+                              rent_propertyType.value.toLowerCase() == 'agricultural land' ||
+                              rent_propertyType.value.toLowerCase() == 'independent house' ||
+                              selectedIndex.value.toLowerCase() == 'plot' ||
+                              selectedIndex.value.toLowerCase() == 'independent house')
+                          ? 0.0
+                          : (sell_rent_Maintenance_Charges.text.trim().isNotEmpty
+                              ? (double.tryParse(sell_rent_Maintenance_Charges.text.trim()) ?? 0.0)
+                              : 0.0),
                   brokerCommission: double.tryParse(
                     brokerRageCommission.text.trim(),
                   ),

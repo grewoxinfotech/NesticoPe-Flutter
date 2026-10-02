@@ -1283,6 +1283,26 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
         statusBarIconBrightness: Brightness.light,
       ),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoFetchCurrentLocation();
+    });
+  }
+
+  Future<void> _autoFetchCurrentLocation() async {
+    if (_loadingLocation) return;
+    setState(() => _loadingLocation = true);
+    try {
+      final city = await getCurrentCityFromDevice();
+      final trimmed = city?.trim() ?? '';
+      if (trimmed.isNotEmpty && mounted) {
+        cityController.selectedCity.value = trimmed;
+        _finishCitySelection(trimmed);
+      }
+    } catch (e) {
+      debugPrint("Auto fetch location error: $e");
+    } finally {
+      if (mounted) setState(() => _loadingLocation = false);
+    }
   }
 
   @override

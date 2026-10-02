@@ -384,8 +384,8 @@ class OnboardingController extends GetxController {
   }
 
   Future<void> handleBuyHome() async {
-    final loggedIn = await truecallerService.loginWithTrueCaller();
-    if (!loggedIn) {
+    final isUserLoggedIn = await SecureStorage.getLoggedIn();
+    if (!isUserLoggedIn) {
       final proceed = await _showLoginBottomSheet(
         listingType: 'Sell',
         city: '',
@@ -403,8 +403,8 @@ class OnboardingController extends GetxController {
   }
 
   Future<void> handleRentHome() async {
-    final loggedIn = await truecallerService.loginWithTrueCaller();
-    if (!loggedIn) {
+    final isUserLoggedIn = await SecureStorage.getLoggedIn();
+    if (!isUserLoggedIn) {
       final proceed = await _showLoginBottomSheet(
         listingType: 'Rent',
         city: '',

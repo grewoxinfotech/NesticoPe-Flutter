@@ -30,11 +30,14 @@ class AuthService {
 
   Future<UserModel?> loginWithTrueCaller(Map<String, dynamic> data) async {
     try {
+      print("[TRUECALLER_LOG] Sending backend request to ${ApiConstants.truecallerLogin} with payload: $data");
       final response = await http.post(
         Uri.parse(ApiConstants.truecallerLogin),
         headers: {i: j},
         body: jsonEncode(data),
       );
+
+      print("[TRUECALLER_LOG] Backend response status: ${response.statusCode}, body: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -48,33 +51,16 @@ class AuthService {
         await SecureStorage.saveLoggedIn(true);
         final success = data['success'] == true;
         if (success) {
-          // Fluttertoast.showToast(
-          //   msg: "🎉 Login With Truecaller Done Successfully!",
-          //   toastLength: Toast.LENGTH_SHORT,
-          //   gravity: ToastGravity.BOTTOM,
-          //   backgroundColor: Colors.green,
-          //   textColor: Colors.white,
-          // );
+          print("[TRUECALLER_LOG] Backend login success!");
           return user;
         } else {
-          // Fluttertoast.showToast(
-          //   msg: "⚠️ Failed to Login With Truecaller. Please try again.",
-          //   toastLength: Toast.LENGTH_SHORT,
-          //   gravity: ToastGravity.BOTTOM,
-          //   backgroundColor: Colors.red,
-          //   textColor: Colors.white,
-          // );
+          print("[TRUECALLER_LOG] Backend login returned success=false");
         }
       } else {
-        // Fluttertoast.showToast(
-        //   msg: "⚠️ Failed to Login With Truecaller. Please try again.",
-        //   toastLength: Toast.LENGTH_SHORT,
-        //   gravity: ToastGravity.BOTTOM,
-        //   backgroundColor: Colors.red,
-        //   textColor: Colors.white,
-        // );
+        print("[TRUECALLER_LOG] Backend returned error status code: ${response.statusCode}");
       }
-    } catch (e) {
+    } catch (e, stack) {
+      print("[TRUECALLER_LOG] Exception in loginWithTrueCaller backend call: $e\n$stack");
       rethrow;
     }
     return null;

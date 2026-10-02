@@ -1160,46 +1160,46 @@ class ReviewPropertyScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: ColorRes.error.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.error_outline,
-                  color: ColorRes.error,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  'Pending Actions',
-                  style: TextStyle(
-                    color: ColorRes.textPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          const Padding(
-            padding: EdgeInsets.only(left: 44),
-            child: Text(
-              'Complete now to get more visibility & responses',
-              style: TextStyle(
-                color: ColorRes.textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
+          // Row(
+          //   children: [
+          //     Container(
+          //       padding: const EdgeInsets.all(6),
+          //       decoration: BoxDecoration(
+          //         color: ColorRes.error.withOpacity(0.1),
+          //         shape: BoxShape.circle,
+          //       ),
+          //       child: const Icon(
+          //         Icons.error_outline,
+          //         color: ColorRes.error,
+          //         size: 18,
+          //       ),
+          //     ),
+          //     const SizedBox(width: 10),
+          //     const Expanded(
+          //       child: Text(
+          //         'Pending Actions',
+          //         style: TextStyle(
+          //           color: ColorRes.textPrimary,
+          //           fontSize: 15,
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 4),
+          // const Padding(
+          //   padding: EdgeInsets.only(left: 44),
+          //   child: Text(
+          //     'Complete now to get more visibility & responses',
+          //     style: TextStyle(
+          //       color: ColorRes.textSecondary,
+          //       fontSize: 12,
+          //       fontWeight: FontWeight.w400,
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
 
           // Add Photos Action
           _buildActionItem(
@@ -1211,9 +1211,13 @@ class ReviewPropertyScreen extends StatelessWidget {
                 'Properties with photos get 5x more responses from interested buyers. Go back to the previous step to add photos.',
             buttonText: 'Back to Add Photos',
             onPressed: () {
-              // Navigate back to photo upload step
-              controller.stepperSelectedIndex.value =
-                  controller.stepperSelectedIndex.value - 3;
+              // Navigate back to photo upload step dynamically
+              final photoIndex = controller.stepsList.indexWhere(
+                (step) => step.toLowerCase().contains("photo"),
+              );
+              if (photoIndex != -1) {
+                controller.stepperSelectedIndex.value = photoIndex;
+              }
             },
           ),
           const SizedBox(height: 14),

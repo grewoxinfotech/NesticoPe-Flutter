@@ -10,6 +10,7 @@ import 'package:nesticope_app/modules/add_property/view/create_property.dart';
 import 'package:nesticope_app/modules/add_property/view/widget/stepper_property.dart';
 import 'package:nesticope_app/modules/search_property/model/search_model.dart';
 
+import 'package:nesticope_app/modules/add_property/view/widget/rent/additional_detail.dart';
 import '../../../../search_property/view/search_screen.dart';
 
 class RentAdvanceDetail extends StatelessWidget {
@@ -108,12 +109,36 @@ class RentAdvanceDetail extends StatelessWidget {
       if ((controller.lookingTo.value == "Rent" ||
               controller.lookingTo.value == 'Sell') &&
           controller.propertyType.value == "Residential") {
-        return Form(
-          key: formKey,
-          // autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Form(
+            key: formKey,
+            // autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              // Facing field
+              const SizedBox(height: 16),
+              buildSectionTitle("Facing"),
+              const SizedBox(height: 8),
+              Obx(
+                () => Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children:
+                      sell_rent_facing.map((option) {
+                        return buildChoice(
+                          title: option,
+                          selected: controller.rent_facing.value == option,
+                          onTap: () {
+                            controller.setValue(controller.rent_facing, option);
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
+              const SizedBox(height: 16),
+
               if (controller.rent_propertyType.value.toLowerCase() != "plot" &&
                   controller.rent_propertyType.value.toLowerCase() !=
                       "agricultural land") ...[
@@ -613,153 +638,122 @@ class RentAdvanceDetail extends StatelessWidget {
                   ),
                 ],
 
-                SizedBox(height: 16),
+                if (controller.rent_propertyType.value.toLowerCase() != 'plot' &&
+                    controller.rent_propertyType.value.toLowerCase() != 'agricultural land' &&
+                    controller.rent_propertyType.value.toLowerCase() != 'independent house' &&
+                    controller.selectedIndex.value.toLowerCase() != 'plot' &&
+                    controller.selectedIndex.value.toLowerCase() != 'independent house') ...[
+                  SizedBox(height: 16),
 
-                if (controller.lookingTo.value == 'Rent') ...[
-                  buildSectionTitle("Maintenance Charges"),
-                  SizedBox(height: 8),
-                  Obx(
-                    () => Wrap(
-                      spacing: 12,
-
-                      runSpacing: 12,
-                      children:
-                          rent_maintenanceChargeType.map((option) {
-                            return buildChoice(
-                              title: option,
-                              selected:
-                                  controller.rent_maintenanceChargeType.value ==
-                                  option,
-                              onTap: () {
-                                controller.setValue(
-                                  controller.rent_maintenanceChargeType,
-                                  option,
-                                );
-                              },
-                            );
-                          }).toList(),
-                    ),
-                  ),
-                  if (controller.rent_maintenanceChargeType.value ==
-                      "Separate") ...[
-                    SizedBox(height: 16),
-                    Text("Maintenance Charges"),
+                  if (controller.lookingTo.value == 'Rent') ...[
+                    buildSectionTitle("Maintenance Charges"),
                     SizedBox(height: 8),
-                    buildTextField(
-                      "Enter Maintenance Charges",
-                      Icons.currency_rupee_outlined,
-                      controller.sell_rent_Maintenance_Charges,
-                      isPhoneKey: true,
-                    ),
-                  ],
-                ]
-                // else if (controller.lookingTo.value == "Sell") ...[
-                //   buildSectionTitle("Maintenance Charges"),
-                //   SizedBox(height: 8),
-                //   Obx(
-                //         () => Wrap(
-                //       spacing: 12,
-                //
-                //       runSpacing: 12,
-                //       children:
-                //       rent_maintenanceChargeType.map((option) {
-                //         return buildChoice(
-                //           title: option,
-                //           selected:
-                //           controller.rent_maintenanceChargeType.value ==
-                //               option,
-                //           onTap: () {
-                //             controller.setValue(
-                //               controller.rent_maintenanceChargeType,
-                //               option,
-                //             );
-                //           },
-                //         );
-                //       }).toList(),
-                //     ),
-                //   ),
-                //   if(controller.rent_maintenanceChargeType.value ==
-                //       "Separate")...[
-                //     Text("Maintenance Charges"),
-                //     SizedBox(height: 8),
-                //     buildTextField(
-                //       "Enter Maintenance Charges",
-                //       Icons.currency_rupee_outlined,
-                //       controller.sell_rent_Maintenance_Charges,
-                //       isPhoneKey: true,
-                //     ),
-                //   ]
-                // ],
-                else if (controller.lookingTo.value == "Sell") ...[
-                  buildSectionTitle("Maintenance Charges"),
-                  const SizedBox(height: 8),
+                    Obx(
+                      () => Wrap(
+                        spacing: 12,
 
-                  if (isEdit) ...[
-                    Obx(() {
-                      final hasMaintenance =
-                          controller.sell_rent_Maintenance_Charges.text
-                              .trim()
-                              .isNotEmpty;
-                      final selectedType =
-                          controller.rent_maintenanceChargeType.value;
-
-                      // Auto-default logic on edit
-                      if (hasMaintenance &&
-                          controller.rent_maintenanceChargeType.value.isEmpty) {
-                        controller.rent_maintenanceChargeType.value =
-                            "Separate";
-                      } else if (!hasMaintenance &&
-                          controller.rent_maintenanceChargeType.value.isEmpty) {
-                        controller.rent_maintenanceChargeType.value =
-                            "Included in rent";
-                      }
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 🔹 Choice buttons
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
-                            children:
-                                rent_maintenanceChargeType.map((option) {
-                                  return buildChoice(
-                                    title: option,
-                                    selected: selectedType == option,
-                                    onTap: () {
-                                      controller.setValue(
-                                        controller.rent_maintenanceChargeType,
-                                        option,
-                                      );
-                                    },
+                        runSpacing: 12,
+                        children:
+                            rent_maintenanceChargeType.map((option) {
+                              return buildChoice(
+                                title: option,
+                                selected:
+                                    controller.rent_maintenanceChargeType.value ==
+                                    option,
+                                onTap: () {
+                                  controller.setValue(
+                                    controller.rent_maintenanceChargeType,
+                                    option,
                                   );
-                                }).toList(),
-                          ),
-
-                          // 🔹 Show text field only when “Separate” is selected
-                          if (selectedType == "Separate") ...[
-                            const SizedBox(height: 8),
-                            Text("Maintenance Charges"),
-                            const SizedBox(height: 8),
-                            buildTextField(
-                              "Enter Maintenance Charges",
-                              Icons.currency_rupee_outlined,
-                              controller.sell_rent_Maintenance_Charges,
-                              isPhoneKey: true,
-                            ),
-                          ],
-                        ],
-                      );
-                    }),
-                  ] else ...[
-                    Text("Maintenance Charges"),
-                    const SizedBox(height: 8),
-                    buildTextField(
-                      "Enter Maintenance Charges",
-                      Icons.currency_rupee_outlined,
-                      controller.sell_rent_Maintenance_Charges,
-                      isPhoneKey: true,
+                                },
+                              );
+                            }).toList(),
+                      ),
                     ),
+                    if (controller.rent_maintenanceChargeType.value ==
+                        "Separate") ...[
+                      SizedBox(height: 16),
+                      Text("Maintenance Charges"),
+                      SizedBox(height: 8),
+                      buildTextField(
+                        "Enter Maintenance Charges",
+                        Icons.currency_rupee_outlined,
+                        controller.sell_rent_Maintenance_Charges,
+                        isPhoneKey: true,
+                      ),
+                    ],
+                  ]
+                  else if (controller.lookingTo.value == "Sell") ...[
+                    buildSectionTitle("Maintenance Charges"),
+                    const SizedBox(height: 8),
+
+                    if (isEdit) ...[
+                      Obx(() {
+                        final hasMaintenance =
+                            controller.sell_rent_Maintenance_Charges.text
+                                .trim()
+                                .isNotEmpty;
+                        final selectedType =
+                            controller.rent_maintenanceChargeType.value;
+
+                        // Auto-default logic on edit
+                        if (hasMaintenance &&
+                            controller.rent_maintenanceChargeType.value.isEmpty) {
+                          controller.rent_maintenanceChargeType.value =
+                              "Separate";
+                        } else if (!hasMaintenance &&
+                            controller.rent_maintenanceChargeType.value.isEmpty) {
+                          controller.rent_maintenanceChargeType.value =
+                              "Included in rent";
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 🔹 Choice buttons
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children:
+                                  rent_maintenanceChargeType.map((option) {
+                                    return buildChoice(
+                                      title: option,
+                                      selected: selectedType == option,
+                                      onTap: () {
+                                        controller.setValue(
+                                          controller.rent_maintenanceChargeType,
+                                          option,
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
+                            ),
+
+                            // 🔹 Show text field only when “Separate” is selected
+                            if (selectedType == "Separate") ...[
+                              const SizedBox(height: 8),
+                              Text("Maintenance Charges"),
+                              const SizedBox(height: 8),
+                              buildTextField(
+                                "Enter Maintenance Charges",
+                                Icons.currency_rupee_outlined,
+                                controller.sell_rent_Maintenance_Charges,
+                                isPhoneKey: true,
+                              ),
+                            ],
+                          ],
+                        );
+                      }),
+                    ] else ...[
+                      Text("Maintenance Charges"),
+                      const SizedBox(height: 8),
+                      buildTextField(
+                        "Enter Maintenance Charges",
+                        Icons.currency_rupee_outlined,
+                        controller.sell_rent_Maintenance_Charges,
+                        isPhoneKey: true,
+                      ),
+                    ],
                   ],
                 ],
 
@@ -809,8 +803,75 @@ class RentAdvanceDetail extends StatelessWidget {
                   ],
                 ],
               ],
+              const SizedBox(height: 24),
+              Obx(
+                () => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        controller.isAdditionalDetailsExpanded.value =
+                            !controller.isAdditionalDetailsExpanded.value;
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ColorRes.primary.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: ColorRes.primary.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.add_circle_outline_rounded,
+                                  color: ColorRes.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "Additional Details",
+                                  style: TextStyle(
+                                    fontSize: AppFontSizes.medium,
+                                    fontWeight: AppFontWeights.bold,
+                                    color: ColorRes.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Icon(
+                              controller.isAdditionalDetailsExpanded.value
+                                  ? Icons.keyboard_arrow_up_rounded
+                                  : Icons.keyboard_arrow_down_rounded,
+                              color: ColorRes.primary,
+                              size: 24,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (controller.isAdditionalDetailsExpanded.value) ...[
+                      const SizedBox(height: 16),
+                      RentAdditionalDetail(
+                        controller: controller,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ],
           ),
+        ),
         );
       }
       return SizedBox.shrink();

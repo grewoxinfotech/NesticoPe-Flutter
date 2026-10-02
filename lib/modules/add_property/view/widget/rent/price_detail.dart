@@ -417,66 +417,6 @@ class RentPriceDetail extends StatelessWidget {
                 ],
               ),
 
-              // -------------------- FUTURE 5 YEARS PRICES --------------------
-              // -------------------- FUTURE 5 YEARS PRICES --------------------
-              const SizedBox(height: 12),
-              buildSectionTitle(
-                "Future 5 Years Price Projection (Optional)",
-                subtitle:
-                    "Enter expected future 5 years property price projections based on market growth and location potential.",
-              ),
-              const SizedBox(height: 8),
-
-              Column(
-                children: [
-                  // First 4 fields → 2 in each row
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: List.generate(5, (index) {
-                      int year = DateTime.now().year + (index + 1);
-                      return SizedBox(
-                        width: (MediaQuery.of(context).size.width - 45) / 2,
-                        child: buildTextField(
-                          "$year",
-                          Icons.currency_rupee_outlined,
-                          controller.futurePrices[index],
-                          isPhoneKey: true,
-                          validator: (value) {
-                            if (value != null && value.isNotEmpty) {
-                              if (int.tryParse(value) == null) {
-                                return 'Enter a valid number';
-                              }
-                            }
-                            return null;
-                          },
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 12),
-                  //
-                  // // Last field → full width
-                  // Builder(builder: (context) {
-                  //   int year = DateTime.now().year + 5;
-                  //   return buildTextField(
-                  //     "Price for $year ",
-                  //     Icons.currency_rupee_outlined,
-                  //     controller.futurePrices[4],
-                  //     isPhoneKey: true,
-                  //     validator: (value) {
-                  //       if (value != null && value.isNotEmpty) {
-                  //         if (int.tryParse(value) == null) {
-                  //           return 'Enter a valid number';
-                  //         }
-                  //       }
-                  //       return null;
-                  //     },
-                  //   );
-                  // }),
-                ],
-              ),
-
               SizedBox(height: 16),
               buildSectionTitle('Price Negotiable'),
               SizedBox(height: 8),
@@ -1313,65 +1253,6 @@ class RentPriceDetail extends StatelessWidget {
                   ],
                 ),
 
-                // -------------------- FUTURE 5 YEARS PRICES --------------------
-                // -------------------- FUTURE 5 YEARS PRICES --------------------
-                const SizedBox(height: 12),
-                buildSectionTitle(
-                  "Future 5 Years Price Projection (Optional)",
-                  subtitle:
-                      "Enter expected future 5 years property price projections based on market growth and location potential.",
-                ),
-                const SizedBox(height: 8),
-
-                Column(
-                  children: [
-                    // First 4 fields → 2 in each row
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List.generate(5, (index) {
-                        int year = DateTime.now().year + (index + 1);
-                        return SizedBox(
-                          width: (MediaQuery.of(context).size.width - 45) / 2,
-                          child: buildTextField(
-                            "$year",
-                            Icons.currency_rupee_outlined,
-                            controller.futurePrices[index],
-                            isPhoneKey: true,
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                if (int.tryParse(value) == null) {
-                                  return 'Enter a valid number';
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 12),
-                    //
-                    // // Last field → full width
-                    // Builder(builder: (context) {
-                    //   int year = DateTime.now().year + 5;
-                    //   return buildTextField(
-                    //     "Price for $year ",
-                    //     Icons.currency_rupee_outlined,
-                    //     controller.futurePrices[4],
-                    //     isPhoneKey: true,
-                    //     validator: (value) {
-                    //       if (value != null && value.isNotEmpty) {
-                    //         if (int.tryParse(value) == null) {
-                    //           return 'Enter a valid number';
-                    //         }
-                    //       }
-                    //       return null;
-                    //     },
-                    //   );
-                    // }),
-                  ],
-                ),
                 SizedBox(height: 16),
                 buildSectionTitle('Price  Negotiable'),
                 SizedBox(height: 8),
@@ -1560,65 +1441,8 @@ class RentPriceDetail extends StatelessWidget {
                   ],
                 ),
 
-                // -------------------- FUTURE 5 YEARS PRICES --------------------
-                // -------------------- FUTURE 5 YEARS PRICES --------------------
-                const SizedBox(height: 12),
-                buildSectionTitle(
-                  "Future 5 Years Price Projection (Optional)",
-                  subtitle:
-                      "Enter expected future 5 years property price projections based on market growth and location potential.",
-                ),
-                const SizedBox(height: 8),
 
-                Column(
-                  children: [
-                    // First 4 fields → 2 in each row
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List.generate(5, (index) {
-                        int year = DateTime.now().year + (index + 1);
-                        return SizedBox(
-                          width: (MediaQuery.of(context).size.width - 45) / 2,
-                          child: buildTextField(
-                            "$year",
-                            Icons.currency_rupee_outlined,
-                            controller.futurePrices[index],
-                            isPhoneKey: true,
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                if (int.tryParse(value) == null) {
-                                  return 'Enter a valid number';
-                                }
-                              }
-                              return null;
-                            },
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 12),
-                    //
-                    // // Last field → full width
-                    // Builder(builder: (context) {
-                    //   int year = DateTime.now().year + 5;
-                    //   return buildTextField(
-                    //     "Price for $year ",
-                    //     Icons.currency_rupee_outlined,
-                    //     controller.futurePrices[4],
-                    //     isPhoneKey: true,
-                    //     validator: (value) {
-                    //       if (value != null && value.isNotEmpty) {
-                    //         if (int.tryParse(value) == null) {
-                    //           return 'Enter a valid number';
-                    //         }
-                    //       }
-                    //       return null;
-                    //     },
-                    //   );
-                    // }),
-                  ],
-                ),
+
                 SizedBox(height: 16),
                 buildSectionTitle('Price Negotiable'),
                 SizedBox(height: 8),

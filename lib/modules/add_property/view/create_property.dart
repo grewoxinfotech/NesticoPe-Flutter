@@ -311,15 +311,10 @@ class CreatePropertyScreen extends StatelessWidget {
                                                 formKey: currentFormKey,
                                               );
                                             case 5:
-                                              return RentAdditionalDetail(
-                                                controller: controller,
-                                                formKey: currentFormKey,
-                                              );
-                                            case 6:
                                               return RentAmenities(
                                                 controller: controller,
                                               );
-                                            case 7:
+                                            case 6:
                                               return ReviewPropertyScreen(
                                                 controller: controller,
                                               );

@@ -1157,7 +1157,8 @@ class PostProperty extends StatelessWidget {
                   dropdownItems: ['sq.ft.', 'sq.yd.', 'sq.mt.'],
                   isPhoneKey: true,
                 ),
-                if (controller.rent_propertyType.value != 'Independent House') ...[
+                if (controller.rent_propertyType.value != 'Independent House' &&
+                    controller.rent_propertyType.value != 'Plot') ...[
                   const Text('Building'),
                   SizedBox(height: 8),
                   buildTextField(
@@ -1401,7 +1402,8 @@ class PostProperty extends StatelessWidget {
                           )
                           : SizedBox.shrink(),
                 ),
-                if (controller.rent_propertyType.value != 'Independent House') ...[
+                if (controller.rent_propertyType.value != 'Independent House' &&
+                    controller.rent_propertyType.value != 'Plot') ...[
                   SizedBox(height: 16),
                   const Text('Building'),
                   SizedBox(height: 8),
@@ -1545,43 +1547,88 @@ class PostProperty extends StatelessWidget {
                 buildSectionTitle('BHK'),
                 const SizedBox(height: 8),
 
-                Obx(
-                  () => Column(
+                Obx(() {
+                  final selectedValue = controller.isCustomBhk.value
+                      ? "Custom"
+                      : (bhkTypes.contains(controller.bhkType.value)
+                          ? controller.bhkType.value
+                          : (controller.bhkType.value.isNotEmpty
+                              ? "Custom"
+                              : null));
+
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            ...bhkTypes.map(
-                              (type) => Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: buildChoice(
-                                  title: type,
-                                  width: 80,
-                                  selected: controller.bhkType.value == type,
-                                  onTap: () {
-                                    controller.isCustomBhk.value = false;
-                                    controller.customBhkController.clear();
-                                    controller.setValue(
-                                      controller.bhkType,
-                                      type,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-
-                            buildChoice(
-                              title: "Custom",
-                              width: 90,
-                              selected: controller.isCustomBhk.value,
-                              onTap: () {
-                                controller.isCustomBhk.value = true;
-                              },
-                            ),
-                          ],
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedValue,
+                        isExpanded: true,
+                        hint: const Text(
+                          "Select BHK",
+                          style: TextStyle(
+                            fontSize: AppFontSizes.bodySmall,
+                            color: ColorRes.textSecondary,
+                          ),
                         ),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: ColorRes.leadGreyColor,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          filled: true,
+                          fillColor: ColorRes.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: ColorRes.leadGreyColor.shade300,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: ColorRes.leadGreyColor.shade300,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: ColorRes.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                        dropdownColor: ColorRes.white,
+                        style: const TextStyle(
+                          fontSize: AppFontSizes.bodySmall,
+                          color: ColorRes.black,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                        items: [...bhkTypes, "Custom"]
+                            .map(
+                              (type) => DropdownMenuItem<String>(
+                                value: type,
+                                child: Text(type),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            if (value == "Custom") {
+                              controller.isCustomBhk.value = true;
+                              controller.bhkType.value = "";
+                            } else {
+                              controller.isCustomBhk.value = false;
+                              controller.customBhkController.clear();
+                              controller.setValue(
+                                controller.bhkType,
+                                value,
+                              );
+                            }
+                          }
+                        },
                       ),
 
                       if (controller.isCustomBhk.value) ...[
@@ -1615,8 +1662,8 @@ class PostProperty extends StatelessWidget {
                         ),
                       ],
                     ],
-                  ),
-                ),
+                  );
+                }),
                 Obx(
                   () =>
                       controller.showBHKChooseToError.value
@@ -1972,52 +2019,55 @@ class PostProperty extends StatelessWidget {
             children: [
               SizedBox(height: 24),
 
-              const Text('Building'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Building / Project / Society',
-                Icons.apartment_outlined,
-                controller.commercial_rent_building_Name,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter building name';
-                  }
-                  return null;
-                },
-                onTap: () async {
-                  Prediction selectedCity = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CommonSearchField(
-                            onCitySelected: (city) {
-                              Navigator.pop(context, city);
-                            },
+              if (controller.selectedIndex.value != 'Plot') ...[
+                const Text('Building'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Building / Project / Society',
+                  Icons.apartment_outlined,
+                  controller.commercial_rent_building_Name,
+                  validator: (value) {
+                    if (controller.selectedIndex.value != 'Plot' &&
+                        (value == null || value.isEmpty)) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
 
-                            isSearchForBuilding: true,
-                            isFromAddProperty: true,
-                            initialSearchText:
-                                controller.commercial_rent_Loaclity_Name.text,
-                            hintText: 'Building / Project / Society',
-                          ),
-                    ),
-                  );
+                              isSearchForBuilding: true,
+                              isFromAddProperty: true,
+                              initialSearchText:
+                                  controller.commercial_rent_Loaclity_Name.text,
+                              hintText: 'Building / Project / Society',
+                            ),
+                      ),
+                    );
 
-                  controller.commercial_rent_building_Name.text =
-                      selectedCity.structuredFormatting?.mainText ?? '';
-                  if (controller
-                      .commercial_rent_building_Name
-                      .text
-                      .isNotEmpty) {
-                    controller.commercial_rent_Loaclity_Name.text =
-                        selectedCity.structuredFormatting?.secondaryText ?? '';
-                    controller.sell_rent_Address.text =
-                        selectedCity.structuredFormatting?.secondaryText ?? '';
-                  }
-                },
-                isEnable: false,
-              ),
-              SizedBox(height: 16),
+                    controller.commercial_rent_building_Name.text =
+                        selectedCity.structuredFormatting?.mainText ?? '';
+                    if (controller
+                        .commercial_rent_building_Name
+                        .text
+                        .isNotEmpty) {
+                      controller.commercial_rent_Loaclity_Name.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                      controller.sell_rent_Address.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                    }
+                  },
+                  isEnable: false,
+                ),
+                SizedBox(height: 16),
+              ],
 
               const Text('Locality'),
               SizedBox(height: 8),
@@ -2860,72 +2910,64 @@ class PostProperty extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24),
-              const Text('Building'),
-              SizedBox(height: 8),
-              buildTextField(
-                'Building / Project / Society',
-                Icons.apartment_outlined,
-                controller.commercial_rent_building_Name,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter building name';
-                  }
-                  return null;
-                },
-                onTap: () async {
-                  Prediction selectedCity = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CommonSearchField(
-                            onCitySelected: (city) {
-                              Navigator.pop(context, city);
-                            },
-                            isFromAddProperty: true,
-                            isSearchForBuilding:
-                                true, // 👈 enable building search mode
-                            selectedCity:
-                                controller
-                                    .cityController
-                                    .text, // current city filter
-                            initialSearchText:
-                                controller.commercial_rent_building_Name.text,
-                            hintText: 'Building / Project / Society',
-                          ),
-                    ),
-                  );
+              if (controller.selectedIndex.value != 'Plot') ...[
+                const Text('Building'),
+                SizedBox(height: 8),
+                buildTextField(
+                  'Building / Project / Society',
+                  Icons.apartment_outlined,
+                  controller.commercial_rent_building_Name,
+                  validator: (value) {
+                    if (controller.selectedIndex.value != 'Plot' &&
+                        (value == null || value.isEmpty)) {
+                      return 'Please enter building name';
+                    }
+                    return null;
+                  },
+                  onTap: () async {
+                    Prediction selectedCity = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CommonSearchField(
+                              onCitySelected: (city) {
+                                Navigator.pop(context, city);
+                              },
+                              isFromAddProperty: true,
+                              isSearchForBuilding:
+                                  true, // 👈 enable building search mode
+                              selectedCity:
+                                  controller
+                                      .cityController
+                                      .text, // current city filter
+                              initialSearchText:
+                                  controller.commercial_rent_building_Name.text,
+                              hintText: 'Building / Project / Society',
+                            ),
+                      ),
+                    );
 
-                  // controller.commercial_rent_building_Name.text =
-                  //     selectedCity.structuredFormatting?.mainText ?? '';
-                  // if (controller
-                  //     .commercial_rent_building_Name
-                  //     .text
-                  //     .isNotEmpty) {
-                  //   controller.commercial_rent_Loaclity_Name.text =
-                  //       selectedCity.structuredFormatting?.secondaryText ?? '';
-                  //   controller.sell_rent_Address.text =
-                  //       selectedCity.structuredFormatting?.secondaryText ?? '';
-                  // }
-                  controller.commercial_rent_building_Name.text =
-                      selectedCity.structuredFormatting?.mainText ??
-                      selectedCity.description ??
-                      '';
+                    controller.commercial_rent_building_Name.text =
+                        selectedCity.structuredFormatting?.mainText ??
+                        selectedCity.description ??
+                        '';
 
-                  // ✅ Fill Locality & Address (secondary text)
-                  if (controller
-                      .commercial_rent_building_Name
-                      .text
-                      .isNotEmpty) {
-                    controller.commercial_rent_Loaclity_Name.text =
-                        selectedCity.structuredFormatting?.secondaryText ?? '';
-                    controller.sell_rent_Address.text =
-                        selectedCity.structuredFormatting?.secondaryText ?? '';
-                  }
-                },
-                isEnable: false,
-              ),
+                    // ✅ Fill Locality & Address (secondary text)
+                    if (controller
+                        .commercial_rent_building_Name
+                        .text
+                        .isNotEmpty) {
+                      controller.commercial_rent_Loaclity_Name.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                      controller.sell_rent_Address.text =
+                          selectedCity.structuredFormatting?.secondaryText ?? '';
+                    }
+                  },
+                  isEnable: false,
+                ),
 
-              SizedBox(height: 16),
+                SizedBox(height: 16),
+              ],
               const Text('Locality'),
               SizedBox(height: 8),
               buildTextField(

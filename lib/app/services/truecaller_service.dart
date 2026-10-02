@@ -68,22 +68,30 @@ class TruecallerService {
   Future<void> initialize() async {
     // Truecaller SDK is supported only on Android
     if (!Platform.isAndroid) {
+      print("[TRUECALLER_LOG] Not on Android platform. Skipping Truecaller SDK init.");
       return;
     }
 
     try {
+      print("[TRUECALLER_LOG] Ensuring Truecaller Client ID...");
       await ApiConfig.ensureTruecallerClientId();
 
       if (ApiConfig.truecallerClientId.isNotEmpty) {
-      } else {}
+        print("[TRUECALLER_LOG] ClientId from ApiConfig: ${ApiConfig.truecallerClientId}");
+      } else {
+        print("[TRUECALLER_LOG] ClientId from ApiConfig is empty. Will use manifest ClientId.");
+      }
 
+      print("[TRUECALLER_LOG] Calling TcSdk.initializeSDK()...");
       await TcSdk.initializeSDK(
         sdkOption: TcSdkOptions.OPTION_VERIFY_ONLY_TC_USERS,
       );
-    } catch (e) {
+      print("[TRUECALLER_LOG] TcSdk.initializeSDK completed successfully.");
+    } catch (e, stack) {
+      print("[TRUECALLER_LOG] ERROR during Truecaller SDK initialization: $e\n$stack");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Initialization Error',
-        message: 'Truecaller SDK failed to initialize',
+        message: 'Truecaller SDK failed to initialize: $e',
         contentType: ContentType.failure,
       );
     }
@@ -92,8 +100,11 @@ class TruecallerService {
   /// Checks if Truecaller OAuth flow is usable
   Future<bool> isUsable() async {
     try {
-      return await TcSdk.isOAuthFlowUsable;
-    } catch (e) {
+      final usable = await TcSdk.isOAuthFlowUsable;
+      print("[TRUECALLER_LOG] TcSdk.isOAuthFlowUsable result: $usable");
+      return usable;
+    } catch (e, stack) {
+      print("[TRUECALLER_LOG] ERROR checking isOAuthFlowUsable: $e\n$stack");
       return false;
     }
   }
@@ -101,13 +112,17 @@ class TruecallerService {
   /// Opens the Truecaller authorization screen and listens for response
   Future<TruecallerResponse?> login() async {
     if (!Platform.isAndroid) {
+      print("[TRUECALLER_LOG] login() aborted: Not an Android device.");
       return null;
     }
+
+    print("[TRUECALLER_LOG] Checking Truecaller usability...");
     final usable = await isUsable();
     if (!usable) {
+      print("[TRUECALLER_LOG] Truecaller OAuth flow is NOT usable on this device. (Check Truecaller App installation / SHA-1 fingerprint / Client ID)");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Not Available',
-        message: 'Truecaller is not available on this device',
+        message: 'Truecaller is not available on this device (Check App or SHA-1)',
         contentType: ContentType.warning,
       );
       return null;
@@ -120,10 +135,25 @@ class TruecallerService {
     String? savedCodeChallenge;
 
     _streamSubscription = TcSdk.streamCallbackData.listen((callback) {
+      print("[TRUECALLER_LOG] Received callback result: ${callback.result}");
       switch (callback.result) {
         case TcSdkCallbackResult.success:
           final data = callback.tcOAuthData;
           final profile = callback.profile;
+
+          print("==================================================");
+          print("[TRUECALLER_LOG] 📥 ALL DATA RECEIVED FROM TRUECALLER SDK:");
+          print("  - authorizationCode: ${data?.authorizationCode}");
+          print("  - state: ${data?.state}");
+          print("  - firstName: ${profile?.firstName}");
+          print("  - lastName: ${profile?.lastName}");
+          print("  - phoneNumber: ${profile?.phoneNumber}");
+          print("  - email: ${profile?.email}");
+          print("  - gender: ${profile?.gender}");
+          print("  - city: ${profile?.city}");
+          print("  - countryCode: ${profile?.countryCode}");
+          print("  - avatarUrl: ${profile?.avatarUrl}");
+          print("==================================================");
 
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Truecaller Verified',
@@ -143,14 +173,16 @@ class TruecallerService {
           );
           break;
         case TcSdkCallbackResult.failure:
+          print("[TRUECALLER_LOG] FAILURE! Error Code: ${callback.error?.code}, Message: ${callback.error?.message}");
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Login Failed',
-            message: callback.error?.message ?? 'Truecaller login failed',
+            message: callback.error?.message ?? 'Truecaller login failed (Code: ${callback.error?.code})',
             contentType: ContentType.failure,
           );
           completer.complete(null);
           break;
         case TcSdkCallbackResult.verification:
+          print("[TRUECALLER_LOG] VERIFICATION NEEDED! Manual verification / OTP required.");
           NesticoPeSnackBar.showAwesomeSnackbar(
             title: 'Verification Needed',
             message: 'Manual verification/OTP required',
@@ -159,24 +191,30 @@ class TruecallerService {
           completer.complete(null);
           break;
         default:
+          print("[TRUECALLER_LOG] DEFAULT/UNKNOWN callback result: ${callback.result}");
           break;
       }
     });
 
     try {
+      print("[TRUECALLER_LOG] Setting OAuth State & Scopes...");
       TcSdk.setOAuthState("random_state");
       TcSdk.setOAuthScopes(['profile', 'phone', 'openid']);
 
+      print("[TRUECALLER_LOG] Generating Code Verifier & Challenge...");
       final codeVerifier = await TcSdk.generateRandomCodeVerifier;
       final codeChallenge = await TcSdk.generateCodeChallenge(codeVerifier);
       savedCodeVerifier = codeVerifier;
       savedCodeChallenge = codeChallenge;
 
+      print("[TRUECALLER_LOG] CodeVerifier: $codeVerifier | CodeChallenge: $codeChallenge");
+
       if (codeChallenge != null) {
         TcSdk.setCodeChallenge(codeChallenge);
-
+        print("[TRUECALLER_LOG] Requesting Authorization Code (TcSdk.getAuthorizationCode)...");
         TcSdk.getAuthorizationCode;
       } else {
+        print("[TRUECALLER_LOG] Failed to generate codeChallenge.");
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Preparation Failed',
           message: 'Failed to prepare Truecaller OAuth',
@@ -184,10 +222,11 @@ class TruecallerService {
         );
         completer.complete(null);
       }
-    } catch (e) {
+    } catch (e, stack) {
+      print("[TRUECALLER_LOG] EXCEPTION in login() setup: $e\n$stack");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Exception',
-        message: 'Error during Truecaller login',
+        message: 'Error during Truecaller login: $e',
         contentType: ContentType.failure,
       );
       if (!completer.isCompleted) completer.complete(null);
@@ -196,6 +235,7 @@ class TruecallerService {
     final result = await completer.future.timeout(
       const Duration(seconds: 12),
       onTimeout: () {
+        print("[TRUECALLER_LOG] TIMEOUT: 12 seconds elapsed with no callback from Truecaller app.");
         NesticoPeSnackBar.showAwesomeSnackbar(
           title: 'Request Timeout',
           message:
@@ -206,6 +246,7 @@ class TruecallerService {
       },
     );
     if (result != null) {
+      print("[TRUECALLER_LOG] Login result acquired successfully.");
       NesticoPeSnackBar.showAwesomeSnackbar(
         title: 'Login Ready',
         message: 'Proceeding with backend authentication',
@@ -251,6 +292,13 @@ class TruecallerService {
         'authorizationCode': authorizationCode,
         'codeVerifier': codeVerifier,
       };
+
+      print("==================================================");
+      print("[TRUECALLER_LOG] 📤 DATA SENT TO BACKEND FOR AUTHENTICATION:");
+      print("  - authorizationCode: $authorizationCode");
+      print("  - codeVerifier: $codeVerifier");
+      print("ℹ️ Note: Truecaller profile data (name, phone, email) is verified securely on backend using authorizationCode & codeVerifier via OAuth PKCE.");
+      print("==================================================");
 
       final user = await AuthService().loginWithTrueCaller(payload);
       if (user != null) {
