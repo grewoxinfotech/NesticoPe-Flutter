@@ -375,9 +375,11 @@ class RentPriceDetail extends StatelessWidget {
               // -------------------- PAST 5 YEARS PRICES --------------------
               const SizedBox(height: 24),
               buildSectionTitle(
-                "Past 5 Years Price History (Required)",
+                "Past 5 Years Price History (Mandatory)",
                 subtitle:
-                    "Enter the past 5 years property prices to track price trends and market appreciation history.",
+                    "Enter the past 5 years property prices for this area to track price trends and market appreciation.",
+                tooltipMessage:
+                    "Enter the list prices of this area for the past 5 years to track price trends and market appreciation.",
               ),
               const SizedBox(height: 8),
 
@@ -417,6 +419,41 @@ class RentPriceDetail extends StatelessWidget {
                 ],
               ),
 
+              // -------------------- FUTURE 5 YEARS PRICE PROJECTION --------------------
+              // const SizedBox(height: 24),
+              // buildSectionTitle(
+              //   "Future 5 Years Price Projection (Optional)",
+              //   subtitle:
+              //       "Enter expected future 5 years property price projections based on market growth and location potential.",
+              //   tooltipMessage:
+              //       "Enter estimated future 5 years property price projections for this area based on growth and market potential.",
+              // ),
+              // const SizedBox(height: 8),
+
+              // Wrap(
+              //   spacing: 12,
+              //   runSpacing: 12,
+              //   children: List.generate(5, (index) {
+              //     int year = DateTime.now().year + (index + 1);
+              //     return SizedBox(
+              //       width: (MediaQuery.of(context).size.width - 45) / 2,
+              //       child: buildTextField(
+              //         "$year",
+              //         Icons.currency_rupee_outlined,
+              //         controller.futurePrices[index],
+              //         isPhoneKey: true,
+              //         validator: (value) {
+              //           if (value != null && value.isNotEmpty) {
+              //             if (int.tryParse(value) == null) {
+              //               return 'Enter a valid number';
+              //             }
+              //           }
+              //           return null;
+              //         },
+              //       ),
+              //     );
+              //   }),
+              // ),
               SizedBox(height: 16),
               buildSectionTitle('Price Negotiable'),
               SizedBox(height: 8),
@@ -1440,8 +1477,6 @@ class RentPriceDetail extends StatelessWidget {
                     const SizedBox(height: 12),
                   ],
                 ),
-
-
 
                 SizedBox(height: 16),
                 buildSectionTitle('Price Negotiable'),

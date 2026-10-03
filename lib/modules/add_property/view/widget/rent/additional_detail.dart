@@ -41,6 +41,8 @@ class RentAdditionalDetail extends StatelessWidget {
               "Future 5 Years Price Projection (Optional)",
               subtitle:
                   "Enter expected future 5 years property price projections based on market growth and location potential.",
+              tooltipMessage:
+                  "Enter estimated future 5 years property price projections for this area based on growth and market potential.",
             ),
             const SizedBox(height: 8),
             Wrap(

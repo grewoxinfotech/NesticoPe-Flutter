@@ -166,58 +166,61 @@ class _CustomSnackBarWidgetState extends State<_CustomSnackBarWidget>
           opacity: _fadeAnimation,
           child: Material(
             color: ColorRes.transparentColor,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _getBackgroundColor(),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Icon(_getIcon(), color: ColorRes.white, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      widget.message,
-                      style: TextStyle(
-                        color: ColorRes.white,
-                        fontSize: AppFontSizes.medium,
-                        fontWeight: AppFontWeights.medium,
-                      ),
-                    ),
-                  ),
-                  if (widget.actionLabel != null &&
-                      widget.onActionPressed != null) ...[
-                    const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: () {
-                        widget.onActionPressed!();
-                        _dismiss();
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: ColorRes.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
-                      child: Text(
-                        widget.actionLabel!,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+            child: GestureDetector(
+              onTap: _dismiss,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _getBackgroundColor(),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
-                  IconButton(
-                    icon: const Icon(Icons.close, color: ColorRes.white),
-                    onPressed: _dismiss,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(_getIcon(), color: ColorRes.white, size: 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        widget.message,
+                        style: TextStyle(
+                          color: ColorRes.white,
+                          fontSize: AppFontSizes.medium,
+                          fontWeight: AppFontWeights.medium,
+                        ),
+                      ),
+                    ),
+                    if (widget.actionLabel != null &&
+                        widget.onActionPressed != null) ...[
+                      const SizedBox(width: 8),
+                      TextButton(
+                        onPressed: () {
+                          widget.onActionPressed!();
+                          _dismiss();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: ColorRes.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                        child: Text(
+                          widget.actionLabel!,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                    IconButton(
+                      icon: const Icon(Icons.close, color: ColorRes.white),
+                      onPressed: _dismiss,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

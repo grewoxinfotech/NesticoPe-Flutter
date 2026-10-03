@@ -289,35 +289,42 @@ class CreatePropertyScreen extends StatelessWidget {
                                                     'Sell') &&
                                             controller.propertyType.value ==
                                                 "Residential") {
-                                          switch (step) {
-                                            case 1:
+                                          final stepName =
+                                              step < controller.stepsList.length
+                                                  ? controller.stepsList[step]
+                                                  : "";
+                                          switch (stepName) {
+                                            case "Property Details":
                                               return PostProperty(
                                                 controller: controller,
                                                 formKey: currentFormKey,
                                               );
-                                            case 2:
+                                            case "Price Details":
                                               return RentPriceDetail(
                                                 controller: controller,
                                                 formKey: currentFormKey,
                                               );
-                                            case 3:
+                                            case "Photos":
                                               return PhotoUpload(
                                                 controller: controller,
                                                 formKey: currentFormKey,
                                               );
-                                            case 4:
+                                            case "Advanced Details":
                                               return RentAdvanceDetail(
                                                 controller: controller,
                                                 formKey: currentFormKey,
                                               );
-                                            case 5:
+                                            case "Amenities":
                                               return RentAmenities(
                                                 controller: controller,
                                               );
-                                            case 6:
+                                            case "Verify":
+                                            case "Review":
                                               return ReviewPropertyScreen(
                                                 controller: controller,
                                               );
+                                            default:
+                                              return Container();
                                           }
                                         } else if ((controller
                                                         .lookingTo
@@ -1282,23 +1289,58 @@ Widget buildSectionTitle(
   String? subtitle,
   String? tooltipMessage,
 }) {
-  final String? helperText = subtitle ?? tooltipMessage;
-  if (helperText != null && helperText.isNotEmpty) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.left,
-          style: const TextStyle(
-            fontSize: AppFontSizes.small,
-            fontWeight: AppFontWeights.semiBold,
-            color: ColorRes.textSecondary,
+  final String? infoText = tooltipMessage ?? subtitle;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              title,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+                color: ColorRes.textSecondary,
+              ),
+            ),
           ),
-        ),
+          if (infoText != null && infoText.isNotEmpty) ...[
+            const SizedBox(width: 6),
+            Tooltip(
+              message: infoText,
+              triggerMode: TooltipTriggerMode.tap,
+              showDuration: const Duration(seconds: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              textStyle: const TextStyle(
+                fontSize: 12,
+                color: Colors.white,
+                fontWeight: FontWeight.w400,
+              ),
+              decoration: BoxDecoration(
+                color: ColorRes.primary.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  size: 18,
+                  color: ColorRes.primary,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      if (subtitle != null && subtitle.isNotEmpty) ...[
         const SizedBox(height: 4),
         Text(
-          helperText,
+          subtitle,
           style: TextStyle(
             fontSize: AppFontSizes.bodySmall,
             color: ColorRes.leadGreyColor.shade600,
@@ -1306,16 +1348,7 @@ Widget buildSectionTitle(
           ),
         ),
       ],
-    );
-  }
-  return Text(
-    title,
-    textAlign: TextAlign.left,
-    style: const TextStyle(
-      fontSize: AppFontSizes.small,
-      fontWeight: AppFontWeights.semiBold,
-      color: ColorRes.textSecondary,
-    ),
+    ],
   );
 }
 

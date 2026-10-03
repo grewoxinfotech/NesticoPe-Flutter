@@ -17,27 +17,57 @@ class NesticoPeSnackBar {
     final ctx = Get.context ?? Get.key.currentContext ?? Get.overlayContext;
     if (ctx == null) return;
 
+    void dismiss() {
+      try {
+        ScaffoldMessenger.of(ctx).hideCurrentSnackBar();
+        ScaffoldMessenger.of(ctx).clearSnackBars();
+      } catch (_) {}
+      try {
+        if (Get.isSnackbarOpen) {
+          Get.closeCurrentSnackbar();
+        }
+      } catch (_) {}
+    }
+
     final snackBar = SnackBar(
       elevation: 0,
-
       behavior: SnackBarBehavior.floating,
       backgroundColor: ColorRes.transparentColor,
-      content: AwesomeSnackbarContent(
-        title: title,
-        message: message,
-
-        contentType: contentType,
-
-        color: color,
-        inMaterialBanner: true,
-        titleTextStyle: TextStyle(
-          fontSize: AppFontSizes.body,
-          fontWeight: AppFontWeights.bold,
-        ),
-        messageTextStyle: TextStyle(
-          fontSize: AppFontSizes.small,
-          fontWeight: AppFontWeights.semiBold,
-        ),
+      duration: const Duration(seconds: 4),
+      content: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: dismiss,
+            child: AwesomeSnackbarContent(
+              title: title,
+              message: message,
+              contentType: contentType,
+              color: color,
+              inMaterialBanner: true,
+              titleTextStyle: TextStyle(
+                fontSize: AppFontSizes.body,
+                fontWeight: AppFontWeights.bold,
+              ),
+              messageTextStyle: TextStyle(
+                fontSize: AppFontSizes.small,
+                fontWeight: AppFontWeights.semiBold,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            width: 60,
+            height: 60,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: dismiss,
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ],
       ),
     );
 
@@ -53,28 +83,57 @@ void showTopAwesomeSnackbar({
   required ContentType contentType,
   Color? color,
 }) {
+  void dismiss() {
+    try {
+      if (Get.isSnackbarOpen) {
+        Get.closeCurrentSnackbar();
+      }
+    } catch (_) {}
+  }
+
   Get.snackbar(
     "",
     "",
     snackPosition: SnackPosition.TOP, // 👈 TOP
     backgroundColor: Colors.transparent,
-    margin: EdgeInsets.all(12),
+    margin: const EdgeInsets.all(12),
     padding: EdgeInsets.zero,
-    duration: Duration(seconds: 3),
-    messageText: AwesomeSnackbarContent(
-      title: title,
-      message: message,
-      contentType: contentType,
-      color: color,
-      inMaterialBanner: false,
-      titleTextStyle: TextStyle(
-        fontSize: AppFontSizes.body,
-        fontWeight: AppFontWeights.bold,
-      ),
-      messageTextStyle: TextStyle(
-        fontSize: AppFontSizes.small,
-        fontWeight: AppFontWeights.semiBold,
-      ),
+    duration: const Duration(seconds: 4),
+    onTap: (_) => dismiss(),
+    messageText: Stack(
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: dismiss,
+          child: AwesomeSnackbarContent(
+            title: title,
+            message: message,
+            contentType: contentType,
+            color: color,
+            inMaterialBanner: false,
+            titleTextStyle: TextStyle(
+              fontSize: AppFontSizes.body,
+              fontWeight: AppFontWeights.bold,
+            ),
+            messageTextStyle: TextStyle(
+              fontSize: AppFontSizes.small,
+              fontWeight: AppFontWeights.semiBold,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          right: 0,
+          width: 60,
+          height: 60,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: dismiss,
+            child: const SizedBox.expand(),
+          ),
+        ),
+      ],
     ),
   );
 }

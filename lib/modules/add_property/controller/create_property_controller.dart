@@ -281,8 +281,23 @@ class CreatePropertyController extends GetxController {
 
   // Add a computed getter for stepsList
   List<String> get stepsList {
+    bool isPlot = (selectedIndex.value.toLowerCase() == "plot" ||
+        rent_propertyType.value.toLowerCase() == "plot" ||
+        selectedIndex.value.toLowerCase() == "agricultural land" ||
+        rent_propertyType.value.toLowerCase() == "agricultural land");
+
     // Example: change steps based on lookingTo.value
     if (lookingTo.value == "Rent" && propertyType.value == "Residential") {
+      if (isPlot) {
+        return [
+          "Basic Detail",
+          "Property Details",
+          "Price Details",
+          "Photos",
+          "Amenities",
+          "Verify",
+        ];
+      }
       return [
         "Basic Detail",
         "Property Details",
@@ -294,6 +309,16 @@ class CreatePropertyController extends GetxController {
       ];
     } else if (lookingTo.value == "Sell" &&
         propertyType.value == "Residential") {
+      if (isPlot) {
+        return [
+          "Basic Detail",
+          "Property Details",
+          "Price Details",
+          "Photos",
+          "Amenities",
+          "Verify",
+        ];
+      }
       return [
         "Basic Detail",
         "Property Details",
