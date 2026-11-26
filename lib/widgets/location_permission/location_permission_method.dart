@@ -124,7 +124,12 @@ Future<bool> requestGalleryPermission() async {
       (v) => v.version.sdkInt,
     );
 
-    permission = sdkInt >= 33 ? Permission.photos : Permission.storage;
+    // On Android 13+ (API 33+), system photo picker is used which does not require any permission.
+    if (sdkInt >= 33) {
+      return true;
+    }
+
+    permission = Permission.storage;
   } else if (Platform.isIOS) {
     permission = Permission.photos;
   } else {
@@ -177,6 +182,13 @@ Future<bool> requestGalleryPermission() async {
 
 Future<bool> requestStoragePermission() async {
   if (!Platform.isAndroid) return true;
+
+  final sdkInt = await DeviceInfoPlugin().androidInfo.then(
+    (v) => v.version.sdkInt,
+  );
+  if (sdkInt >= 33) {
+    return true;
+  }
 
   final permission = Permission.storage;
   var status = await permission.status;

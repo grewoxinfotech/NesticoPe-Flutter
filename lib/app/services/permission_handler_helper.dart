@@ -7,7 +7,8 @@ Future<bool> requestStoragePermission() async {
     final sdkInt = await DeviceInfoPlugin().androidInfo.then(
       (v) => v.version.sdkInt,
     );
-    final permission = sdkInt >= 33 ? Permission.photos : Permission.storage;
+    if (sdkInt >= 33) return true;
+    final permission = Permission.storage;
 
     final status = await permission.status;
     if (status.isGranted || status.isLimited) return true;
